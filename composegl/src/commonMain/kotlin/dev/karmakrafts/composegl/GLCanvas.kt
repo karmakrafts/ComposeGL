@@ -19,8 +19,8 @@ package dev.karmakrafts.composegl
 import androidx.compose.runtime.Composable
 
 @Composable
-expect fun GLCanvas(
+expect fun GLCanvas( // @formatter:off
     onDispose: () -> Unit = {},
     fallbackContent: @Composable () -> Unit = {},
     content: GLRenderScope.() -> Unit
-)
+) // @formatter:on

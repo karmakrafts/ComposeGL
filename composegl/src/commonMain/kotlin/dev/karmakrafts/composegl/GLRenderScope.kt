@@ -16,6 +16,6 @@
 
 package dev.karmakrafts.composegl
 
-sealed interface GLRenderScope {
+sealed interface GLRenderScope : GLES30 {
 
 }
