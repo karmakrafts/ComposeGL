@@ -17,11 +17,13 @@
 package dev.karmakrafts.composegl
 
 import androidx.compose.runtime.Composable
+import org.khronos.webgl.WebGLRenderingContext
 
 @Composable
 actual fun GLCanvas(
     onDispose: () -> Unit,
-    fallbackContent: @Composable () -> Unit
+    fallbackContent: @Composable () -> Unit,
+    content: GLRenderScope.() -> Unit
 ) {
 
 }

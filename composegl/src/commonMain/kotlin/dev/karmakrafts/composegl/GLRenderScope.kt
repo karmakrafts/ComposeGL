@@ -16,12 +16,6 @@
 
 package dev.karmakrafts.composegl
 
-import androidx.compose.runtime.Composable
-
-@Composable
-actual fun GLCanvas(
-    onDispose: () -> Unit,
-    fallbackContent: @Composable () -> Unit
-) {
+sealed interface GLRenderScope {
 
 }

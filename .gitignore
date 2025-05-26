@@ -7,3 +7,4 @@ captures
 .externalNativeBuild
 local.properties
 xcuserdata
+docs/reference/

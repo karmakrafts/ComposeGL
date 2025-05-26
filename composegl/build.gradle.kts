@@ -40,6 +40,9 @@ fun Provider<MinimalExternalModuleDependency>.withVariant(variant: String): Stri
 
 @OptIn(ExperimentalWasmDsl::class)
 kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
     jvm()
     androidTarget {
         publishLibraryVariants("release")
@@ -50,9 +53,6 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
     js {
-        browser()
-    }
-    wasmJs {
         browser()
     }
     applyDefaultHierarchyTemplate()
