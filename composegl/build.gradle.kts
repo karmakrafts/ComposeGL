@@ -20,6 +20,10 @@ import dev.karmakrafts.conventions.GitLabCI.karmaKraftsDefaults
 import dev.karmakrafts.conventions.apache2License
 import dev.karmakrafts.conventions.setProjectInfo
 import dev.karmakrafts.conventions.setRepository
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.time.ZonedDateTime
 
 plugins {
@@ -56,6 +60,17 @@ kotlin {
         browser()
     }
     applyDefaultHierarchyTemplate()
+    targets.withType<KotlinNativeTarget>().filter { it.konanTarget.family == Family.IOS }.forEach { target ->
+        target.apply {
+            compilations {
+                val main by getting {
+                    cinterops {
+                        val MetalANGLE by creating
+                    }
+                }
+            }
+        }
+    }
     sourceSets {
         commonMain {
             dependencies {

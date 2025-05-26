@@ -16,6 +16,11 @@
 
 package dev.karmakrafts.composegl
 
+/**
+ * GLES 1.1 conformant API minus fixed point/fixed pipeline functions,
+ * as WebGL is based on GLES 2.0 and upwards.
+ * See https://registry.khronos.org/OpenGL/specs/es/1.1/es_full_spec_1.1.pdf
+ */
 interface GLES11 {
     val GL_DEPTH_BUFFER_BIT: Int
     val GL_STENCIL_BUFFER_BIT: Int
@@ -48,71 +53,30 @@ interface GLES11 {
     val GL_DST_COLOR: Int
     val GL_ONE_MINUS_DST_COLOR: Int
     val GL_SRC_ALPHA_SATURATE: Int
-    val GL_CLIP_PLANE0: Int
-    val GL_CLIP_PLANE1: Int
-    val GL_CLIP_PLANE2: Int
-    val GL_CLIP_PLANE3: Int
-    val GL_CLIP_PLANE4: Int
-    val GL_CLIP_PLANE5: Int
     val GL_FRONT: Int
     val GL_BACK: Int
     val GL_FRONT_AND_BACK: Int
-    val GL_FOG: Int
-    val GL_LIGHTING: Int
     val GL_TEXTURE_2D: Int
     val GL_CULL_FACE: Int
-    val GL_ALPHA_TEST: Int
     val GL_BLEND: Int
-    val GL_COLOR_LOGIC_OP: Int
     val GL_DITHER: Int
     val GL_STENCIL_TEST: Int
     val GL_DEPTH_TEST: Int
-    val GL_POINT_SMOOTH: Int
-    val GL_LINE_SMOOTH: Int
     val GL_SCISSOR_TEST: Int
-    val GL_COLOR_MATERIAL: Int
-    val GL_NORMALIZE: Int
-    val GL_RESCALE_NORMAL: Int
-    val GL_VERTEX_ARRAY: Int
-    val GL_NORMAL_ARRAY: Int
-    val GL_COLOR_ARRAY: Int
-    val GL_TEXTURE_COORD_ARRAY: Int
-    val GL_MULTISAMPLE: Int
     val GL_SAMPLE_ALPHA_TO_COVERAGE: Int
-    val GL_SAMPLE_ALPHA_TO_ONE: Int
     val GL_SAMPLE_COVERAGE: Int
     val GL_NO_ERROR: Int
     val GL_INVALID_ENUM: Int
     val GL_INVALID_VALUE: Int
     val GL_INVALID_OPERATION: Int
-    val GL_STACK_OVERFLOW: Int
-    val GL_STACK_UNDERFLOW: Int
     val GL_OUT_OF_MEMORY: Int
-    val GL_EXP: Int
-    val GL_EXP2: Int
-    val GL_FOG_DENSITY: Int
-    val GL_FOG_START: Int
-    val GL_FOG_END: Int
-    val GL_FOG_MODE: Int
-    val GL_FOG_COLOR: Int
     val GL_CW: Int
     val GL_CCW: Int
-    val GL_CURRENT_COLOR: Int
-    val GL_CURRENT_NORMAL: Int
-    val GL_CURRENT_TEXTURE_COORDS: Int
-    val GL_POINT_SIZE: Int
-    val GL_POINT_SIZE_MIN: Int
-    val GL_POINT_SIZE_MAX: Int
-    val GL_POINT_FADE_THRESHOLD_SIZE: Int
-    val GL_POINT_DISTANCE_ATTENUATION: Int
-    val GL_SMOOTH_POINT_SIZE_RANGE: Int
     val GL_LINE_WIDTH: Int
-    val GL_SMOOTH_LINE_WIDTH_RANGE: Int
     val GL_ALIASED_POINT_SIZE_RANGE: Int
     val GL_ALIASED_LINE_WIDTH_RANGE: Int
     val GL_CULL_FACE_MODE: Int
     val GL_FRONT_FACE: Int
-    val GL_SHADE_MODEL: Int
     val GL_DEPTH_RANGE: Int
     val GL_DEPTH_WRITEMASK: Int
     val GL_DEPTH_CLEAR_VALUE: Int
@@ -125,28 +89,11 @@ interface GLES11 {
     val GL_STENCIL_PASS_DEPTH_PASS: Int
     val GL_STENCIL_REF: Int
     val GL_STENCIL_WRITEMASK: Int
-    val GL_MATRIX_MODE: Int
     val GL_VIEWPORT: Int
-    val GL_MODELVIEW_STACK_DEPTH: Int
-    val GL_PROJECTION_STACK_DEPTH: Int
-    val GL_TEXTURE_STACK_DEPTH: Int
-    val GL_MODELVIEW_MATRIX: Int
-    val GL_PROJECTION_MATRIX: Int
-    val GL_TEXTURE_MATRIX: Int
-    val GL_ALPHA_TEST_FUNC: Int
-    val GL_ALPHA_TEST_REF: Int
-    val GL_BLEND_DST: Int
-    val GL_BLEND_SRC: Int
-    val GL_LOGIC_OP_MODE: Int
     val GL_SCISSOR_BOX: Int
     val GL_COLOR_CLEAR_VALUE: Int
     val GL_COLOR_WRITEMASK: Int
-    val GL_MAX_LIGHTS: Int
-    val GL_MAX_CLIP_PLANES: Int
     val GL_MAX_TEXTURE_SIZE: Int
-    val GL_MAX_MODELVIEW_STACK_DEPTH: Int
-    val GL_MAX_PROJECTION_STACK_DEPTH: Int
-    val GL_MAX_TEXTURE_STACK_DEPTH: Int
     val GL_MAX_VIEWPORT_DIMS: Int
     val GL_MAX_TEXTURE_UNITS: Int
     val GL_SUBPIXEL_BITS: Int
@@ -160,74 +107,21 @@ interface GLES11 {
     val GL_POLYGON_OFFSET_FILL: Int
     val GL_POLYGON_OFFSET_FACTOR: Int
     val GL_TEXTURE_BINDING_2D: Int
-    val GL_VERTEX_ARRAY_SIZE: Int
-    val GL_VERTEX_ARRAY_TYPE: Int
-    val GL_VERTEX_ARRAY_STRIDE: Int
-    val GL_NORMAL_ARRAY_TYPE: Int
-    val GL_NORMAL_ARRAY_STRIDE: Int
-    val GL_COLOR_ARRAY_SIZE: Int
-    val GL_COLOR_ARRAY_TYPE: Int
-    val GL_COLOR_ARRAY_STRIDE: Int
-    val GL_TEXTURE_COORD_ARRAY_SIZE: Int
-    val GL_TEXTURE_COORD_ARRAY_TYPE: Int
-    val GL_TEXTURE_COORD_ARRAY_STRIDE: Int
-    val GL_VERTEX_ARRAY_POINTER: Int
-    val GL_NORMAL_ARRAY_POINTER: Int
-    val GL_COLOR_ARRAY_POINTER: Int
-    val GL_TEXTURE_COORD_ARRAY_POINTER: Int
     val GL_SAMPLE_BUFFERS: Int
     val GL_SAMPLES: Int
     val GL_SAMPLE_COVERAGE_VALUE: Int
     val GL_SAMPLE_COVERAGE_INVERT: Int
-    val GL_NUM_COMPRESSED_TEXTURE_FORMATS: Int
     val GL_COMPRESSED_TEXTURE_FORMATS: Int
     val GL_DONT_CARE: Int
     val GL_FASTEST: Int
     val GL_NICEST: Int
-    val GL_PERSPECTIVE_CORRECTION_HINT: Int
-    val GL_POINT_SMOOTH_HINT: Int
-    val GL_LINE_SMOOTH_HINT: Int
-    val GL_FOG_HINT: Int
     val GL_GENERATE_MIPMAP_HINT: Int
-    val GL_LIGHT_MODEL_AMBIENT: Int
-    val GL_LIGHT_MODEL_TWO_SIDE: Int
-    val GL_AMBIENT: Int
-    val GL_DIFFUSE: Int
-    val GL_SPECULAR: Int
-    val GL_POSITION: Int
-    val GL_SPOT_DIRECTION: Int
-    val GL_SPOT_EXPONENT: Int
-    val GL_SPOT_CUTOFF: Int
-    val GL_CONSTANT_ATTENUATION: Int
-    val GL_LINEAR_ATTENUATION: Int
-    val GL_QUADRATIC_ATTENUATION: Int
     val GL_BYTE: Int
     val GL_UNSIGNED_BYTE: Int
     val GL_SHORT: Int
     val GL_UNSIGNED_SHORT: Int
     val GL_FLOAT: Int
-    val GL_FIXED: Int
-    val GL_CLEAR: Int
-    val GL_AND: Int
-    val GL_AND_REVERSE: Int
-    val GL_COPY: Int
-    val GL_AND_INVERTED: Int
-    val GL_NOOP: Int
-    val GL_XOR: Int
-    val GL_OR: Int
-    val GL_NOR: Int
-    val GL_EQUIV: Int
     val GL_INVERT: Int
-    val GL_OR_REVERSE: Int
-    val GL_COPY_INVERTED: Int
-    val GL_OR_INVERTED: Int
-    val GL_NAND: Int
-    val GL_SET: Int
-    val GL_EMISSION: Int
-    val GL_SHININESS: Int
-    val GL_AMBIENT_AND_DIFFUSE: Int
-    val GL_MODELVIEW: Int
-    val GL_PROJECTION: Int
     val GL_TEXTURE: Int
     val GL_ALPHA: Int
     val GL_RGB: Int
@@ -239,8 +133,6 @@ interface GLES11 {
     val GL_UNSIGNED_SHORT_4_4_4_4: Int
     val GL_UNSIGNED_SHORT_5_5_5_1: Int
     val GL_UNSIGNED_SHORT_5_6_5: Int
-    val GL_FLAT: Int
-    val GL_SMOOTH: Int
     val GL_KEEP: Int
     val GL_REPLACE: Int
     val GL_INCR: Int
@@ -248,13 +140,7 @@ interface GLES11 {
     val GL_VENDOR: Int
     val GL_RENDERER: Int
     val GL_VERSION: Int
-    val GL_EXTENSIONS: Int
-    val GL_MODULATE: Int
-    val GL_DECAL: Int
     val GL_ADD: Int
-    val GL_TEXTURE_ENV_MODE: Int
-    val GL_TEXTURE_ENV_COLOR: Int
-    val GL_TEXTURE_ENV: Int
     val GL_NEAREST: Int
     val GL_LINEAR: Int
     val GL_NEAREST_MIPMAP_NEAREST: Int
@@ -265,7 +151,6 @@ interface GLES11 {
     val GL_TEXTURE_MIN_FILTER: Int
     val GL_TEXTURE_WRAP_S: Int
     val GL_TEXTURE_WRAP_T: Int
-    val GL_GENERATE_MIPMAP: Int
     val GL_TEXTURE0: Int
     val GL_TEXTURE1: Int
     val GL_TEXTURE2: Int
@@ -299,54 +184,17 @@ interface GLES11 {
     val GL_TEXTURE30: Int
     val GL_TEXTURE31: Int
     val GL_ACTIVE_TEXTURE: Int
-    val GL_CLIENT_ACTIVE_TEXTURE: Int
     val GL_REPEAT: Int
     val GL_CLAMP_TO_EDGE: Int
-    val GL_LIGHT0: Int
-    val GL_LIGHT1: Int
-    val GL_LIGHT2: Int
-    val GL_LIGHT3: Int
-    val GL_LIGHT4: Int
-    val GL_LIGHT5: Int
-    val GL_LIGHT6: Int
-    val GL_LIGHT7: Int
     val GL_ARRAY_BUFFER: Int
     val GL_ELEMENT_ARRAY_BUFFER: Int
     val GL_ARRAY_BUFFER_BINDING: Int
     val GL_ELEMENT_ARRAY_BUFFER_BINDING: Int
-    val GL_VERTEX_ARRAY_BUFFER_BINDING: Int
-    val GL_NORMAL_ARRAY_BUFFER_BINDING: Int
-    val GL_COLOR_ARRAY_BUFFER_BINDING: Int
-    val GL_TEXTURE_COORD_ARRAY_BUFFER_BINDING: Int
     val GL_STATIC_DRAW: Int
     val GL_DYNAMIC_DRAW: Int
     val GL_BUFFER_SIZE: Int
     val GL_BUFFER_USAGE: Int
     val GL_SUBTRACT: Int
-    val GL_COMBINE: Int
-    val GL_COMBINE_RGB: Int
-    val GL_COMBINE_ALPHA: Int
-    val GL_RGB_SCALE: Int
-    val GL_ADD_SIGNED: Int
-    val GL_INTERPOLATE: Int
-    val GL_CONSTANT: Int
-    val GL_PRIMARY_COLOR: Int
-    val GL_PREVIOUS: Int
-    val GL_OPERAND0_RGB: Int
-    val GL_OPERAND1_RGB: Int
-    val GL_OPERAND2_RGB: Int
-    val GL_OPERAND0_ALPHA: Int
-    val GL_OPERAND1_ALPHA: Int
-    val GL_OPERAND2_ALPHA: Int
-    val GL_ALPHA_SCALE: Int
-    val GL_SRC0_RGB: Int
-    val GL_SRC1_RGB: Int
-    val GL_SRC2_RGB: Int
-    val GL_SRC0_ALPHA: Int
-    val GL_SRC1_ALPHA: Int
-    val GL_SRC2_ALPHA: Int
-    val GL_DOT3_RGB: Int
-    val GL_DOT3_RGBA: Int
 
     // @formatter:off
     fun glAlphaFunc(func: Int, ref: Float)
@@ -388,38 +236,30 @@ interface GLES11 {
     fun glTexParameterfv(target: Int, pname: Int, params: FloatArray)
     fun glTranslatef(x: Float, y: Float, z: Float)
     fun glActiveTexture(texture: Int)
-    fun glAlphaFuncx(func: Int, ref: Int)
     fun glBindBuffer(target: Int, buffer: Int)
     fun glBindTexture(target: Int, texture: Int)
     fun glBlendFunc(sfactor: Int, dfactor: Int)
-    fun glBufferData(target: Int, size: Long, data: ByteArray, usage: Int)
-    fun glBufferData(target: Int, size: Long, data: ShortArray, usage: Int)
-    fun glBufferData(target: Int, size: Long, data: IntArray, usage: Int)
-    fun glBufferData(target: Int, size: Long, data: FloatArray, usage: Int)
-    fun glBufferSubData(target: Int, offset: Long, size: Long, data: ByteArray)
-    fun glBufferSubData(target: Int, offset: Long, size: Long, data: ShortArray)
-    fun glBufferSubData(target: Int, offset: Long, size: Long, data: IntArray)
-    fun glBufferSubData(target: Int, offset: Long, size: Long, data: FloatArray)
+    fun glBufferData(target: Int, data: ShortArray, usage: Int)
+    fun glBufferData(target: Int, data: IntArray, usage: Int)
+    fun glBufferData(target: Int, data: FloatArray, usage: Int)
+    fun glBufferSubData(target: Int, offset: Long, data: ShortArray)
+    fun glBufferSubData(target: Int, offset: Long, data: IntArray)
+    fun glBufferSubData(target: Int, offset: Long, data: FloatArray)
     fun glClear(mask: Int)
-    fun glClearColorx(red: Int, green: Int, blue: Int, alpha: Int)
-    fun glClearDepthx(depth: Int)
     fun glClearStencil(s: Int)
     fun glClientActiveTexture(texture: Int)
-    fun glClipPlanex(plane: Int, equation: IntArray)
     fun glColor4ub(red: Byte, green: Byte, blue: Byte, alpha: Byte)
-    fun glColor4x(red: Int, green: Int, blue: Int, alpha: Int)
-    fun glColorMask(red: Int, green: Int, blue: Int, alpha: Int)
+    fun glColorMask(red: Boolean, green: Boolean, blue: Boolean, alpha: Boolean)
     fun glColorPointer(size: Int, type: Int, stride: Int, pointer: Long)
-    fun glCompressedTexImage2D(target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, imageSize: Int, data: ByteArray)
-    fun glCompressedTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, imageSize: Int, data: ByteArray)
+    fun glCompressedTexImage2D(target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, data: ByteArray)
+    fun glCompressedTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, data: ByteArray)
     fun glCopyTexImage2D(target: Int, level: Int, internalformat: Int, x: Int, y: Int, width: Int, height: Int, border: Int)
     fun glCopyTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, x: Int, y: Int, width: Int, height: Int)
     fun glCullFace(mode: Int)
-    fun glDeleteBuffers(n: Int, buffers: IntArray)
-    fun glDeleteTextures(n: Int, textures: IntArray)
+    fun glDeleteBuffers(buffers: IntArray)
+    fun glDeleteTextures(textures: IntArray)
     fun glDepthFunc(func: Int)
-    fun glDepthMask(flag: Int)
-    fun glDepthRangex(n: Int, f: Int)
+    fun glDepthMask(flag: Boolean)
     fun glDisable(cap: Int)
     fun glDisableClientState(array: Int)
     fun glDrawArrays(mode: Int, first: Int, count: Int)
@@ -428,59 +268,29 @@ interface GLES11 {
     fun glEnableClientState(array: Int)
     fun glFinish()
     fun glFlush()
-    fun glFogx(pname: Int, param: Int)
-    fun glFogxv(pname: Int, param: IntArray)
     fun glFrontFace(mode: Int)
-    fun glFrustumx(l: Int, r: Int, b: Int, t: Int, n: Int, f: Int)
-    fun glGetBooleanv(pname: Int, data: IntArray)
+    fun glGetBooleanv(pname: Int, data: BooleanArray)
     fun glGetBufferParameteriv(target: Int, pname: Int, params: IntArray)
-    fun glGetClipPlanex(plane: Int, equation: IntArray)
-    fun glGenBuffers(n: Int, buffers: IntArray)
-    fun glGenTextures(n: Int, textures: IntArray)
+    fun glGenBuffers(buffers: IntArray)
+    fun glGenTextures(textures: IntArray)
     fun glGetError(): Int
-    fun glGetFixedv(pname: Int, params: IntArray)
     fun glGetIntegerv(pname: Int, data: IntArray)
-    fun glGetLightxv(light: Int, pname: Int, params: IntArray)
-    fun glGetMaterialxv(face: Int, pname: Int, params: IntArray)
     // fun glGetPointerv(pname: Int, params: Long) TODO: implement this
-    fun glGetString(name: Int): String
+    fun glGetString(name: Int): String?
     fun glGetTexEnviv(target: Int, pname: Int, params: IntArray)
-    fun glGetTexEnvxv(target: Int, pname: Int, params: IntArray)
     fun glGetTexParameteriv(target: Int, pname: Int, params: IntArray)
-    fun glGetTexParameterxv(target: Int, pname: Int, params: IntArray)
     fun glHint(target: Int, mode: Int)
     fun glIsBuffer(buffer: Int): Int
     fun glIsEnabled(cap: Int): Int
     fun glIsTexture(texture: Int): Int
-    fun glLightModelx(pname: Int, param: Int)
-    fun glLightModelxv(pname: Int, param: IntArray)
-    fun glLightx(light: Int, pname: Int, param: Int)
-    fun glLightxv(light: Int, pname: Int, params: IntArray)
-    fun glLineWidthx(width: Int)
     fun glLoadIdentity()
-    fun glLoadMatrixx(m: IntArray)
     fun glLogicOp(opcode: Int)
-    fun glMaterialx(face: Int, pname: Int, param: Int)
-    fun glMaterialxv(face: Int, pname: Int, param: IntArray)
     fun glMatrixMode(mode: Int)
-    fun glMultMatrixx(m: IntArray)
-    fun glMultiTexCoord4x(texture: Int, s: Int, t: Int, r: Int, q: Int)
-    fun glNormal3x(nx: Int, ny: Int, nz: Int)
     fun glNormalPointer(type: Int, stride: Int, pointer: Long)
-    fun glOrthox(l: Int, r: Int, b: Int, t: Int, n: Int, f: Int)
     fun glPixelStorei(pname: Int, param: Int)
-    fun glPointParameterx(pname: Int, param: Int)
-    fun glPointParameterxv(pname: Int, params: IntArray)
-    fun glPointSizex(size: Int)
-    fun glPolygonOffsetx(factor: Int, units: Int)
-    fun glPopMatrix()
-    fun glPushMatrix()
     fun glReadPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: ByteArray)
     fun glReadPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: IntArray)
-    fun glRotatex(angle: Int, x: Int, y: Int, z: Int)
     fun glSampleCoverage(value: Float, invert: Int)
-    fun glSampleCoveragex(value: Int, invert: Int)
-    fun glScalex(x: Int, y: Int, z: Int)
     fun glScissor(x: Int, y: Int, width: Int, height: Int)
     fun glShadeModel(mode: Int)
     fun glStencilFunc(func: Int, ref: Int, mask: Int)
@@ -488,18 +298,13 @@ interface GLES11 {
     fun glStencilOp(fail: Int, zfail: Int, zpass: Int)
     fun glTexCoordPointer(size: Int, type: Int, stride: Int, pointer: Long)
     fun glTexEnvi(target: Int, pname: Int, param: Int)
-    fun glTexEnvx(target: Int, pname: Int, param: Int)
     fun glTexEnviv(target: Int, pname: Int, params: IntArray)
-    fun glTexEnvxv(target: Int, pname: Int, params: IntArray)
     fun glTexImage2D(target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: ByteArray)
     fun glTexImage2D(target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: IntArray)
     fun glTexParameteri(target: Int, pname: Int, param: Int)
-    fun glTexParameterx(target: Int, pname: Int, param: Int)
     fun glTexParameteriv(target: Int, pname: Int, params: IntArray)
-    fun glTexParameterxv(target: Int, pname: Int, params: IntArray)
     fun glTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, type: Int, pixels: ByteArray)
     fun glTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, type: Int, pixels: IntArray)
-    fun glTranslatex(x: Int, y: Int, z: Int)
     fun glVertexPointer(size: Int, type: Int, stride: Int, pointer: Long)
     fun glViewport(x: Int, y: Int, width: Int, height: Int)
     // @formatter:on

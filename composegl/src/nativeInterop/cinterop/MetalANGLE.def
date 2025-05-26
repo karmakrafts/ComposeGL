@@ -1,0 +1,9 @@
+headers = MGLKit.h
+headerFilter = MGL*.h *gl*.h
+package = angle
+language = Objective-C
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal ModelIO OpenGLESCommon QuartzCore Security Symbols UIKit UserNotifications darwin posix
+
+compilerOpts.ios_x64 = -framework ../MetalANGLE/macosx/MetalANGLE -I ../MetalANGLE/include
+compilerOpts.ios_arm64 = -framework ../MetalANGLE/iphoneos/MetalANGLE -I ../MetalANGLE/include
+compilerOpts.ios_simulator_arm64 = -framework ../MetalANGLE/iphonesimulator/MetalANGLE -I ../MetalANGLE/include
