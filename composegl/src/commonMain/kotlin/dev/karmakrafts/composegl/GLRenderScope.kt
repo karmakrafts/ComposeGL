@@ -16,6 +16,9 @@
 
 package dev.karmakrafts.composegl
 
-sealed interface GLRenderScope : GLES30 {
+import dev.karmakrafts.composegl.gles.GLES20
 
+interface GLRenderScope : GLES20 {
+    val width: Int
+    val height: Int
 }

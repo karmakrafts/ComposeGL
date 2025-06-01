@@ -24,6 +24,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.dokka) apply false
+    alias(libs.plugins.introspekt) apply false
     alias(libs.plugins.karmaConventions)
 }
 

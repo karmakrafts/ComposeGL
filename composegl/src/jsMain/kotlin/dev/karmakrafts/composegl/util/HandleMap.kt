@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl
+package dev.karmakrafts.composegl.util
 
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+internal class HandleMap<T>(
+    private val delegate: MutableMap<Int, T> = HashMap()
+) : MutableMap<Int, T> by delegate {
+    private fun nextAvailableId(): Int {
+        var id = 0
+        while (id in this) ++id
+        return id
+    }
 
-@Composable
-fun DefaultGLCanvasFallbackContent() {
-    Text("OpenGL is not supported")
+    fun putNext(value: T): Int {
+        val id = nextAvailableId()
+        this[id] = value
+        return id
+    }
 }
-
-@Composable
-expect fun GLCanvas( // @formatter:off
-    onDispose: () -> Unit = {},
-    fallbackContent: @Composable () -> Unit = { DefaultGLCanvasFallbackContent() },
-    overlayContent: (@Composable () -> Unit)? = null,
-    content: GLRenderScope.() -> Unit
-) // @formatter:on

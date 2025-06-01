@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl
+package dev.karmakrafts.composegl.gles
 
+import java.nio.ByteBuffer
+import java.nio.FloatBuffer
+import java.nio.IntBuffer
+import java.nio.ShortBuffer
 import android.opengl.GLES11 as AndroidGLES11
 
 internal object PlatformGLES11 : GLES11 {
@@ -92,7 +96,6 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_COLOR_WRITEMASK: Int get() = AndroidGLES11.GL_COLOR_WRITEMASK
     override val GL_MAX_TEXTURE_SIZE: Int get() = AndroidGLES11.GL_MAX_TEXTURE_SIZE
     override val GL_MAX_VIEWPORT_DIMS: Int get() = AndroidGLES11.GL_MAX_VIEWPORT_DIMS
-    override val GL_MAX_TEXTURE_UNITS: Int get() = AndroidGLES11.GL_MAX_TEXTURE_UNITS
     override val GL_SUBPIXEL_BITS: Int get() = AndroidGLES11.GL_SUBPIXEL_BITS
     override val GL_RED_BITS: Int get() = AndroidGLES11.GL_RED_BITS
     override val GL_GREEN_BITS: Int get() = AndroidGLES11.GL_GREEN_BITS
@@ -137,7 +140,6 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_VENDOR: Int get() = AndroidGLES11.GL_VENDOR
     override val GL_RENDERER: Int get() = AndroidGLES11.GL_RENDERER
     override val GL_VERSION: Int get() = AndroidGLES11.GL_VERSION
-    override val GL_ADD: Int get() = AndroidGLES11.GL_ADD
     override val GL_NEAREST: Int get() = AndroidGLES11.GL_NEAREST
     override val GL_LINEAR: Int get() = AndroidGLES11.GL_LINEAR
     override val GL_NEAREST_MIPMAP_NEAREST: Int get() = AndroidGLES11.GL_NEAREST_MIPMAP_NEAREST
@@ -191,5 +193,292 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_DYNAMIC_DRAW: Int get() = AndroidGLES11.GL_DYNAMIC_DRAW
     override val GL_BUFFER_SIZE: Int get() = AndroidGLES11.GL_BUFFER_SIZE
     override val GL_BUFFER_USAGE: Int get() = AndroidGLES11.GL_BUFFER_USAGE
-    override val GL_SUBTRACT: Int get() = AndroidGLES11.GL_SUBTRACT
+
+    override fun glClearColor(red: Float, green: Float, blue: Float, alpha: Float) {
+        AndroidGLES11.glClearColor(red, green, blue, alpha)
+    }
+
+    override fun glClearDepthf(d: Float) {
+        AndroidGLES11.glClearDepthf(d)
+    }
+
+    override fun glDepthRangef(n: Float, f: Float) {
+        AndroidGLES11.glDepthRangef(n, f)
+    }
+
+    override fun glLineWidth(width: Float) {
+        AndroidGLES11.glLineWidth(width)
+    }
+
+    override fun glPolygonOffset(factor: Float, units: Float) {
+        AndroidGLES11.glPolygonOffset(factor, units)
+    }
+
+    override fun glTexParameterf(target: Int, pname: Int, param: Float) {
+        AndroidGLES11.glTexParameterf(target, pname, param)
+    }
+
+    override fun glActiveTexture(texture: Int) {
+        AndroidGLES11.glActiveTexture(texture)
+    }
+
+    override fun glBindBuffer(target: Int, buffer: Int) {
+        AndroidGLES11.glBindBuffer(target, buffer)
+    }
+
+    override fun glBindTexture(target: Int, texture: Int) {
+        AndroidGLES11.glBindTexture(target, texture)
+    }
+
+    override fun glBlendFunc(sfactor: Int, dfactor: Int) {
+        AndroidGLES11.glBlendFunc(sfactor, dfactor)
+    }
+
+    override fun glBufferData(target: Int, data: ShortArray, usage: Int) {
+        AndroidGLES11.glBufferData(target, data.size, ShortBuffer.wrap(data), usage)
+    }
+
+    override fun glBufferData(target: Int, data: IntArray, usage: Int) {
+        AndroidGLES11.glBufferData(target, data.size, IntBuffer.wrap(data), usage)
+    }
+
+    override fun glBufferData(target: Int, data: FloatArray, usage: Int) {
+        AndroidGLES11.glBufferData(target, data.size, FloatBuffer.wrap(data), usage)
+    }
+
+    override fun glBufferSubData(target: Int, offset: Long, data: ShortArray) {
+        AndroidGLES11.glBufferSubData(target, offset.toInt(), data.size, ShortBuffer.wrap(data))
+    }
+
+    override fun glBufferSubData(target: Int, offset: Long, data: IntArray) {
+        AndroidGLES11.glBufferSubData(target, offset.toInt(), data.size, IntBuffer.wrap(data))
+    }
+
+    override fun glBufferSubData(target: Int, offset: Long, data: FloatArray) {
+        AndroidGLES11.glBufferSubData(target, offset.toInt(), data.size, FloatBuffer.wrap(data))
+    }
+
+    override fun glClear(mask: Int) {
+        AndroidGLES11.glClear(mask)
+    }
+
+    override fun glClearStencil(s: Int) {
+        AndroidGLES11.glClearStencil(s)
+    }
+
+    override fun glColorMask(red: Boolean, green: Boolean, blue: Boolean, alpha: Boolean) {
+        AndroidGLES11.glColorMask(red, green, blue, alpha)
+    }
+
+    override fun glCompressedTexImage2D(
+        target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, data: ByteArray
+    ) {
+        AndroidGLES11.glCompressedTexImage2D(
+            target, level, internalformat, width, height, border, data.size, ByteBuffer.wrap(data)
+        )
+    }
+
+    override fun glCompressedTexSubImage2D(
+        target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, data: ByteArray
+    ) {
+        AndroidGLES11.glCompressedTexSubImage2D(
+            target, level, xoffset, yoffset, width, height, format, data.size, ByteBuffer.wrap(data)
+        )
+    }
+
+    override fun glCopyTexImage2D(
+        target: Int, level: Int, internalformat: Int, x: Int, y: Int, width: Int, height: Int, border: Int
+    ) {
+        AndroidGLES11.glCopyTexImage2D(target, level, internalformat, x, y, width, height, border)
+    }
+
+    override fun glCopyTexSubImage2D(
+        target: Int, level: Int, xoffset: Int, yoffset: Int, x: Int, y: Int, width: Int, height: Int
+    ) {
+        AndroidGLES11.glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height)
+    }
+
+    override fun glCullFace(mode: Int) {
+        AndroidGLES11.glCullFace(mode)
+    }
+
+    override fun glGenBuffers(buffers: IntArray) {
+        AndroidGLES11.glGenBuffers(buffers.size, buffers, 0)
+    }
+
+    override fun glDeleteBuffers(buffers: IntArray) {
+        AndroidGLES11.glDeleteBuffers(buffers.size, buffers, 0)
+    }
+
+    override fun glGenTextures(textures: IntArray) {
+        AndroidGLES11.glGenTextures(textures.size, textures, 0)
+    }
+
+    override fun glDeleteTextures(textures: IntArray) {
+        AndroidGLES11.glDeleteTextures(textures.size, textures, 0)
+    }
+
+    override fun glDepthFunc(func: Int) {
+        AndroidGLES11.glDepthFunc(func)
+    }
+
+    override fun glDepthMask(flag: Boolean) {
+        AndroidGLES11.glDepthMask(flag)
+    }
+
+    override fun glDisable(cap: Int) {
+        AndroidGLES11.glDisable(cap)
+    }
+
+    override fun glDrawArrays(mode: Int, first: Int, count: Int) {
+        AndroidGLES11.glDrawArrays(mode, first, count)
+    }
+
+    override fun glDrawElements(mode: Int, count: Int, type: Int, offset: Long) {
+        AndroidGLES11.glDrawElements(mode, count, type, offset.toInt())
+    }
+
+    override fun glEnable(cap: Int) {
+        AndroidGLES11.glEnable(cap)
+    }
+
+    override fun glFinish() {
+        AndroidGLES11.glFinish()
+    }
+
+    override fun glFlush() {
+        AndroidGLES11.glFlush()
+    }
+
+    override fun glFrontFace(mode: Int) {
+        AndroidGLES11.glFrontFace(mode)
+    }
+
+    override fun glGetError(): Int {
+        return AndroidGLES11.glGetError()
+    }
+
+    override fun glHint(target: Int, mode: Int) {
+        AndroidGLES11.glHint(target, mode)
+    }
+
+    override fun glIsBuffer(buffer: Int): Boolean {
+        return AndroidGLES11.glIsBuffer(buffer)
+    }
+
+    override fun glIsEnabled(cap: Int): Boolean {
+        return AndroidGLES11.glIsEnabled(cap)
+    }
+
+    override fun glIsTexture(texture: Int): Boolean {
+        return AndroidGLES11.glIsTexture(texture)
+    }
+
+    override fun glPixelStorei(pname: Int, param: Int) {
+        AndroidGLES11.glPixelStorei(pname, param)
+    }
+
+    override fun glReadPixels(
+        x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: ByteArray
+    ) {
+        AndroidGLES11.glReadPixels(x, y, width, height, format, type, ByteBuffer.wrap(pixels))
+    }
+
+    override fun glReadPixels(
+        x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: IntArray
+    ) {
+        AndroidGLES11.glReadPixels(x, y, width, height, format, type, IntBuffer.wrap(pixels))
+    }
+
+    override fun glSampleCoverage(value: Float, invert: Boolean) {
+        AndroidGLES11.glSampleCoverage(value, invert)
+    }
+
+    override fun glScissor(x: Int, y: Int, width: Int, height: Int) {
+        AndroidGLES11.glScissor(x, y, width, height)
+    }
+
+    override fun glStencilFunc(func: Int, ref: Int, mask: Int) {
+        AndroidGLES11.glStencilFunc(func, ref, mask)
+    }
+
+    override fun glStencilMask(mask: Int) {
+        AndroidGLES11.glStencilMask(mask)
+    }
+
+    override fun glStencilOp(fail: Int, zfail: Int, zpass: Int) {
+        AndroidGLES11.glStencilOp(fail, zfail, zpass)
+    }
+
+    override fun glTexImage2D(
+        target: Int,
+        level: Int,
+        internalformat: Int,
+        width: Int,
+        height: Int,
+        border: Int,
+        format: Int,
+        type: Int,
+        pixels: ByteArray
+    ) {
+        AndroidGLES11.glTexImage2D(
+            target, level, internalformat, width, height, border, format, type, ByteBuffer.wrap(pixels)
+        )
+    }
+
+    override fun glTexImage2D(
+        target: Int,
+        level: Int,
+        internalformat: Int,
+        width: Int,
+        height: Int,
+        border: Int,
+        format: Int,
+        type: Int,
+        pixels: IntArray
+    ) {
+        AndroidGLES11.glTexImage2D(
+            target, level, internalformat, width, height, border, format, type, IntBuffer.wrap(pixels)
+        )
+    }
+
+    override fun glTexParameteri(target: Int, pname: Int, param: Int) {
+        AndroidGLES11.glTexParameteri(target, pname, param)
+    }
+
+    override fun glTexSubImage2D(
+        target: Int,
+        level: Int,
+        xoffset: Int,
+        yoffset: Int,
+        width: Int,
+        height: Int,
+        format: Int,
+        type: Int,
+        pixels: ByteArray
+    ) {
+        AndroidGLES11.glTexSubImage2D(
+            target, level, xoffset, yoffset, width, height, format, type, ByteBuffer.wrap(pixels)
+        )
+    }
+
+    override fun glTexSubImage2D(
+        target: Int,
+        level: Int,
+        xoffset: Int,
+        yoffset: Int,
+        width: Int,
+        height: Int,
+        format: Int,
+        type: Int,
+        pixels: IntArray
+    ) {
+        AndroidGLES11.glTexSubImage2D(
+            target, level, xoffset, yoffset, width, height, format, type, IntBuffer.wrap(pixels)
+        )
+    }
+
+    override fun glViewport(x: Int, y: Int, width: Int, height: Int) {
+        AndroidGLES11.glViewport(x, y, width, height)
+    }
 }

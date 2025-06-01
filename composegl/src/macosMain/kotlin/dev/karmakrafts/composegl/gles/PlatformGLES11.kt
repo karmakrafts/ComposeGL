@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl
+package dev.karmakrafts.composegl.gles
 
+import kotlinx.cinterop.COpaque
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.cValuesOf
+import kotlinx.cinterop.convert
+import kotlinx.cinterop.reinterpret
+import kotlinx.cinterop.toCPointer
+import kotlinx.cinterop.usePinned
+
+@OptIn(ExperimentalForeignApi::class)
 internal object PlatformGLES11 : GLES11 {
     override val GL_DEPTH_BUFFER_BIT: Int get() = platform.OpenGL.GL_DEPTH_BUFFER_BIT
     override val GL_STENCIL_BUFFER_BIT: Int get() = platform.OpenGL.GL_STENCIL_BUFFER_BIT
@@ -90,7 +100,6 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_COLOR_WRITEMASK: Int get() = platform.OpenGL.GL_COLOR_WRITEMASK
     override val GL_MAX_TEXTURE_SIZE: Int get() = platform.OpenGL.GL_MAX_TEXTURE_SIZE
     override val GL_MAX_VIEWPORT_DIMS: Int get() = platform.OpenGL.GL_MAX_VIEWPORT_DIMS
-    override val GL_MAX_TEXTURE_UNITS: Int get() = platform.OpenGL.GL_MAX_TEXTURE_UNITS
     override val GL_SUBPIXEL_BITS: Int get() = platform.OpenGL.GL_SUBPIXEL_BITS
     override val GL_RED_BITS: Int get() = platform.OpenGL.GL_RED_BITS
     override val GL_GREEN_BITS: Int get() = platform.OpenGL.GL_GREEN_BITS
@@ -135,7 +144,6 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_VENDOR: Int get() = platform.OpenGL.GL_VENDOR
     override val GL_RENDERER: Int get() = platform.OpenGL.GL_RENDERER
     override val GL_VERSION: Int get() = platform.OpenGL.GL_VERSION
-    override val GL_ADD: Int get() = platform.OpenGL.GL_ADD
     override val GL_NEAREST: Int get() = platform.OpenGL.GL_NEAREST
     override val GL_LINEAR: Int get() = platform.OpenGL.GL_LINEAR
     override val GL_NEAREST_MIPMAP_NEAREST: Int get() = platform.OpenGL.GL_NEAREST_MIPMAP_NEAREST
@@ -189,5 +197,349 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_DYNAMIC_DRAW: Int get() = platform.OpenGL.GL_DYNAMIC_DRAW
     override val GL_BUFFER_SIZE: Int get() = platform.OpenGL.GL_BUFFER_SIZE
     override val GL_BUFFER_USAGE: Int get() = platform.OpenGL.GL_BUFFER_USAGE
-    override val GL_SUBTRACT: Int get() = platform.OpenGL.GL_SUBTRACT
+
+    override fun glClearColor(red: Float, green: Float, blue: Float, alpha: Float) {
+        platform.OpenGL.glClearColor(red, green, blue, alpha)
+    }
+
+    override fun glClearDepthf(d: Float) {
+        platform.OpenGL.glClearDepth(d.toDouble())
+    }
+
+    override fun glDepthRangef(n: Float, f: Float) {
+        platform.OpenGL.glDepthRange(n.toDouble(), f.toDouble())
+    }
+
+    override fun glLineWidth(width: Float) {
+        platform.OpenGL.glLineWidth(width)
+    }
+
+    override fun glPolygonOffset(factor: Float, units: Float) {
+        platform.OpenGL.glPolygonOffset(factor, units)
+    }
+
+    override fun glTexParameterf(target: Int, pname: Int, param: Float) {
+        platform.OpenGL.glTexParameterf(target.convert(), pname.convert(), param)
+    }
+
+    override fun glActiveTexture(texture: Int) {
+        platform.OpenGL.glActiveTexture(texture.convert())
+    }
+
+    override fun glBindBuffer(target: Int, buffer: Int) {
+        platform.OpenGL.glBindBuffer(target.convert(), buffer.convert())
+    }
+
+    override fun glBindTexture(target: Int, texture: Int) {
+        platform.OpenGL.glBindTexture(target.convert(), texture.convert())
+    }
+
+    override fun glBlendFunc(sfactor: Int, dfactor: Int) {
+        platform.OpenGL.glBlendFunc(sfactor.convert(), dfactor.convert())
+    }
+
+    override fun glBufferData(target: Int, data: ShortArray, usage: Int) {
+        platform.OpenGL.glBufferData(target.convert(), data.size.convert(), cValuesOf(*data), usage.convert())
+    }
+
+    override fun glBufferData(target: Int, data: IntArray, usage: Int) {
+        platform.OpenGL.glBufferData(target.convert(), data.size.convert(), cValuesOf(*data), usage.convert())
+    }
+
+    override fun glBufferData(target: Int, data: FloatArray, usage: Int) {
+        platform.OpenGL.glBufferData(target.convert(), data.size.convert(), cValuesOf(*data), usage.convert())
+    }
+
+    override fun glBufferSubData(target: Int, offset: Long, data: ShortArray) {
+        platform.OpenGL.glBufferSubData(target.convert(), offset, data.size.convert(), cValuesOf(*data))
+    }
+
+    override fun glBufferSubData(target: Int, offset: Long, data: IntArray) {
+        platform.OpenGL.glBufferSubData(target.convert(), offset, data.size.convert(), cValuesOf(*data))
+    }
+
+    override fun glBufferSubData(target: Int, offset: Long, data: FloatArray) {
+        platform.OpenGL.glBufferSubData(target.convert(), offset, data.size.convert(), cValuesOf(*data))
+    }
+
+    override fun glClear(mask: Int) {
+        platform.OpenGL.glClear(mask.convert())
+    }
+
+    override fun glClearStencil(s: Int) {
+        platform.OpenGL.glClearStencil(s)
+    }
+
+    override fun glColorMask(red: Boolean, green: Boolean, blue: Boolean, alpha: Boolean) {
+        platform.OpenGL.glColorMask(
+            red.toGLBool().convert(), green.toGLBool().convert(), blue.toGLBool().convert(), alpha.toGLBool().convert()
+        )
+    }
+
+    override fun glCompressedTexImage2D(
+        target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, data: ByteArray
+    ) {
+        platform.OpenGL.glCompressedTexImage2D(
+            target.convert(),
+            level,
+            internalformat.convert(),
+            width,
+            height,
+            border,
+            data.size.convert(),
+            cValuesOf(*data)
+        )
+    }
+
+    override fun glCompressedTexSubImage2D(
+        target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, data: ByteArray
+    ) {
+        platform.OpenGL.glCompressedTexSubImage2D(
+            target.convert(),
+            level,
+            xoffset,
+            yoffset,
+            width,
+            height,
+            format.convert(),
+            data.size.convert(),
+            cValuesOf(*data)
+        )
+    }
+
+    override fun glCopyTexImage2D(
+        target: Int, level: Int, internalformat: Int, x: Int, y: Int, width: Int, height: Int, border: Int
+    ) {
+        platform.OpenGL.glCopyTexImage2D(target.convert(), level, internalformat.convert(), x, y, width, height, border)
+    }
+
+    override fun glCopyTexSubImage2D(
+        target: Int, level: Int, xoffset: Int, yoffset: Int, x: Int, y: Int, width: Int, height: Int
+    ) {
+        platform.OpenGL.glCopyTexSubImage2D(target.convert(), level, xoffset, yoffset, x, y, width, height)
+    }
+
+    override fun glCullFace(mode: Int) {
+        platform.OpenGL.glCullFace(mode.convert())
+    }
+
+    override fun glGenBuffers(buffers: IntArray) {
+        buffers.usePinned { pinnedArray ->
+            platform.OpenGL.glGenBuffers(buffers.size.convert(), pinnedArray.addressOf(0).reinterpret())
+        }
+    }
+
+    override fun glDeleteBuffers(buffers: IntArray) {
+        buffers.usePinned { pinnedArray ->
+            platform.OpenGL.glDeleteBuffers(buffers.size.convert(), pinnedArray.addressOf(0).reinterpret())
+        }
+    }
+
+    override fun glGenTextures(textures: IntArray) {
+        textures.usePinned { pinnedArray ->
+            platform.OpenGL.glGenTextures(textures.size.convert(), pinnedArray.addressOf(0).reinterpret())
+        }
+    }
+
+    override fun glDeleteTextures(textures: IntArray) {
+        textures.usePinned { pinnedArray ->
+            platform.OpenGL.glDeleteTextures(textures.size.convert(), pinnedArray.addressOf(0).reinterpret())
+        }
+    }
+
+    override fun glDepthFunc(func: Int) {
+        platform.OpenGL.glDepthFunc(func.convert())
+    }
+
+    override fun glDepthMask(flag: Boolean) {
+        platform.OpenGL.glDepthMask(flag.toGLBool().convert())
+    }
+
+    override fun glDisable(cap: Int) {
+        platform.OpenGL.glDisable(cap.convert())
+    }
+
+    override fun glDrawArrays(mode: Int, first: Int, count: Int) {
+        platform.OpenGL.glDrawArrays(mode.convert(), first, count)
+    }
+
+    override fun glDrawElements(mode: Int, count: Int, type: Int, offset: Long) {
+        platform.OpenGL.glDrawElements(mode.convert(), count, type.convert(), offset.toCPointer<COpaque>())
+    }
+
+    override fun glEnable(cap: Int) {
+        platform.OpenGL.glEnable(cap.convert())
+    }
+
+    override fun glFinish() {
+        platform.OpenGL.glFinish()
+    }
+
+    override fun glFlush() {
+        platform.OpenGL.glFlush()
+    }
+
+    override fun glFrontFace(mode: Int) {
+        platform.OpenGL.glFrontFace(mode.convert())
+    }
+
+    override fun glGetError(): Int {
+        return platform.OpenGL.glGetError().convert()
+    }
+
+    override fun glHint(target: Int, mode: Int) {
+        platform.OpenGL.glHint(target.convert(), mode.convert())
+    }
+
+    override fun glIsBuffer(buffer: Int): Boolean {
+        return platform.OpenGL.glIsBuffer(buffer.convert()).convert<Int>().fromGLBool()
+    }
+
+    override fun glIsEnabled(cap: Int): Boolean {
+        return platform.OpenGL.glIsEnabled(cap.convert()).convert<Int>().fromGLBool()
+    }
+
+    override fun glIsTexture(texture: Int): Boolean {
+        return platform.OpenGL.glIsTexture(texture.convert()).convert<Int>().fromGLBool()
+    }
+
+    override fun glPixelStorei(pname: Int, param: Int) {
+        platform.OpenGL.glPixelStorei(pname.convert(), param)
+    }
+
+    override fun glReadPixels(
+        x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: ByteArray
+    ) {
+        platform.OpenGL.glReadPixels(x, y, width, height, format.convert(), type.convert(), cValuesOf(*pixels))
+    }
+
+    override fun glReadPixels(
+        x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: IntArray
+    ) {
+        platform.OpenGL.glReadPixels(x, y, width, height, format.convert(), type.convert(), cValuesOf(*pixels))
+    }
+
+    override fun glSampleCoverage(value: Float, invert: Boolean) {
+        platform.OpenGL.glSampleCoverage(value, invert.toGLBool().convert())
+    }
+
+    override fun glScissor(x: Int, y: Int, width: Int, height: Int) {
+        platform.OpenGL.glScissor(x, y, width, height)
+    }
+
+    override fun glStencilFunc(func: Int, ref: Int, mask: Int) {
+        platform.OpenGL.glStencilFunc(func.convert(), ref, mask.convert())
+    }
+
+    override fun glStencilMask(mask: Int) {
+        platform.OpenGL.glStencilMask(mask.convert())
+    }
+
+    override fun glStencilOp(fail: Int, zfail: Int, zpass: Int) {
+        platform.OpenGL.glStencilOp(fail.convert(), zfail.convert(), zpass.convert())
+    }
+
+    override fun glTexImage2D(
+        target: Int,
+        level: Int,
+        internalformat: Int,
+        width: Int,
+        height: Int,
+        border: Int,
+        format: Int,
+        type: Int,
+        pixels: ByteArray
+    ) {
+        platform.OpenGL.glTexImage2D(
+            target.convert(),
+            level,
+            internalformat,
+            width,
+            height,
+            border,
+            format.convert(),
+            type.convert(),
+            cValuesOf(*pixels)
+        )
+    }
+
+    override fun glTexImage2D(
+        target: Int,
+        level: Int,
+        internalformat: Int,
+        width: Int,
+        height: Int,
+        border: Int,
+        format: Int,
+        type: Int,
+        pixels: IntArray
+    ) {
+        platform.OpenGL.glTexImage2D(
+            target.convert(),
+            level,
+            internalformat,
+            width,
+            height,
+            border,
+            format.convert(),
+            type.convert(),
+            cValuesOf(*pixels)
+        )
+    }
+
+    override fun glTexParameteri(target: Int, pname: Int, param: Int) {
+        platform.OpenGL.glTexParameteri(target.convert(), pname.convert(), param)
+    }
+
+    override fun glTexSubImage2D(
+        target: Int,
+        level: Int,
+        xoffset: Int,
+        yoffset: Int,
+        width: Int,
+        height: Int,
+        format: Int,
+        type: Int,
+        pixels: ByteArray
+    ) {
+        platform.OpenGL.glTexSubImage2D(
+            target.convert(),
+            level,
+            xoffset,
+            yoffset,
+            width,
+            height,
+            format.convert(),
+            type.convert(),
+            cValuesOf(*pixels)
+        )
+    }
+
+    override fun glTexSubImage2D(
+        target: Int,
+        level: Int,
+        xoffset: Int,
+        yoffset: Int,
+        width: Int,
+        height: Int,
+        format: Int,
+        type: Int,
+        pixels: IntArray
+    ) {
+        platform.OpenGL.glTexSubImage2D(
+            target.convert(),
+            level,
+            xoffset,
+            yoffset,
+            width,
+            height,
+            format.convert(),
+            type.convert(),
+            cValuesOf(*pixels)
+        )
+    }
+
+    override fun glViewport(x: Int, y: Int, width: Int, height: Int) {
+        platform.OpenGL.glViewport(x, y, width, height)
+    }
 }

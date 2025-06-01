@@ -17,13 +17,26 @@
 package dev.karmakrafts.composegl
 
 import androidx.compose.runtime.Composable
-import org.khronos.webgl.WebGLRenderingContext
+import androidx.compose.ui.InternalComposeUiApi
+import androidx.compose.ui.scene.CanvasLayersComposeScene
+import androidx.compose.ui.window.CanvasBasedWindow
+import org.jetbrains.skia.DirectContext
 
+@OptIn(InternalComposeUiApi::class)
 @Composable
 actual fun GLCanvas(
     onDispose: () -> Unit,
     fallbackContent: @Composable () -> Unit,
+    overlayContent: (@Composable () -> Unit)?,
     content: GLRenderScope.() -> Unit
 ) {
+    DirectContext.makeGL()
+    val scene = CanvasLayersComposeScene()
+    scene.setContent {
 
+    }
+    CanvasBasedWindow {
+
+    }
+    scene.render()
 }

@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl
+package dev.karmakrafts.composegl.gles
 
+/**
+ * GLES 2.0 conformant API minus fixed point/fixed pipeline functions,
+ * compatible with the WebGL standard.
+ * See https://registry.khronos.org/OpenGL/specs/es/1.1/es_full_spec_1.1.pdf
+ */
 interface GLES20 : GLES11 {
     val GL_FUNC_ADD: Int
     val GL_BLEND_EQUATION: Int
@@ -57,9 +62,7 @@ interface GLES20 : GLES11 {
     val GL_VALIDATE_STATUS: Int
     val GL_ATTACHED_SHADERS: Int
     val GL_ACTIVE_UNIFORMS: Int
-    val GL_ACTIVE_UNIFORM_MAX_LENGTH: Int
     val GL_ACTIVE_ATTRIBUTES: Int
-    val GL_ACTIVE_ATTRIBUTE_MAX_LENGTH: Int
     val GL_SHADING_LANGUAGE_VERSION: Int
     val GL_CURRENT_PROGRAM: Int
     val GL_INCR_WRAP: Int
@@ -95,25 +98,11 @@ interface GLES20 : GLES11 {
     val GL_VERTEX_ATTRIB_ARRAY_NORMALIZED: Int
     val GL_VERTEX_ATTRIB_ARRAY_POINTER: Int
     val GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING: Int
-    val GL_IMPLEMENTATION_COLOR_READ_TYPE: Int
-    val GL_IMPLEMENTATION_COLOR_READ_FORMAT: Int
     val GL_COMPILE_STATUS: Int
-    val GL_INFO_LOG_LENGTH: Int
-    val GL_SHADER_SOURCE_LENGTH: Int
-    val GL_SHADER_COMPILER: Int
-    val GL_SHADER_BINARY_FORMATS: Int
-    val GL_NUM_SHADER_BINARY_FORMATS: Int
-    val GL_LOW_FLOAT: Int
-    val GL_MEDIUM_FLOAT: Int
-    val GL_HIGH_FLOAT: Int
-    val GL_LOW_INT: Int
-    val GL_MEDIUM_INT: Int
-    val GL_HIGH_INT: Int
     val GL_FRAMEBUFFER: Int
     val GL_RENDERBUFFER: Int
     val GL_RGBA4: Int
     val GL_RGB5_A1: Int
-    val GL_RGB565: Int
     val GL_DEPTH_COMPONENT16: Int
     val GL_STENCIL_INDEX8: Int
     val GL_RENDERBUFFER_WIDTH: Int
@@ -136,7 +125,6 @@ interface GLES20 : GLES11 {
     val GL_FRAMEBUFFER_COMPLETE: Int
     val GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: Int
     val GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: Int
-    val GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS: Int
     val GL_FRAMEBUFFER_UNSUPPORTED: Int
     val GL_FRAMEBUFFER_BINDING: Int
     val GL_RENDERBUFFER_BINDING: Int

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl
+package dev.karmakrafts.composegl.gles
 
 /**
  * GLES 1.1 conformant API minus fixed point/fixed pipeline functions,
- * as WebGL is based on GLES 2.0 and upwards.
+ * compatible with the WebGL standard.
  * See https://registry.khronos.org/OpenGL/specs/es/1.1/es_full_spec_1.1.pdf
  */
 interface GLES11 {
@@ -95,7 +95,6 @@ interface GLES11 {
     val GL_COLOR_WRITEMASK: Int
     val GL_MAX_TEXTURE_SIZE: Int
     val GL_MAX_VIEWPORT_DIMS: Int
-    val GL_MAX_TEXTURE_UNITS: Int
     val GL_SUBPIXEL_BITS: Int
     val GL_RED_BITS: Int
     val GL_GREEN_BITS: Int
@@ -140,7 +139,6 @@ interface GLES11 {
     val GL_VENDOR: Int
     val GL_RENDERER: Int
     val GL_VERSION: Int
-    val GL_ADD: Int
     val GL_NEAREST: Int
     val GL_LINEAR: Int
     val GL_NEAREST_MIPMAP_NEAREST: Int
@@ -194,47 +192,14 @@ interface GLES11 {
     val GL_DYNAMIC_DRAW: Int
     val GL_BUFFER_SIZE: Int
     val GL_BUFFER_USAGE: Int
-    val GL_SUBTRACT: Int
 
     // @formatter:off
-    fun glAlphaFunc(func: Int, ref: Float)
     fun glClearColor(red: Float, green: Float, blue: Float, alpha: Float)
     fun glClearDepthf(d: Float)
-    fun glClipPlanef(p: Int, eqn: FloatArray)
-    fun glColor4f(red: Float, green: Float, blue: Float, alpha: Float)
     fun glDepthRangef(n: Float, f: Float)
-    fun glFogf(pname: Int, param: Float)
-    fun glFogfv(pname: Int, params: FloatArray)
-    fun glFrustumf(l: Float, r: Float, b: Float, t: Float, n: Float, f: Float)
-    fun glGetClipPlanef(plane: Int, equation: FloatArray)
-    fun glGetFloatv(pname: Int, data: FloatArray)
-    fun glGetLightfv(light: Int, pname: Int, params: FloatArray)
-    fun glGetMaterialfv(face: Int, pname: Int, params: FloatArray)
-    fun glGetTexEnvfv(target: Int, pname: Int, params: FloatArray)
-    fun glGetTexParameterfv(target: Int, pname: Int, params: FloatArray)
-    fun glLightModelf(pname: Int, param: Float)
-    fun glLightModelfv(pname: Int, params: FloatArray)
-    fun glLightf(light: Int, pname: Int, param: Float)
-    fun glLightfv(light: Int, pname: Int, params: FloatArray)
     fun glLineWidth(width: Float)
-    fun glLoadMatrixf(m: FloatArray)
-    fun glMaterialf(face: Int, pname: Int, param: Float)
-    fun glMaterialfv(face: Int, pname: Int, params: FloatArray)
-    fun glMultMatrixf(m: FloatArray)
-    fun glMultiTexCoord4f(target: Int, s: Float, t: Float, r: Float, q: Float)
-    fun glNormal3f(nx: Float, ny: Float, nz: Float)
-    fun glOrthof(l: Float, r: Float, b: Float, t: Float, n: Float, f: Float)
-    fun glPointParameterf(pname: Int, param: Float)
-    fun glPointParameterfv(pname: Int, params: FloatArray)
-    fun glPointSize(size: Float)
     fun glPolygonOffset(factor: Float, units: Float)
-    fun glRotatef(angle: Float, x: Float, y: Float, z: Float)
-    fun glScalef(x: Float, y: Float, z: Float)
-    fun glTexEnvf(target: Int, pname: Int, param: Float)
-    fun glTexEnvfv(target: Int, pname: Int, params: FloatArray)
     fun glTexParameterf(target: Int, pname: Int, param: Float)
-    fun glTexParameterfv(target: Int, pname: Int, params: FloatArray)
-    fun glTranslatef(x: Float, y: Float, z: Float)
     fun glActiveTexture(texture: Int)
     fun glBindBuffer(target: Int, buffer: Int)
     fun glBindTexture(target: Int, texture: Int)
@@ -247,10 +212,7 @@ interface GLES11 {
     fun glBufferSubData(target: Int, offset: Long, data: FloatArray)
     fun glClear(mask: Int)
     fun glClearStencil(s: Int)
-    fun glClientActiveTexture(texture: Int)
-    fun glColor4ub(red: Byte, green: Byte, blue: Byte, alpha: Byte)
     fun glColorMask(red: Boolean, green: Boolean, blue: Boolean, alpha: Boolean)
-    fun glColorPointer(size: Int, type: Int, stride: Int, pointer: Long)
     fun glCompressedTexImage2D(target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, data: ByteArray)
     fun glCompressedTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, data: ByteArray)
     fun glCopyTexImage2D(target: Int, level: Int, internalformat: Int, x: Int, y: Int, width: Int, height: Int, border: Int)
@@ -261,51 +223,35 @@ interface GLES11 {
     fun glDepthFunc(func: Int)
     fun glDepthMask(flag: Boolean)
     fun glDisable(cap: Int)
-    fun glDisableClientState(array: Int)
     fun glDrawArrays(mode: Int, first: Int, count: Int)
-    fun glDrawElements(mode: Int, count: Int, type: Int, indices: Long)
+    fun glDrawElements(mode: Int, count: Int, type: Int, offset: Long)
     fun glEnable(cap: Int)
-    fun glEnableClientState(array: Int)
     fun glFinish()
     fun glFlush()
     fun glFrontFace(mode: Int)
-    fun glGetBooleanv(pname: Int, data: BooleanArray)
-    fun glGetBufferParameteriv(target: Int, pname: Int, params: IntArray)
     fun glGenBuffers(buffers: IntArray)
     fun glGenTextures(textures: IntArray)
     fun glGetError(): Int
-    fun glGetIntegerv(pname: Int, data: IntArray)
-    // fun glGetPointerv(pname: Int, params: Long) TODO: implement this
-    fun glGetString(name: Int): String?
-    fun glGetTexEnviv(target: Int, pname: Int, params: IntArray)
-    fun glGetTexParameteriv(target: Int, pname: Int, params: IntArray)
     fun glHint(target: Int, mode: Int)
-    fun glIsBuffer(buffer: Int): Int
-    fun glIsEnabled(cap: Int): Int
-    fun glIsTexture(texture: Int): Int
-    fun glLoadIdentity()
-    fun glLogicOp(opcode: Int)
-    fun glMatrixMode(mode: Int)
-    fun glNormalPointer(type: Int, stride: Int, pointer: Long)
+    fun glIsBuffer(buffer: Int): Boolean
+    fun glIsEnabled(cap: Int): Boolean
+    fun glIsTexture(texture: Int): Boolean
     fun glPixelStorei(pname: Int, param: Int)
     fun glReadPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: ByteArray)
     fun glReadPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: IntArray)
-    fun glSampleCoverage(value: Float, invert: Int)
+    fun glSampleCoverage(value: Float, invert: Boolean)
     fun glScissor(x: Int, y: Int, width: Int, height: Int)
-    fun glShadeModel(mode: Int)
     fun glStencilFunc(func: Int, ref: Int, mask: Int)
     fun glStencilMask(mask: Int)
     fun glStencilOp(fail: Int, zfail: Int, zpass: Int)
-    fun glTexCoordPointer(size: Int, type: Int, stride: Int, pointer: Long)
-    fun glTexEnvi(target: Int, pname: Int, param: Int)
-    fun glTexEnviv(target: Int, pname: Int, params: IntArray)
     fun glTexImage2D(target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: ByteArray)
     fun glTexImage2D(target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: IntArray)
     fun glTexParameteri(target: Int, pname: Int, param: Int)
-    fun glTexParameteriv(target: Int, pname: Int, params: IntArray)
     fun glTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, type: Int, pixels: ByteArray)
     fun glTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, type: Int, pixels: IntArray)
-    fun glVertexPointer(size: Int, type: Int, stride: Int, pointer: Long)
     fun glViewport(x: Int, y: Int, width: Int, height: Int)
     // @formatter:on
+
+    fun Boolean.toGLBool(): Int = if (this) GL_TRUE else GL_FALSE
+    fun Int.fromGLBool(): Boolean = this == GL_TRUE
 }

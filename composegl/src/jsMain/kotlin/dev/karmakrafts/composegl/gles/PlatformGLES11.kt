@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl
+package dev.karmakrafts.composegl.gles
 
+import dev.karmakrafts.composegl.util.HandleMap
+import dev.karmakrafts.composegl.util.copyTo
+import dev.karmakrafts.composegl.util.toFloat32Array
+import dev.karmakrafts.composegl.util.toInt16Array
+import dev.karmakrafts.composegl.util.toInt32Array
+import dev.karmakrafts.composegl.util.toInt8Array
+import org.khronos.webgl.Int32Array
+import org.khronos.webgl.Int8Array
+import org.khronos.webgl.WebGLBuffer
 import org.khronos.webgl.WebGLRenderingContext
+import org.khronos.webgl.WebGLTexture
 
-internal object PlatformGLES11 : GLES11 {
+internal open class PlatformGLES11(protected val context: WebGLRenderingContext) : GLES11 {
     override val GL_DEPTH_BUFFER_BIT: Int get() = WebGLRenderingContext.DEPTH_BUFFER_BIT
     override val GL_STENCIL_BUFFER_BIT: Int get() = WebGLRenderingContext.STENCIL_BUFFER_BIT
     override val GL_COLOR_BUFFER_BIT: Int get() = WebGLRenderingContext.COLOR_BUFFER_BIT
@@ -92,7 +102,6 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_COLOR_WRITEMASK: Int get() = WebGLRenderingContext.COLOR_WRITEMASK
     override val GL_MAX_TEXTURE_SIZE: Int get() = WebGLRenderingContext.MAX_TEXTURE_SIZE
     override val GL_MAX_VIEWPORT_DIMS: Int get() = WebGLRenderingContext.MAX_VIEWPORT_DIMS
-    override val GL_MAX_TEXTURE_UNITS: Int get() = WebGLRenderingContext.MAX_TEXTURE_IMAGE_UNITS
     override val GL_SUBPIXEL_BITS: Int get() = WebGLRenderingContext.SUBPIXEL_BITS
     override val GL_RED_BITS: Int get() = WebGLRenderingContext.RED_BITS
     override val GL_GREEN_BITS: Int get() = WebGLRenderingContext.GREEN_BITS
@@ -137,7 +146,6 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_VENDOR: Int get() = WebGLRenderingContext.VENDOR
     override val GL_RENDERER: Int get() = WebGLRenderingContext.RENDERER
     override val GL_VERSION: Int get() = WebGLRenderingContext.VERSION
-    override val GL_ADD: Int get() = WebGLRenderingContext.FUNC_ADD // TODO: validate this
     override val GL_NEAREST: Int get() = WebGLRenderingContext.NEAREST
     override val GL_LINEAR: Int get() = WebGLRenderingContext.LINEAR
     override val GL_NEAREST_MIPMAP_NEAREST: Int get() = WebGLRenderingContext.NEAREST_MIPMAP_NEAREST
@@ -191,5 +199,313 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_DYNAMIC_DRAW: Int get() = WebGLRenderingContext.DYNAMIC_DRAW
     override val GL_BUFFER_SIZE: Int get() = WebGLRenderingContext.BUFFER_SIZE
     override val GL_BUFFER_USAGE: Int get() = WebGLRenderingContext.BUFFER_USAGE
-    override val GL_SUBTRACT: Int get() = WebGLRenderingContext.FUNC_SUBTRACT // TODO: validate this
+
+    protected val textures: HandleMap<WebGLTexture> = HandleMap()
+    protected val buffers: HandleMap<WebGLBuffer> = HandleMap()
+
+    override fun glClearColor(red: Float, green: Float, blue: Float, alpha: Float) {
+        context.clearColor(red, green, blue, alpha)
+    }
+
+    override fun glClearDepthf(d: Float) {
+        context.clearDepth(d)
+    }
+
+    override fun glDepthRangef(n: Float, f: Float) {
+        context.depthRange(n, f)
+    }
+
+    override fun glLineWidth(width: Float) {
+        context.lineWidth(width)
+    }
+
+    override fun glPolygonOffset(factor: Float, units: Float) {
+        context.polygonOffset(factor, units)
+    }
+
+    override fun glTexParameterf(target: Int, pname: Int, param: Float) {
+        context.texParameterf(target, pname, param)
+    }
+
+    override fun glActiveTexture(texture: Int) {
+        context.activeTexture(texture)
+    }
+
+    override fun glBindBuffer(target: Int, buffer: Int) {
+        context.bindBuffer(target, buffers[buffer])
+    }
+
+    override fun glBindTexture(target: Int, texture: Int) {
+        context.bindTexture(target, textures[texture])
+    }
+
+    override fun glBlendFunc(sfactor: Int, dfactor: Int) {
+        context.blendFunc(sfactor, dfactor)
+    }
+
+    override fun glBufferData(target: Int, data: ShortArray, usage: Int) {
+        context.bufferData(target, data.toInt16Array(), usage)
+    }
+
+    override fun glBufferData(target: Int, data: IntArray, usage: Int) {
+        context.bufferData(target, data.toInt32Array(), usage)
+    }
+
+    override fun glBufferData(target: Int, data: FloatArray, usage: Int) {
+        context.bufferData(target, data.toFloat32Array(), usage)
+    }
+
+    override fun glBufferSubData(target: Int, offset: Long, data: ShortArray) {
+        context.bufferSubData(target, offset.toInt(), data.toInt16Array())
+    }
+
+    override fun glBufferSubData(target: Int, offset: Long, data: IntArray) {
+        context.bufferSubData(target, offset.toInt(), data.toInt32Array())
+    }
+
+    override fun glBufferSubData(target: Int, offset: Long, data: FloatArray) {
+        context.bufferSubData(target, offset.toInt(), data.toFloat32Array())
+    }
+
+    override fun glClear(mask: Int) {
+        context.clear(mask)
+    }
+
+    override fun glClearStencil(s: Int) {
+        context.clearStencil(s)
+    }
+
+    override fun glColorMask(red: Boolean, green: Boolean, blue: Boolean, alpha: Boolean) {
+        context.colorMask(red, green, blue, alpha)
+    }
+
+    override fun glCompressedTexImage2D(
+        target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, data: ByteArray
+    ) {
+        context.compressedTexImage2D(
+            target, level, internalformat, width, height, border, data.toInt8Array()
+        )
+    }
+
+    override fun glCompressedTexSubImage2D(
+        target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, data: ByteArray
+    ) {
+        context.compressedTexSubImage2D(
+            target, level, xoffset, yoffset, width, height, format, data.toInt8Array()
+        )
+    }
+
+    override fun glCopyTexImage2D(
+        target: Int, level: Int, internalformat: Int, x: Int, y: Int, width: Int, height: Int, border: Int
+    ) {
+        context.copyTexImage2D(
+            target, level, internalformat, x, y, width, height, border
+        )
+    }
+
+    override fun glCopyTexSubImage2D(
+        target: Int, level: Int, xoffset: Int, yoffset: Int, x: Int, y: Int, width: Int, height: Int
+    ) {
+        context.copyTexSubImage2D(
+            target, level, xoffset, yoffset, x, y, width, height
+        )
+    }
+
+    override fun glCullFace(mode: Int) {
+        context.cullFace(mode)
+    }
+
+    override fun glDeleteBuffers(buffers: IntArray) {
+        for (id in buffers) {
+            context.deleteBuffer(this.buffers[id])
+            this.buffers -= id
+        }
+    }
+
+    override fun glDeleteTextures(textures: IntArray) {
+        for (id in textures) {
+            context.deleteTexture(this.textures[id])
+            this.textures -= id
+        }
+    }
+
+    override fun glDepthFunc(func: Int) {
+        context.depthFunc(func)
+    }
+
+    override fun glDepthMask(flag: Boolean) {
+        context.depthMask(flag)
+    }
+
+    override fun glDisable(cap: Int) {
+        context.disable(cap)
+    }
+
+    override fun glDrawArrays(mode: Int, first: Int, count: Int) {
+        context.drawArrays(mode, first, count)
+    }
+
+    override fun glDrawElements(mode: Int, count: Int, type: Int, offset: Long) {
+        context.drawElements(mode, count, type, offset.toInt())
+    }
+
+    override fun glEnable(cap: Int) {
+        context.enable(cap)
+    }
+
+    override fun glFinish() {
+        context.finish()
+    }
+
+    override fun glFlush() {
+        context.flush()
+    }
+
+    override fun glFrontFace(mode: Int) {
+        context.frontFace(mode)
+    }
+
+    override fun glGenBuffers(buffers: IntArray) {
+        for (index in buffers.indices) {
+            buffers[index] = this.buffers.putNext(context.createBuffer()!!)
+        }
+    }
+
+    override fun glGenTextures(textures: IntArray) {
+        for (index in textures.indices) {
+            textures[index] = this.textures.putNext(context.createTexture()!!)
+        }
+    }
+
+    override fun glGetError(): Int {
+        return context.getError()
+    }
+
+    override fun glHint(target: Int, mode: Int) {
+        context.hint(target, mode)
+    }
+
+    override fun glIsBuffer(buffer: Int): Boolean {
+        return context.isBuffer(buffers[buffer])
+    }
+
+    override fun glIsEnabled(cap: Int): Boolean {
+        return context.isEnabled(cap)
+    }
+
+    override fun glIsTexture(texture: Int): Boolean {
+        return context.isTexture(textures[texture])
+    }
+
+    override fun glPixelStorei(pname: Int, param: Int) {
+        context.pixelStorei(pname, param)
+    }
+
+    override fun glReadPixels(
+        x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: ByteArray
+    ) {
+        val buffer = Int8Array(pixels.size)
+        context.readPixels(x, y, width, height, format, type, buffer)
+        buffer.copyTo(pixels)
+    }
+
+    override fun glReadPixels(
+        x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: IntArray
+    ) {
+        val buffer = Int32Array(pixels.size)
+        context.readPixels(x, y, width, height, format, type, buffer)
+        buffer.copyTo(pixels)
+    }
+
+    override fun glSampleCoverage(value: Float, invert: Boolean) {
+        context.sampleCoverage(value, invert)
+    }
+
+    override fun glScissor(x: Int, y: Int, width: Int, height: Int) {
+        context.scissor(x, y, width, height)
+    }
+
+    override fun glStencilFunc(func: Int, ref: Int, mask: Int) {
+        context.stencilFunc(func, ref, mask)
+    }
+
+    override fun glStencilMask(mask: Int) {
+        context.stencilMask(mask)
+    }
+
+    override fun glStencilOp(fail: Int, zfail: Int, zpass: Int) {
+        context.stencilOp(fail, zfail, zpass)
+    }
+
+    override fun glTexImage2D(
+        target: Int,
+        level: Int,
+        internalformat: Int,
+        width: Int,
+        height: Int,
+        border: Int,
+        format: Int,
+        type: Int,
+        pixels: ByteArray
+    ) {
+        context.texImage2D(
+            target, level, internalformat, width, height, border, format, type, pixels.toInt8Array()
+        )
+    }
+
+    override fun glTexImage2D(
+        target: Int,
+        level: Int,
+        internalformat: Int,
+        width: Int,
+        height: Int,
+        border: Int,
+        format: Int,
+        type: Int,
+        pixels: IntArray
+    ) {
+        context.texImage2D(
+            target, level, internalformat, width, height, border, format, type, pixels.toInt32Array()
+        )
+    }
+
+    override fun glTexParameteri(target: Int, pname: Int, param: Int) {
+        context.texParameteri(target, pname, param)
+    }
+
+    override fun glTexSubImage2D(
+        target: Int,
+        level: Int,
+        xoffset: Int,
+        yoffset: Int,
+        width: Int,
+        height: Int,
+        format: Int,
+        type: Int,
+        pixels: ByteArray
+    ) {
+        context.texSubImage2D(
+            target, level, xoffset, yoffset, width, height, format, type, pixels.toInt8Array()
+        )
+    }
+
+    override fun glTexSubImage2D(
+        target: Int,
+        level: Int,
+        xoffset: Int,
+        yoffset: Int,
+        width: Int,
+        height: Int,
+        format: Int,
+        type: Int,
+        pixels: IntArray
+    ) {
+        context.texSubImage2D(
+            target, level, xoffset, yoffset, width, height, format, type, pixels.toInt32Array()
+        )
+    }
+
+    override fun glViewport(x: Int, y: Int, width: Int, height: Int) {
+        context.viewport(x, y, width, height)
+    }
 }

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl
+package dev.karmakrafts.composegl.gles
 
-import dev.karmakrafts.composegl.util.toDoubleArray
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL12
 import org.lwjgl.opengl.GL13
@@ -98,7 +97,6 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_COLOR_WRITEMASK: Int get() = GL11.GL_COLOR_WRITEMASK
     override val GL_MAX_TEXTURE_SIZE: Int get() = GL11.GL_MAX_TEXTURE_SIZE
     override val GL_MAX_VIEWPORT_DIMS: Int get() = GL11.GL_MAX_VIEWPORT_DIMS
-    override val GL_MAX_TEXTURE_UNITS: Int get() = GL13.GL_MAX_TEXTURE_UNITS
     override val GL_SUBPIXEL_BITS: Int get() = GL11.GL_SUBPIXEL_BITS
     override val GL_RED_BITS: Int get() = GL11.GL_RED_BITS
     override val GL_GREEN_BITS: Int get() = GL11.GL_GREEN_BITS
@@ -143,7 +141,6 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_VENDOR: Int get() = GL11.GL_VENDOR
     override val GL_RENDERER: Int get() = GL11.GL_RENDERER
     override val GL_VERSION: Int get() = GL11.GL_VERSION
-    override val GL_ADD: Int get() = GL11.GL_ADD
     override val GL_NEAREST: Int get() = GL11.GL_NEAREST
     override val GL_LINEAR: Int get() = GL11.GL_LINEAR
     override val GL_NEAREST_MIPMAP_NEAREST: Int get() = GL11.GL_NEAREST_MIPMAP_NEAREST
@@ -197,11 +194,6 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_DYNAMIC_DRAW: Int get() = GL15.GL_DYNAMIC_DRAW
     override val GL_BUFFER_SIZE: Int get() = GL15.GL_BUFFER_SIZE
     override val GL_BUFFER_USAGE: Int get() = GL15.GL_BUFFER_USAGE
-    override val GL_SUBTRACT: Int get() = GL13.GL_SUBTRACT
-
-    override fun glAlphaFunc(func: Int, ref: Float) {
-        GL11.glAlphaFunc(func, ref)
-    }
 
     override fun glClearColor(red: Float, green: Float, blue: Float, alpha: Float) {
         GL11.glClearColor(red, green, blue, alpha)
@@ -211,150 +203,20 @@ internal object PlatformGLES11 : GLES11 {
         GL11.glClearDepth(d.toDouble())
     }
 
-    override fun glClipPlanef(p: Int, eqn: FloatArray) {
-        GL11.glClipPlane(p, eqn.toDoubleArray())
-    }
-
-    override fun glColor4f(red: Float, green: Float, blue: Float, alpha: Float) {
-        GL11.glColor4f(red, green, blue, alpha)
-    }
-
     override fun glDepthRangef(n: Float, f: Float) {
         GL11.glDepthRange(n.toDouble(), f.toDouble())
-    }
-
-    override fun glFogf(pname: Int, param: Float) {
-        GL11.glFogf(pname, param)
-    }
-
-    override fun glFogfv(pname: Int, params: FloatArray) {
-        GL11.glFogfv(pname, params)
-    }
-
-    override fun glFrustumf(
-        l: Float, r: Float, b: Float, t: Float, n: Float, f: Float
-    ) {
-        GL11.glFrustum(l.toDouble(), r.toDouble(), b.toDouble(), t.toDouble(), n.toDouble(), f.toDouble())
-    }
-
-    override fun glGetClipPlanef(plane: Int, equation: FloatArray) {
-        GL11.glGetClipPlane(plane, equation.toDoubleArray())
-    }
-
-    override fun glGetFloatv(pname: Int, data: FloatArray) {
-        GL11.glGetFloatv(pname, data)
-    }
-
-    override fun glGetLightfv(light: Int, pname: Int, params: FloatArray) {
-        GL11.glGetLightfv(light, pname, params)
-    }
-
-    override fun glGetMaterialfv(face: Int, pname: Int, params: FloatArray) {
-        GL11.glGetMaterialfv(face, pname, params)
-    }
-
-    override fun glGetTexEnvfv(target: Int, pname: Int, params: FloatArray) {
-        GL11.glGetTexEnvfv(target, pname, params)
-    }
-
-    override fun glGetTexParameterfv(target: Int, pname: Int, params: FloatArray) {
-        GL11.glGetTexParameterfv(target, pname, params)
-    }
-
-    override fun glLightModelf(pname: Int, param: Float) {
-        GL11.glLightModelf(pname, param)
-    }
-
-    override fun glLightModelfv(pname: Int, params: FloatArray) {
-        GL11.glLightModelfv(pname, params)
-    }
-
-    override fun glLightf(light: Int, pname: Int, param: Float) {
-        GL11.glLightf(light, pname, param)
-    }
-
-    override fun glLightfv(light: Int, pname: Int, params: FloatArray) {
-        GL11.glLightfv(light, pname, params)
     }
 
     override fun glLineWidth(width: Float) {
         GL11.glLineWidth(width)
     }
 
-    override fun glLoadMatrixf(m: FloatArray) {
-        GL11.glLoadMatrixf(m)
-    }
-
-    override fun glMaterialf(face: Int, pname: Int, param: Float) {
-        GL11.glMaterialf(face, pname, param)
-    }
-
-    override fun glMaterialfv(face: Int, pname: Int, params: FloatArray) {
-        GL11.glMaterialfv(face, pname, params)
-    }
-
-    override fun glMultMatrixf(m: FloatArray) {
-        GL11.glMultMatrixf(m)
-    }
-
-    override fun glMultiTexCoord4f(
-        target: Int, s: Float, t: Float, r: Float, q: Float
-    ) {
-        GL13.glMultiTexCoord4f(target, s, t, r, q)
-    }
-
-    override fun glNormal3f(nx: Float, ny: Float, nz: Float) {
-        GL11.glNormal3f(nx, ny, nz)
-    }
-
-    override fun glOrthof(
-        l: Float, r: Float, b: Float, t: Float, n: Float, f: Float
-    ) {
-        GL11.glOrtho(l.toDouble(), r.toDouble(), b.toDouble(), t.toDouble(), n.toDouble(), f.toDouble())
-    }
-
-    override fun glPointParameterf(pname: Int, param: Float) {
-        GL14.glPointParameterf(pname, param)
-    }
-
-    override fun glPointParameterfv(pname: Int, params: FloatArray) {
-        GL14.glPointParameterfv(pname, params)
-    }
-
-    override fun glPointSize(size: Float) {
-        GL11.glPointSize(size)
-    }
-
     override fun glPolygonOffset(factor: Float, units: Float) {
         GL11.glPolygonOffset(factor, units)
     }
 
-    override fun glRotatef(angle: Float, x: Float, y: Float, z: Float) {
-        GL11.glRotatef(angle, x, y, z)
-    }
-
-    override fun glScalef(x: Float, y: Float, z: Float) {
-        GL11.glScalef(x, y, z)
-    }
-
-    override fun glTexEnvf(target: Int, pname: Int, param: Float) {
-        GL11.glTexEnvf(target, pname, param)
-    }
-
-    override fun glTexEnvfv(target: Int, pname: Int, params: FloatArray) {
-        GL11.glTexEnvfv(target, pname, params)
-    }
-
     override fun glTexParameterf(target: Int, pname: Int, param: Float) {
         GL11.glTexParameterf(target, pname, param)
-    }
-
-    override fun glTexParameterfv(target: Int, pname: Int, params: FloatArray) {
-        GL11.glTexParameterfv(target, pname, params)
-    }
-
-    override fun glTranslatef(x: Float, y: Float, z: Float) {
-        GL11.glTranslatef(x, y, z)
     }
 
     override fun glActiveTexture(texture: Int) {
@@ -405,20 +267,8 @@ internal object PlatformGLES11 : GLES11 {
         GL11.glClearStencil(s)
     }
 
-    override fun glClientActiveTexture(texture: Int) {
-        GL13.glClientActiveTexture(texture)
-    }
-
-    override fun glColor4ub(red: Byte, green: Byte, blue: Byte, alpha: Byte) {
-        GL11.glColor4ub(red, green, blue, alpha)
-    }
-
     override fun glColorMask(red: Boolean, green: Boolean, blue: Boolean, alpha: Boolean) {
         GL11.glColorMask(red, green, blue, alpha)
-    }
-
-    override fun glColorPointer(size: Int, type: Int, stride: Int, pointer: Long) {
-        GL11.glColorPointer(size, type, stride, pointer)
     }
 
     override fun glCompressedTexImage2D(
@@ -485,24 +335,16 @@ internal object PlatformGLES11 : GLES11 {
         GL11.glDisable(cap)
     }
 
-    override fun glDisableClientState(array: Int) {
-        GL11.glDisableClientState(array)
-    }
-
     override fun glDrawArrays(mode: Int, first: Int, count: Int) {
         GL11.glDrawArrays(mode, first, count)
     }
 
-    override fun glDrawElements(mode: Int, count: Int, type: Int, indices: Long) {
-        GL11.glDrawElements(mode, count, type, indices)
+    override fun glDrawElements(mode: Int, count: Int, type: Int, offset: Long) {
+        GL11.glDrawElements(mode, count, type, offset)
     }
 
     override fun glEnable(cap: Int) {
         GL11.glEnable(cap)
-    }
-
-    override fun glEnableClientState(array: Int) {
-        GL11.glEnableClientState(array)
     }
 
     override fun glFinish() {
@@ -517,124 +359,65 @@ internal object PlatformGLES11 : GLES11 {
         GL11.glFrontFace(mode)
     }
 
-    override fun glGetBooleanv(pname: Int, data: BooleanArray) {
-        val stack = MemoryStack.stackGet()
-        val previousSp = stack.pointer
-        val buffer = stack.malloc(data.size)
-        GL11.glGetBooleanv(pname, buffer)
-        val result = buffer.array()
-        stack.pointer = previousSp
-        for (i in result.indices) {
-            data[i] = result[i] == GL11.GL_TRUE.toByte()
-        }
-    }
-
-    override fun glGetBufferParameteriv(target: Int, pname: Int, params: IntArray) {
-        GL15.glGetBufferParameteriv(target, pname, params)
-    }
-
     override fun glGetError(): Int {
         return GL11.glGetError()
     }
 
-    override fun glGetIntegerv(pname: Int, data: IntArray) {
-        GL11.glGetIntegerv(pname, data)
-    }
-
-    override fun glGetString(name: Int): String? {
-        return GL11.glGetString(name)
-    }
-
-    override fun glGetTexEnviv(target: Int, pname: Int, params: IntArray) {
-        TODO("Not yet implemented")
-    }
-
-    override fun glGetTexParameteriv(target: Int, pname: Int, params: IntArray) {
-        TODO("Not yet implemented")
-    }
-
     override fun glHint(target: Int, mode: Int) {
-        TODO("Not yet implemented")
+        GL11.glHint(target, mode)
     }
 
-    override fun glIsBuffer(buffer: Int): Int {
-        TODO("Not yet implemented")
+    override fun glIsBuffer(buffer: Int): Boolean {
+        return GL15.glIsBuffer(buffer)
     }
 
-    override fun glIsEnabled(cap: Int): Int {
-        TODO("Not yet implemented")
+    override fun glIsEnabled(cap: Int): Boolean {
+        return GL11.glIsEnabled(cap)
     }
 
-    override fun glIsTexture(texture: Int): Int {
-        TODO("Not yet implemented")
-    }
-
-    override fun glLoadIdentity() {
-        TODO("Not yet implemented")
-    }
-
-    override fun glLogicOp(opcode: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun glMatrixMode(mode: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun glNormalPointer(type: Int, stride: Int, pointer: Long) {
-        TODO("Not yet implemented")
+    override fun glIsTexture(texture: Int): Boolean {
+        return GL11.glIsTexture(texture)
     }
 
     override fun glPixelStorei(pname: Int, param: Int) {
-        TODO("Not yet implemented")
+        GL11.glPixelStorei(pname, param)
     }
 
     override fun glReadPixels(
         x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: ByteArray
     ) {
-        TODO("Not yet implemented")
+        val stack = MemoryStack.stackGet()
+        val previousSp = stack.pointer
+        val buffer = stack.malloc(pixels.size)
+        GL11.glReadPixels(x, y, width, height, format, type, buffer)
+        stack.pointer = previousSp
+        buffer.get(pixels)
     }
 
     override fun glReadPixels(
         x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: IntArray
     ) {
-        TODO("Not yet implemented")
+        GL11.glReadPixels(x, y, width, height, format, type, pixels)
     }
 
-    override fun glSampleCoverage(value: Float, invert: Int) {
-        TODO("Not yet implemented")
+    override fun glSampleCoverage(value: Float, invert: Boolean) {
+        GL13.glSampleCoverage(value, invert)
     }
 
     override fun glScissor(x: Int, y: Int, width: Int, height: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun glShadeModel(mode: Int) {
-        TODO("Not yet implemented")
+        GL11.glScissor(x, y, width, height)
     }
 
     override fun glStencilFunc(func: Int, ref: Int, mask: Int) {
-        TODO("Not yet implemented")
+        GL11.glStencilFunc(func, ref, mask)
     }
 
     override fun glStencilMask(mask: Int) {
-        TODO("Not yet implemented")
+        GL11.glStencilMask(mask)
     }
 
     override fun glStencilOp(fail: Int, zfail: Int, zpass: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun glTexCoordPointer(size: Int, type: Int, stride: Int, pointer: Long) {
-        TODO("Not yet implemented")
-    }
-
-    override fun glTexEnvi(target: Int, pname: Int, param: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun glTexEnviv(target: Int, pname: Int, params: IntArray) {
-        TODO("Not yet implemented")
+        GL11.glStencilOp(fail, zfail, zpass)
     }
 
     override fun glTexImage2D(
@@ -648,7 +431,11 @@ internal object PlatformGLES11 : GLES11 {
         type: Int,
         pixels: ByteArray
     ) {
-        TODO("Not yet implemented")
+        val stack = MemoryStack.stackGet()
+        val previousSp = stack.pointer
+        val buffer = stack.bytes(*pixels)
+        GL11.glTexImage2D(target, level, internalformat, width, height, border, format, type, buffer)
+        stack.pointer = previousSp
     }
 
     override fun glTexImage2D(
@@ -662,15 +449,11 @@ internal object PlatformGLES11 : GLES11 {
         type: Int,
         pixels: IntArray
     ) {
-        TODO("Not yet implemented")
+        GL11.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels)
     }
 
     override fun glTexParameteri(target: Int, pname: Int, param: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun glTexParameteriv(target: Int, pname: Int, params: IntArray) {
-        TODO("Not yet implemented")
+        GL11.glTexParameteri(target, pname, param)
     }
 
     override fun glTexSubImage2D(
@@ -684,7 +467,11 @@ internal object PlatformGLES11 : GLES11 {
         type: Int,
         pixels: ByteArray
     ) {
-        TODO("Not yet implemented")
+        val stack = MemoryStack.stackGet()
+        val previousSp = stack.pointer
+        val buffer = stack.bytes(*pixels)
+        GL11.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, buffer)
+        stack.pointer = previousSp
     }
 
     override fun glTexSubImage2D(
@@ -698,14 +485,10 @@ internal object PlatformGLES11 : GLES11 {
         type: Int,
         pixels: IntArray
     ) {
-        TODO("Not yet implemented")
-    }
-
-    override fun glVertexPointer(size: Int, type: Int, stride: Int, pointer: Long) {
-        TODO("Not yet implemented")
+        GL11.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels)
     }
 
     override fun glViewport(x: Int, y: Int, width: Int, height: Int) {
-        TODO("Not yet implemented")
+        GL11.glViewport(x, y, width, height)
     }
 }

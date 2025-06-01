@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl
+package dev.karmakrafts.composegl.gles
 
-internal object PlatformGLES11 : GLES11 {
-
-}
+internal object PlatformGLES11 : GLES11

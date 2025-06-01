@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 actual fun GLCanvas(
     onDispose: () -> Unit,
     fallbackContent: @Composable () -> Unit,
+    overlayContent: (@Composable () -> Unit)?,
     content: GLRenderScope.() -> Unit
 ) {
 

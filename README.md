@@ -6,19 +6,19 @@ It also provides a lightweight abstraction to access GLES and Desktop GL using a
 
 ### Platform support
 
-|                     | Android  | iOS      | macOS      | Windows    | Linux      | Web      |
-|---------------------|----------|----------|------------|------------|------------|----------|
-| **API Level**       | GLES 3.2 | GLES 3.0 | GL 4.1     | GL 4.6     | GL 4.6     | GLES 3.0 |
-| **Backend**         | GLES     | ANGLE    | Desktop GL | Desktop GL | Desktop GL | ANGLE    |
-| **\*Skiko Backend** | GLES     | Metal    | Desktop GL | Desktop GL | Desktop GL | GLES     |
+|                     | Android  | iOS      | macOS           | Windows         | Linux           | Web      |
+|---------------------|----------|----------|-----------------|-----------------|-----------------|----------|
+| **API Level**       | GLES 3.2 | GLES 3.0 | GL 4.1/GLES 2.0 | GL 4.6/GLES 2.0 | GL 4.6/GLES 2.0 | GLES 3.0 |
+| **Backend**         | GLES     | ANGLE    | Desktop GL      | Desktop GL      | Desktop GL      | ANGLE    |
+| **\*Skiko Backend** | GLES     | Metal    | Desktop GL      | Desktop GL      | Desktop GL      | GLES     |
 
 **\*In order to guarantee proper interoperability, ComposeGL forces Compose to use  
 the specified Skiko backend on the respective platforms.**
 
-The common API level as of the last time updating this table is **GLES 3.0**,   
+The common API level as of the last time updating this table is **GLES 2.0**,   
 which is available on all listed platforms without exceptions.  
 
-GLES 3.2 support is planned once ANGLE finishes their implementation, which  
+GLES 3.X support is planned once ANGLE finishes their implementation, which  
 allows using GLES 3.2 on iOS and Web.
 
 ### How to use it
@@ -31,7 +31,8 @@ allows using GLES 3.2 on iOS and Web.
 fun MyApp() {
     GLCanvas(
         onDispose = { /* Callback when canvas is disposed */ },
-        fallbackContent = { Text("ComposeGL is not supported") }
+        fallbackContent = { Text("ComposeGL is not supported") },
+        overlayContent = { Text("Compose inside the GL viewport") }
     ) {
         val shader = memoize { GLShader(...) }
         glClearColor(0F, 0F, 0F, 1F)

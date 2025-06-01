@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-
 /*
  * Copyright 2025 Karma Krafts & associates
  *
@@ -20,10 +18,9 @@ import dev.karmakrafts.conventions.GitLabCI.karmaKraftsDefaults
 import dev.karmakrafts.conventions.apache2License
 import dev.karmakrafts.conventions.setProjectInfo
 import dev.karmakrafts.conventions.setRepository
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.time.ZonedDateTime
 
 plugins {
@@ -32,6 +29,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.introspekt)
     `maven-publish`
 }
 
@@ -42,7 +40,6 @@ fun Provider<MinimalExternalModuleDependency>.withVariant(variant: String): Stri
     return "${dependency.module}:${dependency.version}:$variant"
 }
 
-@OptIn(ExperimentalWasmDsl::class)
 kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
@@ -75,6 +72,10 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.ui)
+                implementation(compose.material3)
+                implementation(libs.skiko)
             }
         }
         jvmMain {
