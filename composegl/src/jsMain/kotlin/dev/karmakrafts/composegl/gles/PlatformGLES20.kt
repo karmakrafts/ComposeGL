@@ -16,7 +16,14 @@
 
 package dev.karmakrafts.composegl.gles
 
+import dev.karmakrafts.composegl.util.HandleMap
+import org.khronos.webgl.WebGLFramebuffer
+import org.khronos.webgl.WebGLProgram
+import org.khronos.webgl.WebGLRenderbuffer
 import org.khronos.webgl.WebGLRenderingContext
+import org.khronos.webgl.WebGLShader
+import org.khronos.webgl.WebGLUniformLocation
+import kotlin.math.min
 
 internal class PlatformGLES20(context: WebGLRenderingContext) : PlatformGLES11(context), GLES20 {
     override val GL_FUNC_ADD: Int get() = WebGLRenderingContext.FUNC_ADD
@@ -127,4 +134,367 @@ internal class PlatformGLES20(context: WebGLRenderingContext) : PlatformGLES11(c
     override val GL_RENDERBUFFER_BINDING: Int get() = WebGLRenderingContext.RENDERBUFFER_BINDING
     override val GL_MAX_RENDERBUFFER_SIZE: Int get() = WebGLRenderingContext.MAX_RENDERBUFFER_SIZE
     override val GL_INVALID_FRAMEBUFFER_OPERATION: Int get() = WebGLRenderingContext.INVALID_FRAMEBUFFER_OPERATION
+
+    private val shaderPrograms: HandleMap<WebGLProgram> = HandleMap()
+    private val shaders: HandleMap<WebGLShader> = HandleMap()
+    private val frameBuffers: HandleMap<WebGLFramebuffer> = HandleMap()
+    private val renderBuffers: HandleMap<WebGLRenderbuffer> = HandleMap()
+
+    private val uniformLocations: HandleMap<WebGLUniformLocation> = HandleMap()
+    private val uniformLocationCache: HashMap<Pair<WebGLProgram, String>, WebGLUniformLocation> = HashMap()
+
+    override fun glAttachShader(program: Int, shader: Int) {
+        context.attachShader(shaderPrograms[program], shaders[shader])
+    }
+
+    override fun glBindAttribLocation(program: Int, index: Int, name: String) {
+        context.bindAttribLocation(shaderPrograms[program], index, name)
+    }
+
+    override fun glBindFramebuffer(target: Int, framebuffer: Int) {
+        context.bindFramebuffer(target, frameBuffers[framebuffer])
+    }
+
+    override fun glBindRenderbuffer(target: Int, renderbuffer: Int) {
+        context.bindRenderbuffer(target, renderBuffers[renderbuffer])
+    }
+
+    override fun glBlendColor(red: Float, green: Float, blue: Float, alpha: Float) {
+        context.blendColor(red, green, blue, alpha)
+    }
+
+    override fun glBlendEquation(mode: Int) {
+        context.blendEquation(mode)
+    }
+
+    override fun glBlendEquationSeparate(modeRGB: Int, modeAlpha: Int) {
+        context.blendEquationSeparate(modeRGB, modeAlpha)
+    }
+
+    override fun glBlendFuncSeparate(
+        sfactorRGB: Int, dfactorRGB: Int, sfactorAlpha: Int, dfactorAlpha: Int
+    ) {
+        context.blendFuncSeparate(sfactorRGB, dfactorAlpha, sfactorAlpha, dfactorAlpha)
+    }
+
+    override fun glCheckFramebufferStatus(target: Int): Int {
+        return context.checkFramebufferStatus(target)
+    }
+
+    override fun glCompileShader(shader: Int) {
+        context.compileShader(shaders[shader])
+    }
+
+    override fun glCreateProgram(): Int {
+        return shaderPrograms.putNext(context.createProgram()!!)
+    }
+
+    override fun glCreateShader(type: Int): Int {
+        return shaders.putNext(context.createShader(type)!!)
+    }
+
+    override fun glDeleteFramebuffers(framebuffers: IntArray) {
+        for (framebuffer in framebuffers) {
+            context.deleteFramebuffer(this.frameBuffers[framebuffer])
+            this.frameBuffers -= framebuffer
+        }
+    }
+
+    override fun glDeleteProgram(program: Int) {
+        context.deleteProgram(shaderPrograms[program])
+        // Remove all location cache entries for this shader program and all uniform location mappings
+        // @formatter:off
+        uniformLocationCache -= uniformLocationCache
+            .filterKeys { (prog, _) -> prog == shaderPrograms[program] }
+            .onEach { (_, loc) -> uniformLocations.findIdByValue(loc)?.let(uniformLocations::remove) }
+            .keys
+        // @formatter:on
+        shaderPrograms -= program
+    }
+
+    override fun glDeleteRenderbuffers(renderbuffers: IntArray) {
+        for (renderbuffer in renderbuffers) {
+            context.deleteRenderbuffer(this.renderBuffers[renderbuffer])
+            this.renderBuffers -= renderbuffer
+        }
+    }
+
+    override fun glDeleteShader(shader: Int) {
+        context.deleteShader(shaders[shader])
+        shaders -= shader
+    }
+
+    override fun glDetachShader(program: Int, shader: Int) {
+        context.detachShader(shaderPrograms[program], shaders[shader])
+    }
+
+    override fun glDisableVertexAttribArray(index: Int) {
+        context.disableVertexAttribArray(index)
+    }
+
+    override fun glEnableVertexAttribArray(index: Int) {
+        context.enableVertexAttribArray(index)
+    }
+
+    override fun glFramebufferRenderbuffer(
+        target: Int, attachment: Int, renderbuffertarget: Int, renderbuffer: Int
+    ) {
+        context.framebufferRenderbuffer(target, attachment, renderbuffertarget, renderBuffers[renderbuffer])
+    }
+
+    override fun glFramebufferTexture2D(
+        target: Int, attachment: Int, textarget: Int, texture: Int, level: Int
+    ) {
+        context.framebufferTexture2D(target, attachment, textarget, textures[texture], level)
+    }
+
+    override fun glGenerateMipmap(target: Int) {
+        context.generateMipmap(target)
+    }
+
+    override fun glGenFramebuffers(framebuffers: IntArray) {
+        for (index in framebuffers.indices) {
+            framebuffers[index] = this.frameBuffers.putNext(context.createFramebuffer()!!)
+        }
+    }
+
+    override fun glGenRenderbuffers(renderbuffers: IntArray) {
+        for (index in renderbuffers.indices) {
+            renderbuffers[index] = this.renderBuffers.putNext(context.createRenderbuffer()!!)
+        }
+    }
+
+    override fun glGetActiveAttrib(
+        program: Int, index: Int, info: GLESActiveInfo
+    ) {
+        val wglInfo = context.getActiveAttrib(shaderPrograms[program], index) ?: return
+        info.type = wglInfo.type
+        info.size = wglInfo.size
+        info.name = wglInfo.name
+    }
+
+    override fun glGetActiveUniform(
+        program: Int, index: Int, info: GLESActiveInfo
+    ) {
+        val wglInfo = context.getActiveUniform(shaderPrograms[program], index) ?: return
+        info.type = wglInfo.type
+        info.size = wglInfo.size
+        info.name = wglInfo.name
+    }
+
+    override fun glGetAttachedShaders(
+        program: Int, maxCount: Int, shaders: IntArray
+    ): Int {
+        val wglShaders = context.getAttachedShaders(shaderPrograms[program]) ?: return 0
+        val count = min(wglShaders.size, maxCount)
+        for (index in 0..<count) {
+            shaders[index] = this.shaders.entries.first { (_, wgls) -> wgls == wglShaders[index] }.key
+        }
+        return count
+    }
+
+    override fun glGetAttribLocation(program: Int, name: String): Int {
+        return context.getAttribLocation(shaderPrograms[program], name)
+    }
+
+    override fun glGetProgramInfoLog(program: Int): String? {
+        return context.getProgramInfoLog(shaderPrograms[program])
+    }
+
+    override fun glGetShaderInfoLog(shader: Int): String? {
+        return context.getShaderInfoLog(shaders[shader])
+    }
+
+    override fun glGetShaderPrecisionFormat(
+        shadertype: Int, precisiontype: Int, format: GLESShaderPrecisionFormat
+    ) {
+        val wglFormat = context.getShaderPrecisionFormat(shadertype, precisiontype) ?: return
+        format.precision = wglFormat.precision
+        format.rangeMin = wglFormat.rangeMin
+        format.rangeMax = wglFormat.rangeMax
+    }
+
+    override fun glGetShaderSource(shader: Int): String? {
+        return context.getShaderSource(shaders[shader])
+    }
+
+    override fun glGetUniformLocation(program: Int, name: String): Int {
+        val wglProgram = shaderPrograms[program]!!
+        val cacheKey = Pair(wglProgram, name)
+        var cachedLocation = uniformLocationCache[cacheKey]
+        if (cachedLocation != null) {
+            return uniformLocations.findIdByValue(cachedLocation)!!
+        }
+        cachedLocation = context.getUniformLocation(wglProgram, name)!!
+        uniformLocationCache[cacheKey] = cachedLocation
+        return uniformLocations.putNext(cachedLocation)
+    }
+
+    override fun glIsFramebuffer(framebuffer: Int): Boolean {
+        return context.isFramebuffer(frameBuffers[framebuffer])
+    }
+
+    override fun glIsProgram(program: Int): Boolean {
+        return context.isProgram(shaderPrograms[program])
+    }
+
+    override fun glIsRenderbuffer(renderbuffer: Int): Boolean {
+        return context.isRenderbuffer(renderBuffers[renderbuffer])
+    }
+
+    override fun glIsShader(shader: Int): Boolean {
+        return context.isShader(shaders[shader])
+    }
+
+    override fun glLinkProgram(program: Int) {
+        context.linkProgram(shaderPrograms[program])
+    }
+
+    override fun glRenderbufferStorage(
+        target: Int, internalformat: Int, width: Int, height: Int
+    ) {
+        context.renderbufferStorage(target, internalformat, width, height)
+    }
+
+    override fun glShaderSource(shader: Int, source: String) {
+        context.shaderSource(shaders[shader], source)
+    }
+
+    override fun glStencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int) {
+        context.stencilFuncSeparate(face, func, ref, mask)
+    }
+
+    override fun glStencilMaskSeparate(face: Int, mask: Int) {
+        context.stencilMaskSeparate(face, mask)
+    }
+
+    override fun glStencilOpSeparate(face: Int, sfail: Int, dpfail: Int, dppass: Int) {
+        context.stencilOpSeparate(face, sfail, dpfail, dppass)
+    }
+
+    override fun glUniform1f(location: Int, v0: Float) {
+        context.uniform1f(uniformLocations[location], v0)
+    }
+
+    override fun glUniform1fv(location: Int, value: FloatArray) {
+        context.uniform1fv(uniformLocations[location], value.toTypedArray())
+    }
+
+    override fun glUniform1i(location: Int, v0: Int) {
+        context.uniform1i(uniformLocations[location], v0)
+    }
+
+    override fun glUniform1iv(location: Int, value: IntArray) {
+        context.uniform1iv(uniformLocations[location], value.toTypedArray())
+    }
+
+    override fun glUniform2f(location: Int, v0: Float, v1: Float) {
+        context.uniform2f(uniformLocations[location], v0, v1)
+    }
+
+    override fun glUniform2fv(location: Int, value: FloatArray) {
+        context.uniform2fv(uniformLocations[location], value.toTypedArray())
+    }
+
+    override fun glUniform2i(location: Int, v0: Int, v1: Int) {
+        context.uniform2i(uniformLocations[location], v0, v1)
+    }
+
+    override fun glUniform2iv(location: Int, value: IntArray) {
+        context.uniform2iv(uniformLocations[location], value.toTypedArray())
+    }
+
+    override fun glUniform3f(location: Int, v0: Float, v1: Float, v2: Float) {
+        context.uniform3f(uniformLocations[location], v0, v1, v2)
+    }
+
+    override fun glUniform3fv(location: Int, value: FloatArray) {
+        context.uniform3fv(uniformLocations[location], value.toTypedArray())
+    }
+
+    override fun glUniform3i(location: Int, v0: Int, v1: Int, v2: Int) {
+        context.uniform3i(uniformLocations[location], v0, v1, v2)
+    }
+
+    override fun glUniform3iv(location: Int, value: IntArray) {
+        context.uniform3iv(uniformLocations[location], value.toTypedArray())
+    }
+
+    override fun glUniform4f(
+        location: Int, v0: Float, v1: Float, v2: Float, v3: Float
+    ) {
+        context.uniform4f(uniformLocations[location], v0, v1, v2, v3)
+    }
+
+    override fun glUniform4fv(location: Int, value: FloatArray) {
+        context.uniform4fv(uniformLocations[location], value.toTypedArray())
+    }
+
+    override fun glUniform4i(location: Int, v0: Int, v1: Int, v2: Int, v3: Int) {
+        context.uniform4i(uniformLocations[location], v0, v1, v2, v3)
+    }
+
+    override fun glUniform4iv(location: Int, value: IntArray) {
+        context.uniform4iv(uniformLocations[location], value.toTypedArray())
+    }
+
+    override fun glUniformMatrix2fv(location: Int, transpose: Boolean, value: FloatArray) {
+        context.uniformMatrix2fv(uniformLocations[location], transpose, value.toTypedArray())
+    }
+
+    override fun glUniformMatrix3fv(location: Int, transpose: Boolean, value: FloatArray) {
+        context.uniformMatrix3fv(uniformLocations[location], transpose, value.toTypedArray())
+    }
+
+    override fun glUniformMatrix4fv(location: Int, transpose: Boolean, value: FloatArray) {
+        context.uniformMatrix4fv(uniformLocations[location], transpose, value.toTypedArray())
+    }
+
+    override fun glUseProgram(program: Int) {
+        context.useProgram(shaderPrograms[program])
+    }
+
+    override fun glValidateProgram(program: Int) {
+        context.validateProgram(shaderPrograms[program])
+    }
+
+    override fun glVertexAttrib1f(index: Int, x: Float) {
+        context.vertexAttrib1f(index, x)
+    }
+
+    override fun glVertexAttrib1fv(index: Int, v: FloatArray) {
+        context.vertexAttrib1fv(index, v.toTypedArray())
+    }
+
+    override fun glVertexAttrib2f(index: Int, x: Float, y: Float) {
+        context.vertexAttrib2f(index, x, y)
+    }
+
+    override fun glVertexAttrib2fv(index: Int, v: FloatArray) {
+        context.vertexAttrib2fv(index, v.toTypedArray())
+    }
+
+    override fun glVertexAttrib3f(index: Int, x: Float, y: Float, z: Float) {
+        context.vertexAttrib3f(index, x, y, z)
+    }
+
+    override fun glVertexAttrib3fv(index: Int, v: FloatArray) {
+        context.vertexAttrib3fv(index, v.toTypedArray())
+    }
+
+    override fun glVertexAttrib4f(
+        index: Int, x: Float, y: Float, z: Float, w: Float
+    ) {
+        context.vertexAttrib4f(index, x, y, z, w)
+    }
+
+    override fun glVertexAttrib4fv(index: Int, v: FloatArray) {
+        context.vertexAttrib4fv(index, v.toTypedArray())
+    }
+
+    override fun glVertexAttribPointer(
+        index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Long
+    ) {
+        context.vertexAttribPointer(index, size, type, normalized, stride, offset.toInt())
+    }
 }

@@ -130,4 +130,78 @@ interface GLES20 : GLES11 {
     val GL_RENDERBUFFER_BINDING: Int
     val GL_MAX_RENDERBUFFER_SIZE: Int
     val GL_INVALID_FRAMEBUFFER_OPERATION: Int
+
+    fun glAttachShader(program: Int, shader: Int)
+    fun glBindAttribLocation(program: Int, index: Int, name: String)
+    fun glBindFramebuffer(target: Int, framebuffer: Int)
+    fun glBindRenderbuffer(target: Int, renderbuffer: Int)
+    fun glBlendColor(red: Float, green: Float, blue: Float, alpha: Float)
+    fun glBlendEquation(mode: Int)
+    fun glBlendEquationSeparate(modeRGB: Int, modeAlpha: Int)
+    fun glBlendFuncSeparate(sfactorRGB: Int, dfactorRGB: Int, sfactorAlpha: Int, dfactorAlpha: Int)
+    fun glCheckFramebufferStatus(target: Int): Int
+    fun glCompileShader(shader: Int)
+    fun glCreateProgram(): Int
+    fun glCreateShader(type: Int): Int
+    fun glDeleteFramebuffers(framebuffers: IntArray)
+    fun glDeleteProgram(program: Int)
+    fun glDeleteRenderbuffers(renderbuffers: IntArray)
+    fun glDeleteShader(shader: Int)
+    fun glDetachShader(program: Int, shader: Int)
+    fun glDisableVertexAttribArray(index: Int)
+    fun glEnableVertexAttribArray(index: Int)
+    fun glFramebufferRenderbuffer(target: Int, attachment: Int, renderbuffertarget: Int, renderbuffer: Int)
+    fun glFramebufferTexture2D(target: Int, attachment: Int, textarget: Int, texture: Int, level: Int)
+    fun glGenerateMipmap(target: Int)
+    fun glGenFramebuffers(framebuffers: IntArray)
+    fun glGenRenderbuffers(renderbuffers: IntArray)
+    fun glGetActiveAttrib(program: Int, index: Int, info: GLESActiveInfo)
+    fun glGetActiveUniform(program: Int, index: Int, info: GLESActiveInfo)
+    fun glGetAttachedShaders(program: Int, maxCount: Int, shaders: IntArray): Int
+    fun glGetAttribLocation(program: Int, name: String): Int
+    fun glGetProgramInfoLog(program: Int): String?
+    fun glGetShaderInfoLog(shader: Int): String?
+    fun glGetShaderPrecisionFormat(shadertype: Int, precisiontype: Int, format: GLESShaderPrecisionFormat)
+    fun glGetShaderSource(shader: Int): String?
+    fun glGetUniformLocation(program: Int, name: String): Int
+    fun glIsFramebuffer(framebuffer: Int): Boolean
+    fun glIsProgram(program: Int): Boolean
+    fun glIsRenderbuffer(renderbuffer: Int): Boolean
+    fun glIsShader(shader: Int): Boolean
+    fun glLinkProgram(program: Int)
+    fun glRenderbufferStorage(target: Int, internalformat: Int, width: Int, height: Int)
+    fun glShaderSource(shader: Int, source: String)
+    fun glStencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int)
+    fun glStencilMaskSeparate(face: Int, mask: Int)
+    fun glStencilOpSeparate(face: Int, sfail: Int, dpfail: Int, dppass: Int)
+    fun glUniform1f(location: Int, v0: Float)
+    fun glUniform1fv(location: Int, value: FloatArray)
+    fun glUniform1i(location: Int, v0: Int)
+    fun glUniform1iv(location: Int, value: IntArray)
+    fun glUniform2f(location: Int, v0: Float, v1: Float)
+    fun glUniform2fv(location: Int, value: FloatArray)
+    fun glUniform2i(location: Int, v0: Int, v1: Int)
+    fun glUniform2iv(location: Int, value: IntArray)
+    fun glUniform3f(location: Int, v0: Float, v1: Float, v2: Float)
+    fun glUniform3fv(location: Int, value: FloatArray)
+    fun glUniform3i(location: Int, v0: Int, v1: Int, v2: Int)
+    fun glUniform3iv(location: Int, value: IntArray)
+    fun glUniform4f(location: Int, v0: Float, v1: Float, v2: Float, v3: Float)
+    fun glUniform4fv(location: Int, value: FloatArray)
+    fun glUniform4i(location: Int, v0: Int, v1: Int, v2: Int, v3: Int)
+    fun glUniform4iv(location: Int, value: IntArray)
+    fun glUniformMatrix2fv(location: Int, transpose: Boolean, value: FloatArray)
+    fun glUniformMatrix3fv(location: Int, transpose: Boolean, value: FloatArray)
+    fun glUniformMatrix4fv(location: Int, transpose: Boolean, value: FloatArray)
+    fun glUseProgram(program: Int)
+    fun glValidateProgram(program: Int)
+    fun glVertexAttrib1f(index: Int, x: Float)
+    fun glVertexAttrib1fv(index: Int, v: FloatArray)
+    fun glVertexAttrib2f(index: Int, x: Float, y: Float)
+    fun glVertexAttrib2fv(index: Int, v: FloatArray)
+    fun glVertexAttrib3f(index: Int, x: Float, y: Float, z: Float)
+    fun glVertexAttrib3fv(index: Int, v: FloatArray)
+    fun glVertexAttrib4f(index: Int, x: Float, y: Float, z: Float, w: Float)
+    fun glVertexAttrib4fv(index: Int, v: FloatArray)
+    fun glVertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Long)
 }

@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl.util
+package dev.karmakrafts.composegl.gles
 
-internal class HandleMap<T>(
-    private val delegate: MutableMap<Int, T> = HashMap()
-) : MutableMap<Int, T> by delegate {
-    private fun nextAvailableId(): Int {
-        var id = 0
-        while (id in this) ++id
-        return id
-    }
-
-    fun putNext(value: T): Int {
-        val id = nextAvailableId()
-        this[id] = value
-        return id
-    }
-
-    fun findIdByValue(value: T): Int? = entries.find { (_, v) -> v == value }?.key
-}
+data class GLESShaderPrecisionFormat(
+    var rangeMin: Int,
+    var rangeMax: Int,
+    var precision: Int
+)
