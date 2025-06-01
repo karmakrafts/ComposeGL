@@ -16,6 +16,18 @@
 
 package dev.karmakrafts.composegl.gles
 
-data class GLESShaderPrecisionFormat(
-    var rangeMin: Int, var rangeMax: Int, var precision: Int
-)
+actual typealias GLESTexture = Int
+actual typealias GLESBuffer = Int
+actual typealias GLESFrameBuffer = Int
+actual typealias GLESRenderBuffer = Int
+actual typealias GLESShader = Int
+actual typealias GLESShaderProgram = Int
+actual typealias GLESUniformLocation = Int
+
+actual val glesNoTexture: GLESTexture = 0
+actual val glesNoBuffer: GLESBuffer = 0
+actual val glesNoFrameBuffer: GLESFrameBuffer = 0
+actual val glesNoRenderBuffer: GLESRenderBuffer = 0
+actual val glesNoShader: GLESShader = 0
+actual val glesNoShaderProgram: GLESShaderProgram = 0
+actual val glesNoUniformLocation: GLESUniformLocation = -1

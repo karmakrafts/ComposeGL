@@ -201,8 +201,8 @@ interface GLES11 {
     fun glPolygonOffset(factor: Float, units: Float)
     fun glTexParameterf(target: Int, pname: Int, param: Float)
     fun glActiveTexture(texture: Int)
-    fun glBindBuffer(target: Int, buffer: Int)
-    fun glBindTexture(target: Int, texture: Int)
+    fun glBindBuffer(target: Int, buffer: GLESBuffer)
+    fun glBindTexture(target: Int, texture: GLESTexture)
     fun glBlendFunc(sfactor: Int, dfactor: Int)
     fun glBufferData(target: Int, data: ShortArray, usage: Int)
     fun glBufferData(target: Int, data: IntArray, usage: Int)
@@ -218,8 +218,8 @@ interface GLES11 {
     fun glCopyTexImage2D(target: Int, level: Int, internalformat: Int, x: Int, y: Int, width: Int, height: Int, border: Int)
     fun glCopyTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, x: Int, y: Int, width: Int, height: Int)
     fun glCullFace(mode: Int)
-    fun glDeleteBuffers(buffers: IntArray)
-    fun glDeleteTextures(textures: IntArray)
+    fun glDeleteBuffer(buffer: GLESBuffer)
+    fun glDeleteTexture(texture: GLESTexture)
     fun glDepthFunc(func: Int)
     fun glDepthMask(flag: Boolean)
     fun glDisable(cap: Int)
@@ -229,13 +229,13 @@ interface GLES11 {
     fun glFinish()
     fun glFlush()
     fun glFrontFace(mode: Int)
-    fun glGenBuffers(buffers: IntArray)
-    fun glGenTextures(textures: IntArray)
+    fun glGenBuffer(): GLESBuffer
+    fun glGenTexture(): GLESTexture
     fun glGetError(): Int
     fun glHint(target: Int, mode: Int)
-    fun glIsBuffer(buffer: Int): Boolean
+    fun glIsBuffer(buffer: GLESBuffer): Boolean
     fun glIsEnabled(cap: Int): Boolean
-    fun glIsTexture(texture: Int): Boolean
+    fun glIsTexture(texture: GLESTexture): Boolean
     fun glPixelStorei(pname: Int, param: Int)
     fun glReadPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: ByteArray)
     fun glReadPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: IntArray)

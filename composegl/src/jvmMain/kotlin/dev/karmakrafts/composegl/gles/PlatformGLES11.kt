@@ -223,11 +223,11 @@ internal object PlatformGLES11 : GLES11 {
         GL13.glActiveTexture(texture)
     }
 
-    override fun glBindBuffer(target: Int, buffer: Int) {
+    override fun glBindBuffer(target: Int, buffer: GLESBuffer) {
         GL15.glBindBuffer(target, buffer)
     }
 
-    override fun glBindTexture(target: Int, texture: Int) {
+    override fun glBindTexture(target: Int, texture: GLESTexture) {
         GL11.glBindTexture(target, texture)
     }
 
@@ -307,20 +307,20 @@ internal object PlatformGLES11 : GLES11 {
         GL11.glCullFace(mode)
     }
 
-    override fun glGenBuffers(buffers: IntArray) {
-        GL15.glGenBuffers(buffers)
+    override fun glGenBuffer(): GLESBuffer {
+        return GL15.glGenBuffers()
     }
 
-    override fun glDeleteBuffers(buffers: IntArray) {
-        GL15.glDeleteBuffers(buffers)
+    override fun glDeleteBuffer(buffer: GLESBuffer) {
+        GL15.glDeleteBuffers(buffer)
     }
 
-    override fun glGenTextures(textures: IntArray) {
-        GL15.glGenTextures(textures)
+    override fun glGenTexture(): GLESTexture {
+        return GL15.glGenTextures()
     }
 
-    override fun glDeleteTextures(textures: IntArray) {
-        GL11.glDeleteTextures(textures)
+    override fun glDeleteTexture(texture: GLESTexture) {
+        GL11.glDeleteTextures(texture)
     }
 
     override fun glDepthFunc(func: Int) {
@@ -367,7 +367,7 @@ internal object PlatformGLES11 : GLES11 {
         GL11.glHint(target, mode)
     }
 
-    override fun glIsBuffer(buffer: Int): Boolean {
+    override fun glIsBuffer(buffer: GLESBuffer): Boolean {
         return GL15.glIsBuffer(buffer)
     }
 

@@ -17,7 +17,5 @@
 package dev.karmakrafts.composegl.gles
 
 data class GLESActiveInfo(
-    var size: Int = 0,
-    var type: Int = 0,
-    var name: String = ""
+    var size: Int = 0, var type: Int = 0, var name: String = ""
 )

@@ -25,7 +25,6 @@ import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL41
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
-import kotlin.math.min
 
 internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override val GL_FUNC_ADD: Int get() = GL14.GL_FUNC_ADD
@@ -139,19 +138,19 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
 
     private const val MAX_NAME_SIZE: Int = 4096
 
-    override fun glAttachShader(program: Int, shader: Int) {
+    override fun glAttachShader(program: GLESShaderProgram, shader: GLESShader) {
         GL20.glAttachShader(program, shader)
     }
 
-    override fun glBindAttribLocation(program: Int, index: Int, name: String) {
+    override fun glBindAttribLocation(program: GLESShaderProgram, index: Int, name: String) {
         GL20.glBindAttribLocation(program, index, name)
     }
 
-    override fun glBindFramebuffer(target: Int, framebuffer: Int) {
+    override fun glBindFramebuffer(target: Int, framebuffer: GLESFrameBuffer) {
         GL30.glBindFramebuffer(target, framebuffer)
     }
 
-    override fun glBindRenderbuffer(target: Int, renderbuffer: Int) {
+    override fun glBindRenderbuffer(target: Int, renderbuffer: GLESRenderBuffer) {
         GL30.glBindRenderbuffer(target, renderbuffer)
     }
 
@@ -177,35 +176,35 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         return GL30.glCheckFramebufferStatus(target)
     }
 
-    override fun glCompileShader(shader: Int) {
+    override fun glCompileShader(shader: GLESShader) {
         GL20.glCompileShader(shader)
     }
 
-    override fun glCreateProgram(): Int {
+    override fun glCreateProgram(): GLESShaderProgram {
         return GL20.glCreateProgram()
     }
 
-    override fun glCreateShader(type: Int): Int {
+    override fun glCreateShader(type: Int): GLESShader {
         return GL20.glCreateShader(type)
     }
 
-    override fun glDeleteFramebuffers(framebuffers: IntArray) {
-        GL30.glDeleteFramebuffers(framebuffers)
+    override fun glDeleteFramebuffer(framebuffer: GLESFrameBuffer) {
+        GL30.glDeleteFramebuffers(framebuffer)
     }
 
-    override fun glDeleteProgram(program: Int) {
+    override fun glDeleteProgram(program: GLESShaderProgram) {
         GL20.glDeleteProgram(program)
     }
 
-    override fun glDeleteRenderbuffers(renderbuffers: IntArray) {
-        GL30.glDeleteRenderbuffers(renderbuffers)
+    override fun glDeleteRenderbuffer(renderbuffer: GLESRenderBuffer) {
+        GL30.glDeleteRenderbuffers(renderbuffer)
     }
 
-    override fun glDeleteShader(shader: Int) {
+    override fun glDeleteShader(shader: GLESShader) {
         GL20.glDeleteShader(shader)
     }
 
-    override fun glDetachShader(program: Int, shader: Int) {
+    override fun glDetachShader(program: GLESShaderProgram, shader: GLESShader) {
         GL20.glDetachShader(program, shader)
     }
 
@@ -218,13 +217,13 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     }
 
     override fun glFramebufferRenderbuffer(
-        target: Int, attachment: Int, renderbuffertarget: Int, renderbuffer: Int
+        target: Int, attachment: Int, renderbuffertarget: Int, renderbuffer: GLESRenderBuffer
     ) {
         GL30.glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer)
     }
 
     override fun glFramebufferTexture2D(
-        target: Int, attachment: Int, textarget: Int, texture: Int, level: Int
+        target: Int, attachment: Int, textarget: Int, texture: GLESTexture, level: Int
     ) {
         GL30.glFramebufferTexture2D(target, attachment, textarget, texture, level)
     }
@@ -233,16 +232,16 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         GL30.glGenerateMipmap(target)
     }
 
-    override fun glGenFramebuffers(framebuffers: IntArray) {
-        GL30.glGenFramebuffers(framebuffers)
+    override fun glGenFramebuffer(): GLESFrameBuffer {
+        return GL30.glGenFramebuffers()
     }
 
-    override fun glGenRenderbuffers(renderbuffers: IntArray) {
-        GL30.glGenRenderbuffers(renderbuffers)
+    override fun glGenRenderbuffer(): GLESRenderBuffer {
+        return GL30.glGenRenderbuffers()
     }
 
     override fun glGetActiveAttrib(
-        program: Int, index: Int, info: GLESActiveInfo
+        program: GLESShaderProgram, index: Int, info: GLESActiveInfo
     ) {
         val stack = MemoryStack.stackGet()
         val previousSp = stack.pointer
@@ -257,7 +256,7 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     }
 
     override fun glGetActiveUniform(
-        program: Int, index: Int, info: GLESActiveInfo
+        program: GLESShaderProgram, index: Int, info: GLESActiveInfo
     ) {
         val stack = MemoryStack.stackGet()
         val previousSp = stack.pointer
@@ -271,30 +270,15 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         stack.pointer = previousSp
     }
 
-    override fun glGetAttachedShaders(program: Int, maxCount: Int, shaders: IntArray): Int {
-        val stack = MemoryStack.stackGet()
-        val previousSp = stack.pointer
-        val count = min(maxCount, shaders.size)
-        val actualCountBuffer = stack.mallocInt(1)
-        val shaderBuffer = stack.mallocInt(count)
-        GL20.nglGetAttachedShaders(
-            program, maxCount, MemoryUtil.memAddress(actualCountBuffer), MemoryUtil.memAddress(shaderBuffer)
-        )
-        shaderBuffer.get(shaders)
-        val actualCount = actualCountBuffer.get()
-        stack.pointer = previousSp
-        return actualCount
-    }
-
-    override fun glGetAttribLocation(program: Int, name: String): Int {
+    override fun glGetAttribLocation(program: GLESShaderProgram, name: String): Int {
         return GL20.glGetAttribLocation(program, name)
     }
 
-    override fun glGetProgramInfoLog(program: Int): String? {
+    override fun glGetProgramInfoLog(program: GLESShaderProgram): String? {
         return GL20.glGetProgramInfoLog(program)
     }
 
-    override fun glGetShaderInfoLog(shader: Int): String? {
+    override fun glGetShaderInfoLog(shader: GLESShader): String? {
         return GL20.glGetShaderInfoLog(shader)
     }
 
@@ -312,31 +296,31 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         stack.pointer = previousSp
     }
 
-    override fun glGetShaderSource(shader: Int): String? {
+    override fun glGetShaderSource(shader: GLESShader): String? {
         return GL20.glGetShaderSource(shader)
     }
 
-    override fun glGetUniformLocation(program: Int, name: String): Int {
+    override fun glGetUniformLocation(program: GLESShaderProgram, name: String): GLESUniformLocation {
         return GL20.glGetUniformLocation(program, name)
     }
 
-    override fun glIsFramebuffer(framebuffer: Int): Boolean {
+    override fun glIsFramebuffer(framebuffer: GLESFrameBuffer): Boolean {
         return GL30.glIsFramebuffer(framebuffer)
     }
 
-    override fun glIsProgram(program: Int): Boolean {
+    override fun glIsProgram(program: GLESShaderProgram): Boolean {
         return GL20.glIsProgram(program)
     }
 
-    override fun glIsRenderbuffer(renderbuffer: Int): Boolean {
+    override fun glIsRenderbuffer(renderbuffer: GLESRenderBuffer): Boolean {
         return GL30.glIsRenderbuffer(renderbuffer)
     }
 
-    override fun glIsShader(shader: Int): Boolean {
+    override fun glIsShader(shader: GLESShader): Boolean {
         return GL20.glIsShader(shader)
     }
 
-    override fun glLinkProgram(program: Int) {
+    override fun glLinkProgram(program: GLESShaderProgram) {
         GL20.glLinkProgram(program)
     }
 
@@ -346,7 +330,7 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         GL30.glRenderbufferStorage(target, internalformat, width, height)
     }
 
-    override fun glShaderSource(shader: Int, source: String) {
+    override fun glShaderSource(shader: GLESShader, source: String) {
         GL20.glShaderSource(shader, source)
     }
 
@@ -362,89 +346,89 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         GL20.glStencilOpSeparate(face, sfail, dpfail, dppass)
     }
 
-    override fun glUniform1f(location: Int, v0: Float) {
+    override fun glUniform1f(location: GLESUniformLocation, v0: Float) {
         GL20.glUniform1f(location, v0)
     }
 
-    override fun glUniform1fv(location: Int, value: FloatArray) {
+    override fun glUniform1fv(location: GLESUniformLocation, value: FloatArray) {
         GL20.glUniform1fv(location, value)
     }
 
-    override fun glUniform1i(location: Int, v0: Int) {
+    override fun glUniform1i(location: GLESUniformLocation, v0: Int) {
         GL20.glUniform1i(location, v0)
     }
 
-    override fun glUniform1iv(location: Int, value: IntArray) {
+    override fun glUniform1iv(location: GLESUniformLocation, value: IntArray) {
         GL20.glUniform1iv(location, value)
     }
 
-    override fun glUniform2f(location: Int, v0: Float, v1: Float) {
+    override fun glUniform2f(location: GLESUniformLocation, v0: Float, v1: Float) {
         GL20.glUniform2f(location, v0, v1)
     }
 
-    override fun glUniform2fv(location: Int, value: FloatArray) {
+    override fun glUniform2fv(location: GLESUniformLocation, value: FloatArray) {
         GL20.glUniform2fv(location, value)
     }
 
-    override fun glUniform2i(location: Int, v0: Int, v1: Int) {
+    override fun glUniform2i(location: GLESUniformLocation, v0: Int, v1: Int) {
         GL20.glUniform2i(location, v0, v1)
     }
 
-    override fun glUniform2iv(location: Int, value: IntArray) {
+    override fun glUniform2iv(location: GLESUniformLocation, value: IntArray) {
         GL20.glUniform2iv(location, value)
     }
 
-    override fun glUniform3f(location: Int, v0: Float, v1: Float, v2: Float) {
+    override fun glUniform3f(location: GLESUniformLocation, v0: Float, v1: Float, v2: Float) {
         GL20.glUniform3f(location, v0, v1, v2)
     }
 
-    override fun glUniform3fv(location: Int, value: FloatArray) {
+    override fun glUniform3fv(location: GLESUniformLocation, value: FloatArray) {
         GL20.glUniform3fv(location, value)
     }
 
-    override fun glUniform3i(location: Int, v0: Int, v1: Int, v2: Int) {
+    override fun glUniform3i(location: GLESUniformLocation, v0: Int, v1: Int, v2: Int) {
         GL20.glUniform3i(location, v0, v1, v2)
     }
 
-    override fun glUniform3iv(location: Int, value: IntArray) {
+    override fun glUniform3iv(location: GLESUniformLocation, value: IntArray) {
         GL20.glUniform3iv(location, value)
     }
 
     override fun glUniform4f(
-        location: Int, v0: Float, v1: Float, v2: Float, v3: Float
+        location: GLESUniformLocation, v0: Float, v1: Float, v2: Float, v3: Float
     ) {
         GL20.glUniform4f(location, v0, v1, v2, v3)
     }
 
-    override fun glUniform4fv(location: Int, value: FloatArray) {
+    override fun glUniform4fv(location: GLESUniformLocation, value: FloatArray) {
         GL20.glUniform4fv(location, value)
     }
 
-    override fun glUniform4i(location: Int, v0: Int, v1: Int, v2: Int, v3: Int) {
+    override fun glUniform4i(location: GLESUniformLocation, v0: Int, v1: Int, v2: Int, v3: Int) {
         GL20.glUniform4i(location, v0, v1, v2, v3)
     }
 
-    override fun glUniform4iv(location: Int, value: IntArray) {
+    override fun glUniform4iv(location: GLESUniformLocation, value: IntArray) {
         GL20.glUniform4iv(location, value)
     }
 
-    override fun glUniformMatrix2fv(location: Int, transpose: Boolean, value: FloatArray) {
+    override fun glUniformMatrix2fv(location: GLESUniformLocation, transpose: Boolean, value: FloatArray) {
         GL20.glUniformMatrix2fv(location, transpose, value)
     }
 
-    override fun glUniformMatrix3fv(location: Int, transpose: Boolean, value: FloatArray) {
+    override fun glUniformMatrix3fv(location: GLESUniformLocation, transpose: Boolean, value: FloatArray) {
         GL20.glUniformMatrix3fv(location, transpose, value)
     }
 
-    override fun glUniformMatrix4fv(location: Int, transpose: Boolean, value: FloatArray) {
+    override fun glUniformMatrix4fv(location: GLESUniformLocation, transpose: Boolean, value: FloatArray) {
         GL20.glUniformMatrix4fv(location, transpose, value)
     }
 
-    override fun glUseProgram(program: Int) {
+    override fun glUseProgram(program: GLESShaderProgram) {
         GL20.glUseProgram(program)
     }
 
-    override fun glValidateProgram(program: Int) {
+    override fun glValidateProgram(program: GLESShaderProgram) {
         GL20.glValidateProgram(program)
     }
 

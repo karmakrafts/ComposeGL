@@ -16,7 +16,6 @@
 
 package dev.karmakrafts.composegl.gles
 
-import dev.karmakrafts.composegl.util.HandleMap
 import dev.karmakrafts.composegl.util.copyTo
 import dev.karmakrafts.composegl.util.toFloat32Array
 import dev.karmakrafts.composegl.util.toInt16Array
@@ -24,9 +23,7 @@ import dev.karmakrafts.composegl.util.toInt32Array
 import dev.karmakrafts.composegl.util.toInt8Array
 import org.khronos.webgl.Int32Array
 import org.khronos.webgl.Int8Array
-import org.khronos.webgl.WebGLBuffer
 import org.khronos.webgl.WebGLRenderingContext
-import org.khronos.webgl.WebGLTexture
 
 internal open class PlatformGLES11(protected val context: WebGLRenderingContext) : GLES11 {
     override val GL_DEPTH_BUFFER_BIT: Int get() = WebGLRenderingContext.DEPTH_BUFFER_BIT
@@ -200,9 +197,6 @@ internal open class PlatformGLES11(protected val context: WebGLRenderingContext)
     override val GL_BUFFER_SIZE: Int get() = WebGLRenderingContext.BUFFER_SIZE
     override val GL_BUFFER_USAGE: Int get() = WebGLRenderingContext.BUFFER_USAGE
 
-    protected val textures: HandleMap<WebGLTexture> = HandleMap()
-    protected val buffers: HandleMap<WebGLBuffer> = HandleMap()
-
     override fun glClearColor(red: Float, green: Float, blue: Float, alpha: Float) {
         context.clearColor(red, green, blue, alpha)
     }
@@ -231,12 +225,12 @@ internal open class PlatformGLES11(protected val context: WebGLRenderingContext)
         context.activeTexture(texture)
     }
 
-    override fun glBindBuffer(target: Int, buffer: Int) {
-        context.bindBuffer(target, buffers[buffer])
+    override fun glBindBuffer(target: Int, buffer: GLESBuffer) {
+        context.bindBuffer(target, buffer.asDynamic())
     }
 
-    override fun glBindTexture(target: Int, texture: Int) {
-        context.bindTexture(target, textures[texture])
+    override fun glBindTexture(target: Int, texture: GLESTexture) {
+        context.bindTexture(target, texture.asDynamic())
     }
 
     override fun glBlendFunc(sfactor: Int, dfactor: Int) {
@@ -315,18 +309,12 @@ internal open class PlatformGLES11(protected val context: WebGLRenderingContext)
         context.cullFace(mode)
     }
 
-    override fun glDeleteBuffers(buffers: IntArray) {
-        for (id in buffers) {
-            context.deleteBuffer(this.buffers[id])
-            this.buffers -= id
-        }
+    override fun glDeleteBuffer(buffer: GLESBuffer) {
+        context.deleteBuffer(buffer.asDynamic())
     }
 
-    override fun glDeleteTextures(textures: IntArray) {
-        for (id in textures) {
-            context.deleteTexture(this.textures[id])
-            this.textures -= id
-        }
+    override fun glDeleteTexture(texture: GLESTexture) {
+        context.deleteTexture(texture.asDynamic())
     }
 
     override fun glDepthFunc(func: Int) {
@@ -365,16 +353,12 @@ internal open class PlatformGLES11(protected val context: WebGLRenderingContext)
         context.frontFace(mode)
     }
 
-    override fun glGenBuffers(buffers: IntArray) {
-        for (index in buffers.indices) {
-            buffers[index] = this.buffers.putNext(context.createBuffer()!!)
-        }
+    override fun glGenBuffer(): GLESBuffer {
+        return context.createBuffer()!!
     }
 
-    override fun glGenTextures(textures: IntArray) {
-        for (index in textures.indices) {
-            textures[index] = this.textures.putNext(context.createTexture()!!)
-        }
+    override fun glGenTexture(): GLESTexture {
+        return context.createTexture()!!
     }
 
     override fun glGetError(): Int {
@@ -385,16 +369,16 @@ internal open class PlatformGLES11(protected val context: WebGLRenderingContext)
         context.hint(target, mode)
     }
 
-    override fun glIsBuffer(buffer: Int): Boolean {
-        return context.isBuffer(buffers[buffer])
+    override fun glIsBuffer(buffer: GLESBuffer): Boolean {
+        return context.isBuffer(buffer.asDynamic())
     }
 
     override fun glIsEnabled(cap: Int): Boolean {
         return context.isEnabled(cap)
     }
 
-    override fun glIsTexture(texture: Int): Boolean {
-        return context.isTexture(textures[texture])
+    override fun glIsTexture(texture: GLESTexture): Boolean {
+        return context.isTexture(texture.asDynamic())
     }
 
     override fun glPixelStorei(pname: Int, param: Int) {

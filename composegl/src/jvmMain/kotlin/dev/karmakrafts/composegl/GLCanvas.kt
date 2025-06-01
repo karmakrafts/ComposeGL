@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("GLCanvasImpl")
+
 package dev.karmakrafts.composegl
 
 import androidx.compose.runtime.Composable

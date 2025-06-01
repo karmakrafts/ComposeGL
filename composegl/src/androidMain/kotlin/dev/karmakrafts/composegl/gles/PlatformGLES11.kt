@@ -222,11 +222,11 @@ internal object PlatformGLES11 : GLES11 {
         AndroidGLES11.glActiveTexture(texture)
     }
 
-    override fun glBindBuffer(target: Int, buffer: Int) {
+    override fun glBindBuffer(target: Int, buffer: GLESBuffer) {
         AndroidGLES11.glBindBuffer(target, buffer)
     }
 
-    override fun glBindTexture(target: Int, texture: Int) {
+    override fun glBindTexture(target: Int, texture: GLESTexture) {
         AndroidGLES11.glBindTexture(target, texture)
     }
 
@@ -302,20 +302,24 @@ internal object PlatformGLES11 : GLES11 {
         AndroidGLES11.glCullFace(mode)
     }
 
-    override fun glGenBuffers(buffers: IntArray) {
-        AndroidGLES11.glGenBuffers(buffers.size, buffers, 0)
+    override fun glGenBuffer(): GLESBuffer {
+        val buffers = IntArray(1)
+        AndroidGLES11.glGenBuffers(1, buffers, 0)
+        return buffers.first()
     }
 
-    override fun glDeleteBuffers(buffers: IntArray) {
-        AndroidGLES11.glDeleteBuffers(buffers.size, buffers, 0)
+    override fun glDeleteBuffer(buffer: GLESBuffer) {
+        AndroidGLES11.glDeleteBuffers(1, intArrayOf(buffer), 0)
     }
 
-    override fun glGenTextures(textures: IntArray) {
-        AndroidGLES11.glGenTextures(textures.size, textures, 0)
+    override fun glGenTexture(): GLESTexture {
+        val buffers = IntArray(1)
+        AndroidGLES11.glGenTextures(1, buffers, 0)
+        return buffers.first()
     }
 
-    override fun glDeleteTextures(textures: IntArray) {
-        AndroidGLES11.glDeleteTextures(textures.size, textures, 0)
+    override fun glDeleteTexture(texture: GLESTexture) {
+        AndroidGLES11.glDeleteTextures(1, intArrayOf(texture), 0)
     }
 
     override fun glDepthFunc(func: Int) {
@@ -362,7 +366,7 @@ internal object PlatformGLES11 : GLES11 {
         AndroidGLES11.glHint(target, mode)
     }
 
-    override fun glIsBuffer(buffer: Int): Boolean {
+    override fun glIsBuffer(buffer: GLESBuffer): Boolean {
         return AndroidGLES11.glIsBuffer(buffer)
     }
 

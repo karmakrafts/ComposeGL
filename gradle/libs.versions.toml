@@ -13,8 +13,6 @@ compose = "1.7.3" # https://github.com/JetBrains/compose-multiplatform/releases
 dokka = "2.0.0" # https://github.com/Kotlin/dokka/releases
 karmaConventions = "1.3.20"
 skiko = "0.9.4.2"
-introspekt = "1.2.0"
-lazyStatic = "1.0.1"
 
 [libraries]
 skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skiko" }
@@ -22,7 +20,6 @@ lwjgl = { module = "org.lwjgl:lwjgl", version.ref = "lwjgl" }
 lwjgl-jawt = { module = "org.lwjgl:lwjgl-jawt", version.ref = "lwjgl" }
 lwjgl-opengl = { module = "org.lwjgl:lwjgl-opengl", version.ref = "lwjgl" }
 lwjglx-awt = { module = "org.lwjglx:lwjgl3-awt", version.ref = "lwjglx" }
-lazyStatic = { module = "dev.karmakrafts.lazystatic:lazystatic-core", version.ref = "lazyStatic" }
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -32,4 +29,3 @@ compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 karmaConventions = { id = "dev.karmakrafts.conventions.karma-conventions", version.ref = "karmaConventions" }
-introspekt = { id = "dev.karmakrafts.introspekt.introspekt-gradle-plugin", version.ref = "introspekt" }

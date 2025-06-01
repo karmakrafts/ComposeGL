@@ -18,9 +18,6 @@ package dev.karmakrafts.composegl
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.InternalComposeUiApi
-import androidx.compose.ui.scene.CanvasLayersComposeScene
-import androidx.compose.ui.window.CanvasBasedWindow
-import org.jetbrains.skia.DirectContext
 
 @OptIn(InternalComposeUiApi::class)
 @Composable
@@ -30,13 +27,5 @@ actual fun GLCanvas(
     overlayContent: (@Composable () -> Unit)?,
     content: GLRenderScope.() -> Unit
 ) {
-    DirectContext.makeGL()
-    val scene = CanvasLayersComposeScene()
-    scene.setContent {
 
-    }
-    CanvasBasedWindow {
-
-    }
-    scene.render()
 }

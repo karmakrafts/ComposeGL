@@ -127,4 +127,332 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override val GL_RENDERBUFFER_BINDING: Int get() = AndroidGLES20.GL_RENDERBUFFER_BINDING
     override val GL_MAX_RENDERBUFFER_SIZE: Int get() = AndroidGLES20.GL_MAX_RENDERBUFFER_SIZE
     override val GL_INVALID_FRAMEBUFFER_OPERATION: Int get() = AndroidGLES20.GL_INVALID_FRAMEBUFFER_OPERATION
+
+    private const val MAX_NAME_SIZE: Int = 4096
+
+    override fun glAttachShader(program: GLESShaderProgram, shader: GLESShader) {
+        AndroidGLES20.glAttachShader(program, shader)
+    }
+
+    override fun glBindAttribLocation(program: GLESShaderProgram, index: Int, name: String) {
+        AndroidGLES20.glBindAttribLocation(program, index, name)
+    }
+
+    override fun glBindFramebuffer(target: Int, framebuffer: GLESFrameBuffer) {
+        AndroidGLES20.glBindFramebuffer(target, framebuffer)
+    }
+
+    override fun glBindRenderbuffer(target: Int, renderbuffer: GLESRenderBuffer) {
+        AndroidGLES20.glBindRenderbuffer(target, renderbuffer)
+    }
+
+    override fun glBlendColor(red: Float, green: Float, blue: Float, alpha: Float) {
+        AndroidGLES20.glBlendColor(red, green, blue, alpha)
+    }
+
+    override fun glBlendEquation(mode: Int) {
+        AndroidGLES20.glBlendEquation(mode)
+    }
+
+    override fun glBlendEquationSeparate(modeRGB: Int, modeAlpha: Int) {
+        AndroidGLES20.glBlendEquationSeparate(modeRGB, modeAlpha)
+    }
+
+    override fun glBlendFuncSeparate(
+        sfactorRGB: Int, dfactorRGB: Int, sfactorAlpha: Int, dfactorAlpha: Int
+    ) {
+        AndroidGLES20.glBlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha)
+    }
+
+    override fun glCheckFramebufferStatus(target: Int): Int {
+        return AndroidGLES20.glCheckFramebufferStatus(target)
+    }
+
+    override fun glCompileShader(shader: GLESShader) {
+        AndroidGLES20.glCompileShader(shader)
+    }
+
+    override fun glCreateProgram(): GLESShaderProgram {
+        return AndroidGLES20.glCreateProgram()
+    }
+
+    override fun glCreateShader(type: Int): GLESShader {
+        return AndroidGLES20.glCreateShader(type)
+    }
+
+    override fun glDeleteFramebuffer(framebuffer: GLESFrameBuffer) {
+        AndroidGLES20.glDeleteFramebuffers(1, intArrayOf(framebuffer), 0)
+    }
+
+    override fun glDeleteProgram(program: GLESShaderProgram) {
+        AndroidGLES20.glDeleteProgram(program)
+    }
+
+    override fun glDeleteRenderbuffer(renderbuffer: GLESRenderBuffer) {
+        AndroidGLES20.glDeleteRenderbuffers(1, intArrayOf(renderbuffer), 0)
+    }
+
+    override fun glDeleteShader(shader: GLESShader) {
+        AndroidGLES20.glDeleteShader(shader)
+    }
+
+    override fun glDetachShader(program: GLESShaderProgram, shader: GLESShader) {
+        AndroidGLES20.glDetachShader(program, shader)
+    }
+
+    override fun glDisableVertexAttribArray(index: Int) {
+        AndroidGLES20.glDisableVertexAttribArray(index)
+    }
+
+    override fun glEnableVertexAttribArray(index: Int) {
+        AndroidGLES20.glEnableVertexAttribArray(index)
+    }
+
+    override fun glFramebufferRenderbuffer(
+        target: Int, attachment: Int, renderbuffertarget: Int, renderbuffer: GLESRenderBuffer
+    ) {
+        AndroidGLES20.glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer)
+    }
+
+    override fun glFramebufferTexture2D(
+        target: Int, attachment: Int, textarget: Int, texture: GLESTexture, level: Int
+    ) {
+        AndroidGLES20.glFramebufferTexture2D(target, attachment, textarget, texture, level)
+    }
+
+    override fun glGenerateMipmap(target: Int) {
+        AndroidGLES20.glGenerateMipmap(target)
+    }
+
+    override fun glGenFramebuffer(): GLESFrameBuffer {
+        val id = IntArray(1)
+        AndroidGLES20.glGenFramebuffers(1, id, 0)
+        return id.first()
+    }
+
+    override fun glGenRenderbuffer(): GLESRenderBuffer {
+        val id = IntArray(1)
+        AndroidGLES20.glGenRenderbuffers(1, id, 0)
+        return id.first()
+    }
+
+    override fun glGetActiveAttrib(
+        program: GLESShaderProgram, index: Int, info: GLESActiveInfo
+    ) {
+        val props = IntArray(2)
+        val name = ByteArray(MAX_NAME_SIZE)
+        AndroidGLES20.glGetActiveAttrib(program, index, 0, null, 0, props, 0, props, 1, name, 0)
+        info.size = props[0]
+        info.type = props[1]
+        info.name = name.decodeToString()
+    }
+
+    override fun glGetActiveUniform(
+        program: GLESShaderProgram, index: Int, info: GLESActiveInfo
+    ) {
+        val props = IntArray(2)
+        val name = ByteArray(MAX_NAME_SIZE)
+        AndroidGLES20.glGetActiveUniform(program, index, 0, null, 0, props, 0, props, 1, name, 0)
+        info.size = props[0]
+        info.type = props[1]
+        info.name = name.decodeToString()
+    }
+
+    override fun glGetAttribLocation(program: GLESShaderProgram, name: String): Int {
+        return AndroidGLES20.glGetAttribLocation(program, name)
+    }
+
+    override fun glGetProgramInfoLog(program: GLESShaderProgram): String? {
+        return AndroidGLES20.glGetProgramInfoLog(program)
+    }
+
+    override fun glGetShaderInfoLog(shader: GLESShader): String? {
+        return AndroidGLES20.glGetShaderInfoLog(shader)
+    }
+
+    override fun glGetShaderPrecisionFormat(
+        shadertype: Int, precisiontype: Int, format: GLESShaderPrecisionFormat
+    ) {
+        val props = IntArray(3)
+        AndroidGLES20.glGetShaderPrecisionFormat(shadertype, precisiontype, props, 0, props, 2)
+        format.precision = props[2]
+        format.rangeMin = props[0]
+        format.rangeMax = props[1]
+    }
+
+    override fun glGetShaderSource(shader: GLESShader): String? {
+        return AndroidGLES20.glGetShaderSource(shader)
+    }
+
+    override fun glGetUniformLocation(program: GLESShaderProgram, name: String): GLESUniformLocation {
+        return AndroidGLES20.glGetUniformLocation(program, name)
+    }
+
+    override fun glIsFramebuffer(framebuffer: GLESFrameBuffer): Boolean {
+        return AndroidGLES20.glIsFramebuffer(framebuffer)
+    }
+
+    override fun glIsProgram(program: GLESShaderProgram): Boolean {
+        return AndroidGLES20.glIsProgram(program)
+    }
+
+    override fun glIsRenderbuffer(renderbuffer: GLESRenderBuffer): Boolean {
+        return AndroidGLES20.glIsRenderbuffer(renderbuffer)
+    }
+
+    override fun glIsShader(shader: GLESShader): Boolean {
+        return AndroidGLES20.glIsShader(shader)
+    }
+
+    override fun glLinkProgram(program: GLESShaderProgram) {
+        AndroidGLES20.glLinkProgram(program)
+    }
+
+    override fun glRenderbufferStorage(
+        target: Int, internalformat: Int, width: Int, height: Int
+    ) {
+        AndroidGLES20.glRenderbufferStorage(target, internalformat, width, height)
+    }
+
+    override fun glShaderSource(shader: GLESShader, source: String) {
+        AndroidGLES20.glShaderSource(shader, source)
+    }
+
+    override fun glStencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int) {
+        AndroidGLES20.glStencilFuncSeparate(face, func, ref, mask)
+    }
+
+    override fun glStencilMaskSeparate(face: Int, mask: Int) {
+        AndroidGLES20.glStencilMaskSeparate(face, mask)
+    }
+
+    override fun glStencilOpSeparate(face: Int, sfail: Int, dpfail: Int, dppass: Int) {
+        AndroidGLES20.glStencilOpSeparate(face, sfail, dpfail, dppass)
+    }
+
+    override fun glUniform1f(location: GLESUniformLocation, v0: Float) {
+        AndroidGLES20.glUniform1f(location, v0)
+    }
+
+    override fun glUniform1fv(location: GLESUniformLocation, value: FloatArray) {
+        AndroidGLES20.glUniform1fv(location, value.size, value, 0)
+    }
+
+    override fun glUniform1i(location: GLESUniformLocation, v0: Int) {
+        AndroidGLES20.glUniform1i(location, v0)
+    }
+
+    override fun glUniform1iv(location: GLESUniformLocation, value: IntArray) {
+        AndroidGLES20.glUniform1iv(location, value.size, value, 0)
+    }
+
+    override fun glUniform2f(location: GLESUniformLocation, v0: Float, v1: Float) {
+        AndroidGLES20.glUniform2f(location, v0, v1)
+    }
+
+    override fun glUniform2fv(location: GLESUniformLocation, value: FloatArray) {
+        AndroidGLES20.glUniform2fv(location, value.size, value, 0)
+    }
+
+    override fun glUniform2i(location: GLESUniformLocation, v0: Int, v1: Int) {
+        AndroidGLES20.glUniform2i(location, v0, v1)
+    }
+
+    override fun glUniform2iv(location: GLESUniformLocation, value: IntArray) {
+        AndroidGLES20.glUniform2iv(location, value.size, value, 0)
+    }
+
+    override fun glUniform3f(location: GLESUniformLocation, v0: Float, v1: Float, v2: Float) {
+        AndroidGLES20.glUniform3f(location, v0, v1, v2)
+    }
+
+    override fun glUniform3fv(location: GLESUniformLocation, value: FloatArray) {
+        AndroidGLES20.glUniform3fv(location, value.size, value, 0)
+    }
+
+    override fun glUniform3i(location: GLESUniformLocation, v0: Int, v1: Int, v2: Int) {
+        AndroidGLES20.glUniform3i(location, v0, v1, v2)
+    }
+
+    override fun glUniform3iv(location: GLESUniformLocation, value: IntArray) {
+        AndroidGLES20.glUniform3iv(location, value.size, value, 0)
+    }
+
+    override fun glUniform4f(
+        location: GLESUniformLocation, v0: Float, v1: Float, v2: Float, v3: Float
+    ) {
+        AndroidGLES20.glUniform4f(location, v0, v1, v2, v3)
+    }
+
+    override fun glUniform4fv(location: GLESUniformLocation, value: FloatArray) {
+        AndroidGLES20.glUniform4fv(location, value.size, value, 0)
+    }
+
+    override fun glUniform4i(location: GLESUniformLocation, v0: Int, v1: Int, v2: Int, v3: Int) {
+        AndroidGLES20.glUniform4i(location, v0, v1, v2, v3)
+    }
+
+    override fun glUniform4iv(location: GLESUniformLocation, value: IntArray) {
+        AndroidGLES20.glUniform4iv(location, value.size, value, 0)
+    }
+
+    override fun glUniformMatrix2fv(location: GLESUniformLocation, transpose: Boolean, value: FloatArray) {
+        AndroidGLES20.glUniformMatrix2fv(location, value.size, transpose, value, 0)
+    }
+
+    override fun glUniformMatrix3fv(location: GLESUniformLocation, transpose: Boolean, value: FloatArray) {
+        AndroidGLES20.glUniformMatrix3fv(location, value.size, transpose, value, 0)
+    }
+
+    override fun glUniformMatrix4fv(location: GLESUniformLocation, transpose: Boolean, value: FloatArray) {
+        AndroidGLES20.glUniformMatrix4fv(location, value.size, transpose, value, 0)
+    }
+
+    override fun glUseProgram(program: GLESShaderProgram) {
+        AndroidGLES20.glUseProgram(program)
+    }
+
+    override fun glValidateProgram(program: GLESShaderProgram) {
+        AndroidGLES20.glValidateProgram(program)
+    }
+
+    override fun glVertexAttrib1f(index: Int, x: Float) {
+        AndroidGLES20.glVertexAttrib1f(index, x)
+    }
+
+    override fun glVertexAttrib1fv(index: Int, v: FloatArray) {
+        AndroidGLES20.glVertexAttrib1fv(index, v, 0)
+    }
+
+    override fun glVertexAttrib2f(index: Int, x: Float, y: Float) {
+        AndroidGLES20.glVertexAttrib2f(index, x, y)
+    }
+
+    override fun glVertexAttrib2fv(index: Int, v: FloatArray) {
+        AndroidGLES20.glVertexAttrib2fv(index, v, 0)
+    }
+
+    override fun glVertexAttrib3f(index: Int, x: Float, y: Float, z: Float) {
+        AndroidGLES20.glVertexAttrib3f(index, x, y, z)
+    }
+
+    override fun glVertexAttrib3fv(index: Int, v: FloatArray) {
+        AndroidGLES20.glVertexAttrib3fv(index, v, 0)
+    }
+
+    override fun glVertexAttrib4f(
+        index: Int, x: Float, y: Float, z: Float, w: Float
+    ) {
+        AndroidGLES20.glVertexAttrib4f(index, x, y, z, w)
+    }
+
+    override fun glVertexAttrib4fv(index: Int, v: FloatArray) {
+        AndroidGLES20.glVertexAttrib4fv(index, v, 0)
+    }
+
+    override fun glVertexAttribPointer(
+        index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Long
+    ) {
+        AndroidGLES20.glVertexAttribPointer(index, size, type, normalized, stride, offset.toInt())
+    }
 }

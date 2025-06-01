@@ -18,12 +18,14 @@ package dev.karmakrafts.composegl.gles
 
 import kotlinx.cinterop.COpaque
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.alloc
 import kotlinx.cinterop.cValuesOf
 import kotlinx.cinterop.convert
-import kotlinx.cinterop.reinterpret
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toCPointer
-import kotlinx.cinterop.usePinned
+import kotlinx.cinterop.value
+import platform.OpenGLCommon.GLuintVar
 
 @OptIn(ExperimentalForeignApi::class)
 internal object PlatformGLES11 : GLES11 {
@@ -226,11 +228,11 @@ internal object PlatformGLES11 : GLES11 {
         platform.OpenGL.glActiveTexture(texture.convert())
     }
 
-    override fun glBindBuffer(target: Int, buffer: Int) {
+    override fun glBindBuffer(target: Int, buffer: GLESBuffer) {
         platform.OpenGL.glBindBuffer(target.convert(), buffer.convert())
     }
 
-    override fun glBindTexture(target: Int, texture: Int) {
+    override fun glBindTexture(target: Int, texture: GLESTexture) {
         platform.OpenGL.glBindTexture(target.convert(), texture.convert())
     }
 
@@ -323,28 +325,24 @@ internal object PlatformGLES11 : GLES11 {
         platform.OpenGL.glCullFace(mode.convert())
     }
 
-    override fun glGenBuffers(buffers: IntArray) {
-        buffers.usePinned { pinnedArray ->
-            platform.OpenGL.glGenBuffers(buffers.size.convert(), pinnedArray.addressOf(0).reinterpret())
-        }
+    override fun glGenBuffer(): GLESBuffer = memScoped {
+        val id = alloc<GLuintVar>()
+        platform.OpenGL.glGenBuffers(1, id.ptr)
+        id.value.toInt()
     }
 
-    override fun glDeleteBuffers(buffers: IntArray) {
-        buffers.usePinned { pinnedArray ->
-            platform.OpenGL.glDeleteBuffers(buffers.size.convert(), pinnedArray.addressOf(0).reinterpret())
-        }
+    override fun glDeleteBuffer(buffer: GLESBuffer) {
+        platform.OpenGL.glDeleteBuffers(1, cValuesOf(buffer.toUInt()))
     }
 
-    override fun glGenTextures(textures: IntArray) {
-        textures.usePinned { pinnedArray ->
-            platform.OpenGL.glGenTextures(textures.size.convert(), pinnedArray.addressOf(0).reinterpret())
-        }
+    override fun glGenTexture(): GLESTexture = memScoped {
+        val id = alloc<GLuintVar>()
+        platform.OpenGL.glGenTextures(1, id.ptr)
+        id.value.toInt()
     }
 
-    override fun glDeleteTextures(textures: IntArray) {
-        textures.usePinned { pinnedArray ->
-            platform.OpenGL.glDeleteTextures(textures.size.convert(), pinnedArray.addressOf(0).reinterpret())
-        }
+    override fun glDeleteTexture(texture: GLESTexture) {
+        platform.OpenGL.glDeleteTextures(1, cValuesOf(texture.toUInt()))
     }
 
     override fun glDepthFunc(func: Int) {
@@ -391,7 +389,7 @@ internal object PlatformGLES11 : GLES11 {
         platform.OpenGL.glHint(target.convert(), mode.convert())
     }
 
-    override fun glIsBuffer(buffer: Int): Boolean {
+    override fun glIsBuffer(buffer: GLESBuffer): Boolean {
         return platform.OpenGL.glIsBuffer(buffer.convert()).convert<Int>().fromGLBool()
     }
 
