@@ -16,10 +16,32 @@
 
 package dev.karmakrafts.composegl.gles
 
+import kotlinx.cinterop.ByteVar
+import kotlinx.cinterop.COpaque
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.cValuesOf
+import kotlinx.cinterop.convert
+import kotlinx.cinterop.cstr
+import kotlinx.cinterop.free
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.nativeHeap
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.reinterpret
+import kotlinx.cinterop.toCPointer
+import kotlinx.cinterop.toKStringFromUtf8
+import kotlinx.cinterop.usePinned
+import kotlinx.cinterop.value
 import platform.OpenGL.GL_MAX_FRAGMENT_UNIFORM_COMPONENTS
 import platform.OpenGL.GL_MAX_VARYING_COMPONENTS_EXT
 import platform.OpenGL.GL_MAX_VERTEX_UNIFORM_COMPONENTS
+import platform.OpenGLCommon.GLenumVar
+import platform.OpenGLCommon.GLintVar
+import platform.OpenGLCommon.GLsizeiVar
 
+@OptIn(ExperimentalForeignApi::class)
 internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override val GL_FUNC_ADD: Int get() = platform.OpenGL.GL_FUNC_ADD
     override val GL_BLEND_EQUATION: Int get() = platform.OpenGL.GL_BLEND_EQUATION
@@ -129,4 +151,409 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override val GL_RENDERBUFFER_BINDING: Int get() = platform.OpenGL.GL_RENDERBUFFER_BINDING
     override val GL_MAX_RENDERBUFFER_SIZE: Int get() = platform.OpenGL.GL_MAX_RENDERBUFFER_SIZE
     override val GL_INVALID_FRAMEBUFFER_OPERATION: Int get() = platform.OpenGL.GL_INVALID_FRAMEBUFFER_OPERATION
+
+    private const val MAX_NAME_SIZE: Int = 4096
+
+    override fun glAttachShader(program: Int, shader: Int) {
+        platform.OpenGL.glAttachShader(program.convert(), shader.convert())
+    }
+
+    override fun glBindAttribLocation(program: Int, index: Int, name: String) {
+        platform.OpenGL.glBindAttribLocation(program.convert(), index.convert(), name)
+    }
+
+    override fun glBindFramebuffer(target: Int, framebuffer: Int) {
+        platform.OpenGL.glBindFramebuffer(target.convert(), framebuffer.convert())
+    }
+
+    override fun glBindRenderbuffer(target: Int, renderbuffer: Int) {
+        platform.OpenGL.glBindRenderbuffer(target.convert(), renderbuffer.convert())
+    }
+
+    override fun glBlendColor(red: Float, green: Float, blue: Float, alpha: Float) {
+        platform.OpenGL.glBlendColor(red, green, blue, alpha)
+    }
+
+    override fun glBlendEquation(mode: Int) {
+        platform.OpenGL.glBlendEquation(mode.convert())
+    }
+
+    override fun glBlendEquationSeparate(modeRGB: Int, modeAlpha: Int) {
+        platform.OpenGL.glBlendEquationSeparate(modeRGB.convert(), modeAlpha.convert())
+    }
+
+    override fun glBlendFuncSeparate(
+        sfactorRGB: Int, dfactorRGB: Int, sfactorAlpha: Int, dfactorAlpha: Int
+    ) {
+        platform.OpenGL.glBlendFuncSeparate(
+            sfactorRGB.convert(),
+            dfactorRGB.convert(),
+            sfactorAlpha.convert(),
+            dfactorAlpha.convert()
+        )
+    }
+
+    override fun glCheckFramebufferStatus(target: Int): Int {
+        return platform.OpenGL.glCheckFramebufferStatus(target.convert()).convert()
+    }
+
+    override fun glCompileShader(shader: Int) {
+        platform.OpenGL.glCompileShader(shader.convert())
+    }
+
+    override fun glCreateProgram(): Int {
+        return platform.OpenGL.glCreateProgram().convert()
+    }
+
+    override fun glCreateShader(type: Int): Int {
+        return platform.OpenGL.glCreateShader(type.convert()).convert()
+    }
+
+    override fun glDeleteFramebuffers(framebuffers: IntArray) {
+        platform.OpenGL.glDeleteFramebuffers(framebuffers.size.convert(), cValuesOf(*framebuffers.toUIntArray()))
+    }
+
+    override fun glDeleteProgram(program: Int) {
+        platform.OpenGL.glDeleteProgram(program.convert())
+    }
+
+    override fun glDeleteRenderbuffers(renderbuffers: IntArray) {
+        platform.OpenGL.glDeleteRenderbuffers(renderbuffers.size.convert(), cValuesOf(*renderbuffers.toUIntArray()))
+    }
+
+    override fun glDeleteShader(shader: Int) {
+        platform.OpenGL.glDeleteShader(shader.convert())
+    }
+
+    override fun glDetachShader(program: Int, shader: Int) {
+        platform.OpenGL.glDetachShader(program.convert(), shader.convert())
+    }
+
+    override fun glDisableVertexAttribArray(index: Int) {
+        platform.OpenGL.glDisableVertexAttribArray(index.convert())
+    }
+
+    override fun glEnableVertexAttribArray(index: Int) {
+        platform.OpenGL.glEnableVertexAttribArray(index.convert())
+    }
+
+    override fun glFramebufferRenderbuffer(
+        target: Int, attachment: Int, renderbuffertarget: Int, renderbuffer: Int
+    ) {
+        platform.OpenGL.glFramebufferRenderbuffer(
+            target.convert(),
+            attachment.convert(),
+            renderbuffertarget.convert(),
+            renderbuffer.convert()
+        )
+    }
+
+    override fun glFramebufferTexture2D(
+        target: Int, attachment: Int, textarget: Int, texture: Int, level: Int
+    ) {
+        platform.OpenGL.glFramebufferTexture2D(
+            target.convert(),
+            attachment.convert(),
+            textarget.convert(),
+            texture.convert(),
+            level
+        )
+    }
+
+    override fun glGenerateMipmap(target: Int) {
+        platform.OpenGL.glGenerateMipmap(target.convert())
+    }
+
+    override fun glGenFramebuffers(framebuffers: IntArray) {
+        framebuffers.usePinned { pinnedArray ->
+            platform.OpenGL.glGenFramebuffers(framebuffers.size.convert(), pinnedArray.addressOf(0).reinterpret())
+        }
+    }
+
+    override fun glGenRenderbuffers(renderbuffers: IntArray) {
+        renderbuffers.usePinned { pinnedArray ->
+            platform.OpenGL.glGenRenderbuffers(renderbuffers.size.convert(), pinnedArray.addressOf(0).reinterpret())
+        }
+    }
+
+    override fun glGetActiveAttrib(
+        program: Int, index: Int, info: GLESActiveInfo
+    ) = memScoped {
+        val size = alloc<GLintVar>()
+        val type = alloc<GLenumVar>()
+        val name = allocArray<ByteVar>(MAX_NAME_SIZE)
+        platform.OpenGL.glGetActiveAttrib(
+            program.convert(),
+            index.convert(),
+            MAX_NAME_SIZE,
+            null,
+            size.ptr,
+            type.ptr,
+            name
+        )
+        info.size = size.value
+        info.type = type.value.convert()
+        info.name = name.toKStringFromUtf8()
+    }
+
+    override fun glGetActiveUniform(
+        program: Int, index: Int, info: GLESActiveInfo
+    ) = memScoped {
+        val size = alloc<GLintVar>()
+        val type = alloc<GLenumVar>()
+        val name = allocArray<ByteVar>(MAX_NAME_SIZE)
+        platform.OpenGL.glGetActiveUniform(
+            program.convert(),
+            index.convert(),
+            MAX_NAME_SIZE,
+            null,
+            size.ptr,
+            type.ptr,
+            name
+        )
+        info.size = size.value
+        info.type = type.value.convert()
+        info.name = name.toKStringFromUtf8()
+    }
+
+    override fun glGetAttachedShaders(program: Int, maxCount: Int, shaders: IntArray): Int = memScoped {
+        shaders.usePinned { pinnedArray ->
+            val count = alloc<GLsizeiVar>()
+            platform.OpenGL.glGetAttachedShaders(
+                program.convert(),
+                maxCount.convert(),
+                count.ptr,
+                pinnedArray.addressOf(0).reinterpret()
+            )
+            count.value
+        }
+    }
+
+    override fun glGetAttribLocation(program: Int, name: String): Int {
+        return platform.OpenGL.glGetAttribLocation(program.convert(), name).convert()
+    }
+
+    override fun glGetProgramInfoLog(program: Int): String? = memScoped {
+        val length = alloc<GLintVar>()
+        platform.OpenGL.glGetProgramiv(program.convert(), platform.OpenGL.GL_INFO_LOG_LENGTH.convert(), length.ptr)
+        if (length.value == 0) return@memScoped null
+        val bufferSize = length.value + 1 // Include null-terminator
+        val logBuffer = nativeHeap.allocArray<ByteVar>(bufferSize)
+        platform.OpenGL.glGetProgramInfoLog(program.convert(), bufferSize.convert(), null, logBuffer)
+        val log = logBuffer.toKStringFromUtf8()
+        nativeHeap.free(logBuffer)
+        log
+    }
+
+    override fun glGetShaderInfoLog(shader: Int): String? = memScoped {
+        val length = alloc<GLintVar>()
+        platform.OpenGL.glGetShaderiv(shader.convert(), platform.OpenGL.GL_INFO_LOG_LENGTH.convert(), length.ptr)
+        if (length.value == 0) return@memScoped null
+        val bufferSize = length.value + 1 // Include null-terminator
+        val logBuffer = nativeHeap.allocArray<ByteVar>(bufferSize)
+        platform.OpenGL.glGetShaderInfoLog(shader.convert(), bufferSize.convert(), null, logBuffer)
+        val log = logBuffer.toKStringFromUtf8()
+        nativeHeap.free(logBuffer)
+        log
+    }
+
+    override fun glGetShaderPrecisionFormat(
+        shadertype: Int, precisiontype: Int, format: GLESShaderPrecisionFormat
+    ) {
+        // Dummy response common on macOS systems
+        format.precision = 23
+        format.rangeMin = 127
+        format.rangeMax = 127
+    }
+
+    override fun glGetShaderSource(shader: Int): String? = memScoped {
+        val length = alloc<GLintVar>()
+        platform.OpenGL.glGetShaderiv(shader.convert(), platform.OpenGL.GL_SHADER_SOURCE_LENGTH.convert(), length.ptr)
+        if (length.value == 0) return@memScoped null
+        val bufferSize = length.value + 1 // Include null-terminator
+        val sourceBuffer = nativeHeap.allocArray<ByteVar>(bufferSize)
+        platform.OpenGL.glGetShaderSource(shader.convert(), bufferSize.convert(), null, sourceBuffer)
+        val log = sourceBuffer.toKStringFromUtf8()
+        nativeHeap.free(sourceBuffer)
+        log
+    }
+
+    override fun glGetUniformLocation(program: Int, name: String): Int {
+        return platform.OpenGL.glGetUniformLocation(program.convert(), name)
+    }
+
+    override fun glIsFramebuffer(framebuffer: Int): Boolean {
+        return platform.OpenGL.glIsFramebuffer(framebuffer.convert()).convert<Int>() == GL_TRUE
+    }
+
+    override fun glIsProgram(program: Int): Boolean {
+        return platform.OpenGL.glIsProgram(program.convert()).convert<Int>() == GL_TRUE
+    }
+
+    override fun glIsRenderbuffer(renderbuffer: Int): Boolean {
+        return platform.OpenGL.glIsRenderbuffer(renderbuffer.convert()).convert<Int>() == GL_TRUE
+    }
+
+    override fun glIsShader(shader: Int): Boolean {
+        return platform.OpenGL.glIsShader(shader.convert()).convert<Int>() == GL_TRUE
+    }
+
+    override fun glLinkProgram(program: Int) {
+        platform.OpenGL.glLinkProgram(program.convert())
+    }
+
+    override fun glRenderbufferStorage(
+        target: Int, internalformat: Int, width: Int, height: Int
+    ) {
+        platform.OpenGL.glRenderbufferStorage(target.convert(), internalformat.convert(), width, height)
+    }
+
+    override fun glShaderSource(shader: Int, source: String) = memScoped {
+        platform.OpenGL.glShaderSource(shader.convert(), 1, cValuesOf(source.cstr.ptr), cValuesOf(source.length))
+    }
+
+    override fun glStencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int) {
+        platform.OpenGL.glStencilFuncSeparate(face.convert(), func.convert(), ref, mask.convert())
+    }
+
+    override fun glStencilMaskSeparate(face: Int, mask: Int) {
+        platform.OpenGL.glStencilMaskSeparate(face.convert(), mask.convert())
+    }
+
+    override fun glStencilOpSeparate(face: Int, sfail: Int, dpfail: Int, dppass: Int) {
+        platform.OpenGL.glStencilOpSeparate(face.convert(), sfail.convert(), dpfail.convert(), dppass.convert())
+    }
+
+    override fun glUniform1f(location: Int, v0: Float) {
+        platform.OpenGL.glUniform1f(location, v0)
+    }
+
+    override fun glUniform1fv(location: Int, value: FloatArray) {
+        platform.OpenGL.glUniform1fv(location, value.size.convert(), cValuesOf(*value))
+    }
+
+    override fun glUniform1i(location: Int, v0: Int) {
+        platform.OpenGL.glUniform1i(location, v0)
+    }
+
+    override fun glUniform1iv(location: Int, value: IntArray) {
+        platform.OpenGL.glUniform1iv(location, value.size.convert(), cValuesOf(*value))
+    }
+
+    override fun glUniform2f(location: Int, v0: Float, v1: Float) {
+        platform.OpenGL.glUniform2f(location, v0, v1)
+    }
+
+    override fun glUniform2fv(location: Int, value: FloatArray) {
+        platform.OpenGL.glUniform2fv(location, value.size.convert(), cValuesOf(*value))
+    }
+
+    override fun glUniform2i(location: Int, v0: Int, v1: Int) {
+        platform.OpenGL.glUniform2i(location, v0, v1)
+    }
+
+    override fun glUniform2iv(location: Int, value: IntArray) {
+        platform.OpenGL.glUniform2iv(location, value.size.convert(), cValuesOf(*value))
+    }
+
+    override fun glUniform3f(location: Int, v0: Float, v1: Float, v2: Float) {
+        platform.OpenGL.glUniform3f(location, v0, v1, v2)
+    }
+
+    override fun glUniform3fv(location: Int, value: FloatArray) {
+        platform.OpenGL.glUniform3fv(location, value.size.convert(), cValuesOf(*value))
+    }
+
+    override fun glUniform3i(location: Int, v0: Int, v1: Int, v2: Int) {
+        platform.OpenGL.glUniform3i(location, v0, v1, v2)
+    }
+
+    override fun glUniform3iv(location: Int, value: IntArray) {
+        platform.OpenGL.glUniform3iv(location, value.size.convert(), cValuesOf(*value))
+    }
+
+    override fun glUniform4f(
+        location: Int, v0: Float, v1: Float, v2: Float, v3: Float
+    ) {
+        platform.OpenGL.glUniform4f(location, v0, v1, v2, v3)
+    }
+
+    override fun glUniform4fv(location: Int, value: FloatArray) {
+        platform.OpenGL.glUniform4fv(location, value.size.convert(), cValuesOf(*value))
+    }
+
+    override fun glUniform4i(location: Int, v0: Int, v1: Int, v2: Int, v3: Int) {
+        platform.OpenGL.glUniform4i(location, v0, v1, v2, v3)
+    }
+
+    override fun glUniform4iv(location: Int, value: IntArray) {
+        platform.OpenGL.glUniform4iv(location, value.size.convert(), cValuesOf(*value))
+    }
+
+    override fun glUniformMatrix2fv(location: Int, transpose: Boolean, value: FloatArray) {
+        platform.OpenGL.glUniformMatrix2fv(location, transpose.toGLBool(), value.size.convert(), cValuesOf(*value))
+    }
+
+    override fun glUniformMatrix3fv(location: Int, transpose: Boolean, value: FloatArray) {
+        platform.OpenGL.glUniformMatrix3fv(location, transpose.toGLBool(), value.size.convert(), cValuesOf(*value))
+    }
+
+    override fun glUniformMatrix4fv(location: Int, transpose: Boolean, value: FloatArray) {
+        platform.OpenGL.glUniformMatrix4fv(location, transpose.toGLBool(), value.size.convert(), cValuesOf(*value))
+    }
+
+    override fun glUseProgram(program: Int) {
+        platform.OpenGL.glUseProgram(program.convert())
+    }
+
+    override fun glValidateProgram(program: Int) {
+        platform.OpenGL.glValidateProgram(program.convert())
+    }
+
+    override fun glVertexAttrib1f(index: Int, x: Float) {
+        platform.OpenGL.glVertexAttrib1f(index.convert(), x)
+    }
+
+    override fun glVertexAttrib1fv(index: Int, v: FloatArray) {
+        platform.OpenGL.glVertexAttrib1fv(index.convert(), cValuesOf(*v))
+    }
+
+    override fun glVertexAttrib2f(index: Int, x: Float, y: Float) {
+        platform.OpenGL.glVertexAttrib2f(index.convert(), x, y)
+    }
+
+    override fun glVertexAttrib2fv(index: Int, v: FloatArray) {
+        platform.OpenGL.glVertexAttrib2fv(index.convert(), cValuesOf(*v))
+    }
+
+    override fun glVertexAttrib3f(index: Int, x: Float, y: Float, z: Float) {
+        platform.OpenGL.glVertexAttrib3f(index.convert(), x, y, z)
+    }
+
+    override fun glVertexAttrib3fv(index: Int, v: FloatArray) {
+        platform.OpenGL.glVertexAttrib3fv(index.convert(), cValuesOf(*v))
+    }
+
+    override fun glVertexAttrib4f(
+        index: Int, x: Float, y: Float, z: Float, w: Float
+    ) {
+        platform.OpenGL.glVertexAttrib4f(index.convert(), x, y, z, w)
+    }
+
+    override fun glVertexAttrib4fv(index: Int, v: FloatArray) {
+        platform.OpenGL.glVertexAttrib4fv(index.convert(), cValuesOf(*v))
+    }
+
+    override fun glVertexAttribPointer(
+        index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Long
+    ) {
+        platform.OpenGL.glVertexAttribPointer(
+            index.convert(),
+            size,
+            type.convert(),
+            normalized.toGLBool().convert(),
+            stride,
+            offset.toCPointer<COpaque>()
+        )
+    }
 }

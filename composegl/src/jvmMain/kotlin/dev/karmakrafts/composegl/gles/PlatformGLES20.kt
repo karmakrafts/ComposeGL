@@ -137,6 +137,8 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override val GL_MAX_RENDERBUFFER_SIZE: Int get() = GL30.GL_MAX_RENDERBUFFER_SIZE
     override val GL_INVALID_FRAMEBUFFER_OPERATION: Int get() = GL30.GL_INVALID_FRAMEBUFFER_OPERATION
 
+    private const val MAX_NAME_SIZE: Int = 4096
+
     override fun glAttachShader(program: Int, shader: Int) {
         GL20.glAttachShader(program, shader)
     }
@@ -246,7 +248,7 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         val previousSp = stack.pointer
         val size = stack.mallocInt(1)
         val type = stack.mallocInt(1)
-        val name = stack.malloc(4096) // We assume that attribute names are never > 4096
+        val name = stack.malloc(MAX_NAME_SIZE) // We assume that attribute names are never > MAX_NAME_SIZE
         GL20.glGetActiveAttrib(program, index, null, size, type, name)
         info.size = size.get()
         info.type = type.get()
@@ -261,7 +263,7 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         val previousSp = stack.pointer
         val size = stack.mallocInt(1)
         val type = stack.mallocInt(1)
-        val name = stack.malloc(4096) // We assume that attribute names are never > 4096
+        val name = stack.malloc(MAX_NAME_SIZE) // We assume that attribute names are never > MAX_NAME_SIZE
         GL20.glGetActiveUniform(program, index, null, size, type, name)
         info.size = size.get()
         info.type = type.get()
@@ -302,8 +304,9 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         val stack = MemoryStack.stackGet()
         val previousSp = stack.pointer
         val range = stack.mallocInt(2)
-        GL41.glGetShaderPrecisionFormat(shadertype, precisiontype, range)
-        format.precision = precisiontype
+        val precision = stack.mallocInt(1)
+        GL41.glGetShaderPrecisionFormat(shadertype, precisiontype, range, precision)
+        format.precision = precision.get()
         format.rangeMin = range.get(0)
         format.rangeMax = range.get(1)
         stack.pointer = previousSp
