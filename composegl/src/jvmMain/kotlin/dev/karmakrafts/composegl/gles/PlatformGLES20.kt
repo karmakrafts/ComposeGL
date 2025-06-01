@@ -22,6 +22,10 @@ import org.lwjgl.opengl.GL14
 import org.lwjgl.opengl.GL15
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL41
+import org.lwjgl.system.MemoryStack
+import org.lwjgl.system.MemoryUtil
+import kotlin.math.min
 
 internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override val GL_FUNC_ADD: Int get() = GL14.GL_FUNC_ADD
@@ -132,4 +136,352 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override val GL_RENDERBUFFER_BINDING: Int get() = GL30.GL_RENDERBUFFER_BINDING
     override val GL_MAX_RENDERBUFFER_SIZE: Int get() = GL30.GL_MAX_RENDERBUFFER_SIZE
     override val GL_INVALID_FRAMEBUFFER_OPERATION: Int get() = GL30.GL_INVALID_FRAMEBUFFER_OPERATION
+
+    override fun glAttachShader(program: Int, shader: Int) {
+        GL20.glAttachShader(program, shader)
+    }
+
+    override fun glBindAttribLocation(program: Int, index: Int, name: String) {
+        GL20.glBindAttribLocation(program, index, name)
+    }
+
+    override fun glBindFramebuffer(target: Int, framebuffer: Int) {
+        GL30.glBindFramebuffer(target, framebuffer)
+    }
+
+    override fun glBindRenderbuffer(target: Int, renderbuffer: Int) {
+        GL30.glBindRenderbuffer(target, renderbuffer)
+    }
+
+    override fun glBlendColor(red: Float, green: Float, blue: Float, alpha: Float) {
+        GL14.glBlendColor(red, green, blue, alpha)
+    }
+
+    override fun glBlendEquation(mode: Int) {
+        GL14.glBlendEquation(mode)
+    }
+
+    override fun glBlendEquationSeparate(modeRGB: Int, modeAlpha: Int) {
+        GL20.glBlendEquationSeparate(modeRGB, modeAlpha)
+    }
+
+    override fun glBlendFuncSeparate(
+        sfactorRGB: Int, dfactorRGB: Int, sfactorAlpha: Int, dfactorAlpha: Int
+    ) {
+        GL14.glBlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha)
+    }
+
+    override fun glCheckFramebufferStatus(target: Int): Int {
+        return GL30.glCheckFramebufferStatus(target)
+    }
+
+    override fun glCompileShader(shader: Int) {
+        GL20.glCompileShader(shader)
+    }
+
+    override fun glCreateProgram(): Int {
+        return GL20.glCreateProgram()
+    }
+
+    override fun glCreateShader(type: Int): Int {
+        return GL20.glCreateShader(type)
+    }
+
+    override fun glDeleteFramebuffers(framebuffers: IntArray) {
+        GL30.glDeleteFramebuffers(framebuffers)
+    }
+
+    override fun glDeleteProgram(program: Int) {
+        GL20.glDeleteProgram(program)
+    }
+
+    override fun glDeleteRenderbuffers(renderbuffers: IntArray) {
+        GL30.glDeleteRenderbuffers(renderbuffers)
+    }
+
+    override fun glDeleteShader(shader: Int) {
+        GL20.glDeleteShader(shader)
+    }
+
+    override fun glDetachShader(program: Int, shader: Int) {
+        GL20.glDetachShader(program, shader)
+    }
+
+    override fun glDisableVertexAttribArray(index: Int) {
+        GL20.glDisableVertexAttribArray(index)
+    }
+
+    override fun glEnableVertexAttribArray(index: Int) {
+        GL20.glEnableVertexAttribArray(index)
+    }
+
+    override fun glFramebufferRenderbuffer(
+        target: Int, attachment: Int, renderbuffertarget: Int, renderbuffer: Int
+    ) {
+        GL30.glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer)
+    }
+
+    override fun glFramebufferTexture2D(
+        target: Int, attachment: Int, textarget: Int, texture: Int, level: Int
+    ) {
+        GL30.glFramebufferTexture2D(target, attachment, textarget, texture, level)
+    }
+
+    override fun glGenerateMipmap(target: Int) {
+        GL30.glGenerateMipmap(target)
+    }
+
+    override fun glGenFramebuffers(framebuffers: IntArray) {
+        GL30.glGenFramebuffers(framebuffers)
+    }
+
+    override fun glGenRenderbuffers(renderbuffers: IntArray) {
+        GL30.glGenRenderbuffers(renderbuffers)
+    }
+
+    override fun glGetActiveAttrib(
+        program: Int, index: Int, info: GLESActiveInfo
+    ) {
+        val stack = MemoryStack.stackGet()
+        val previousSp = stack.pointer
+        val size = stack.mallocInt(1)
+        val type = stack.mallocInt(1)
+        val name = stack.malloc(4096) // We assume that attribute names are never > 4096
+        GL20.glGetActiveAttrib(program, index, null, size, type, name)
+        info.size = size.get()
+        info.type = type.get()
+        info.name = MemoryUtil.memUTF8(name)
+        stack.pointer = previousSp
+    }
+
+    override fun glGetActiveUniform(
+        program: Int, index: Int, info: GLESActiveInfo
+    ) {
+        val stack = MemoryStack.stackGet()
+        val previousSp = stack.pointer
+        val size = stack.mallocInt(1)
+        val type = stack.mallocInt(1)
+        val name = stack.malloc(4096) // We assume that attribute names are never > 4096
+        GL20.glGetActiveUniform(program, index, null, size, type, name)
+        info.size = size.get()
+        info.type = type.get()
+        info.name = MemoryUtil.memUTF8(name)
+        stack.pointer = previousSp
+    }
+
+    override fun glGetAttachedShaders(program: Int, maxCount: Int, shaders: IntArray): Int {
+        val stack = MemoryStack.stackGet()
+        val previousSp = stack.pointer
+        val count = min(maxCount, shaders.size)
+        val actualCountBuffer = stack.mallocInt(1)
+        val shaderBuffer = stack.mallocInt(count)
+        GL20.nglGetAttachedShaders(
+            program, maxCount, MemoryUtil.memAddress(actualCountBuffer), MemoryUtil.memAddress(shaderBuffer)
+        )
+        shaderBuffer.get(shaders)
+        val actualCount = actualCountBuffer.get()
+        stack.pointer = previousSp
+        return actualCount
+    }
+
+    override fun glGetAttribLocation(program: Int, name: String): Int {
+        return GL20.glGetAttribLocation(program, name)
+    }
+
+    override fun glGetProgramInfoLog(program: Int): String? {
+        return GL20.glGetProgramInfoLog(program)
+    }
+
+    override fun glGetShaderInfoLog(shader: Int): String? {
+        return GL20.glGetShaderInfoLog(shader)
+    }
+
+    override fun glGetShaderPrecisionFormat(
+        shadertype: Int, precisiontype: Int, format: GLESShaderPrecisionFormat
+    ) {
+        val stack = MemoryStack.stackGet()
+        val previousSp = stack.pointer
+        val range = stack.mallocInt(2)
+        GL41.glGetShaderPrecisionFormat(shadertype, precisiontype, range)
+        format.precision = precisiontype
+        format.rangeMin = range.get(0)
+        format.rangeMax = range.get(1)
+        stack.pointer = previousSp
+    }
+
+    override fun glGetShaderSource(shader: Int): String? {
+        return GL20.glGetShaderSource(shader)
+    }
+
+    override fun glGetUniformLocation(program: Int, name: String): Int {
+        return GL20.glGetUniformLocation(program, name)
+    }
+
+    override fun glIsFramebuffer(framebuffer: Int): Boolean {
+        return GL30.glIsFramebuffer(framebuffer)
+    }
+
+    override fun glIsProgram(program: Int): Boolean {
+        return GL20.glIsProgram(program)
+    }
+
+    override fun glIsRenderbuffer(renderbuffer: Int): Boolean {
+        return GL30.glIsRenderbuffer(renderbuffer)
+    }
+
+    override fun glIsShader(shader: Int): Boolean {
+        return GL20.glIsShader(shader)
+    }
+
+    override fun glLinkProgram(program: Int) {
+        GL20.glLinkProgram(program)
+    }
+
+    override fun glRenderbufferStorage(
+        target: Int, internalformat: Int, width: Int, height: Int
+    ) {
+        GL30.glRenderbufferStorage(target, internalformat, width, height)
+    }
+
+    override fun glShaderSource(shader: Int, source: String) {
+        GL20.glShaderSource(shader, source)
+    }
+
+    override fun glStencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int) {
+        GL20.glStencilFuncSeparate(face, func, ref, mask)
+    }
+
+    override fun glStencilMaskSeparate(face: Int, mask: Int) {
+        GL20.glStencilMaskSeparate(face, mask)
+    }
+
+    override fun glStencilOpSeparate(face: Int, sfail: Int, dpfail: Int, dppass: Int) {
+        GL20.glStencilOpSeparate(face, sfail, dpfail, dppass)
+    }
+
+    override fun glUniform1f(location: Int, v0: Float) {
+        GL20.glUniform1f(location, v0)
+    }
+
+    override fun glUniform1fv(location: Int, value: FloatArray) {
+        GL20.glUniform1fv(location, value)
+    }
+
+    override fun glUniform1i(location: Int, v0: Int) {
+        GL20.glUniform1i(location, v0)
+    }
+
+    override fun glUniform1iv(location: Int, value: IntArray) {
+        GL20.glUniform1iv(location, value)
+    }
+
+    override fun glUniform2f(location: Int, v0: Float, v1: Float) {
+        GL20.glUniform2f(location, v0, v1)
+    }
+
+    override fun glUniform2fv(location: Int, value: FloatArray) {
+        GL20.glUniform2fv(location, value)
+    }
+
+    override fun glUniform2i(location: Int, v0: Int, v1: Int) {
+        GL20.glUniform2i(location, v0, v1)
+    }
+
+    override fun glUniform2iv(location: Int, value: IntArray) {
+        GL20.glUniform2iv(location, value)
+    }
+
+    override fun glUniform3f(location: Int, v0: Float, v1: Float, v2: Float) {
+        GL20.glUniform3f(location, v0, v1, v2)
+    }
+
+    override fun glUniform3fv(location: Int, value: FloatArray) {
+        GL20.glUniform3fv(location, value)
+    }
+
+    override fun glUniform3i(location: Int, v0: Int, v1: Int, v2: Int) {
+        GL20.glUniform3i(location, v0, v1, v2)
+    }
+
+    override fun glUniform3iv(location: Int, value: IntArray) {
+        GL20.glUniform3iv(location, value)
+    }
+
+    override fun glUniform4f(
+        location: Int, v0: Float, v1: Float, v2: Float, v3: Float
+    ) {
+        GL20.glUniform4f(location, v0, v1, v2, v3)
+    }
+
+    override fun glUniform4fv(location: Int, value: FloatArray) {
+        GL20.glUniform4fv(location, value)
+    }
+
+    override fun glUniform4i(location: Int, v0: Int, v1: Int, v2: Int, v3: Int) {
+        GL20.glUniform4i(location, v0, v1, v2, v3)
+    }
+
+    override fun glUniform4iv(location: Int, value: IntArray) {
+        GL20.glUniform4iv(location, value)
+    }
+
+    override fun glUniformMatrix2fv(location: Int, transpose: Boolean, value: FloatArray) {
+        GL20.glUniformMatrix2fv(location, transpose, value)
+    }
+
+    override fun glUniformMatrix3fv(location: Int, transpose: Boolean, value: FloatArray) {
+        GL20.glUniformMatrix3fv(location, transpose, value)
+    }
+
+    override fun glUniformMatrix4fv(location: Int, transpose: Boolean, value: FloatArray) {
+        GL20.glUniformMatrix4fv(location, transpose, value)
+    }
+
+    override fun glUseProgram(program: Int) {
+        GL20.glUseProgram(program)
+    }
+
+    override fun glValidateProgram(program: Int) {
+        GL20.glValidateProgram(program)
+    }
+
+    override fun glVertexAttrib1f(index: Int, x: Float) {
+        GL20.glVertexAttrib1f(index, x)
+    }
+
+    override fun glVertexAttrib1fv(index: Int, v: FloatArray) {
+        GL20.glVertexAttrib1fv(index, v)
+    }
+
+    override fun glVertexAttrib2f(index: Int, x: Float, y: Float) {
+        GL20.glVertexAttrib2f(index, x, y)
+    }
+
+    override fun glVertexAttrib2fv(index: Int, v: FloatArray) {
+        GL20.glVertexAttrib2fv(index, v)
+    }
+
+    override fun glVertexAttrib3f(index: Int, x: Float, y: Float, z: Float) {
+        GL20.glVertexAttrib3f(index, x, y, z)
+    }
+
+    override fun glVertexAttrib3fv(index: Int, v: FloatArray) {
+        GL20.glVertexAttrib3fv(index, v)
+    }
+
+    override fun glVertexAttrib4f(
+        index: Int, x: Float, y: Float, z: Float, w: Float
+    ) {
+        GL20.glVertexAttrib4f(index, x, y, z, w)
+    }
+
+    override fun glVertexAttrib4fv(index: Int, v: FloatArray) {
+        GL20.glVertexAttrib4fv(index, v)
+    }
+
+    override fun glVertexAttribPointer(
+        index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Long
+    ) {
+        GL20.glVertexAttribPointer(index, size, type, normalized, stride, offset)
+    }
 }
