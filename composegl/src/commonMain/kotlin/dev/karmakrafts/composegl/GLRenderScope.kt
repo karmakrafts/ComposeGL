@@ -27,4 +27,8 @@ interface GLRenderScope : GLES20 {
     val height: Int
     val refreshRate: Int
     var refreshRateOverride: Int
+
+    fun resetRefreshRate() {
+        refreshRateOverride = NO_REFRESH_RATE_OVERRIDE
+    }
 }
