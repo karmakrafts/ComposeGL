@@ -30,5 +30,5 @@ actual fun GLCanvas(
     refreshRate: Int,
     content: GLRenderScope.() -> Unit
 ) {
-    TODO("Not implemented")
+
 }

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "composegl"
 
 pluginManagement {
@@ -25,6 +27,7 @@ pluginManagement {
     }
 }
 
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositories {
         google()
@@ -33,4 +36,5 @@ dependencyResolutionManagement {
     }
 }
 
-include("composegl")
+include("composegl-core")
+include("composegl-sample")
