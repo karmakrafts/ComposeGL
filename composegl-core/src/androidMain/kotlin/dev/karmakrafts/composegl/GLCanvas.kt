@@ -20,6 +20,7 @@ package dev.karmakrafts.composegl
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidView
 
 @Composable
 actual fun GLCanvas(
@@ -30,5 +31,13 @@ actual fun GLCanvas(
     refreshRate: Int,
     content: GLRenderScope.() -> Unit
 ) {
-
+    // TODO: Implement initial EGL config selection based on refreshRate
+    if (!OpenGLSupported.current) {
+        fallbackContent()
+        return
+    }
+    AndroidView( // @formatter:off
+        modifier = modifier,
+        factory = { GLCanvasView(it, content) }
+    ) // @formatter:on
 }

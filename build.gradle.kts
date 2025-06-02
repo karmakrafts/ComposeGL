@@ -25,6 +25,7 @@ plugins {
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.dokka) apply false
     alias(libs.plugins.karmaConventions)
+    alias(libs.plugins.introspekt) apply false
 }
 
 group = "dev.karmakrafts.composegl"

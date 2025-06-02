@@ -14,7 +14,7 @@ dokka = "2.0.0" # https://github.com/Kotlin/dokka/releases
 karmaConventions = "1.3.20"
 skiko = "0.9.4.2"
 introspekt = "1.2.1"
-lazyStatic = "1.1.1.12-SNAPSHOT"
+lazyStatic = "1.1.1"
 
 [libraries]
 skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skiko" }

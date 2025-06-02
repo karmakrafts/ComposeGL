@@ -35,14 +35,14 @@ internal object GLCanvasManager {
         minorVersion = 1
         doubleBuffer = false
         swapInterval = -1 // We already disable this later on, but it can't hurt to prevent confusion
-        // We use GL_RGBA_32F and GL_DEPTH_16_STENCIL_8 for our main framebuffer
-        redSize = 32
-        greenSize = 32
-        blueSize = 32
-        alphaSize = 32
+        // GL_RGBA8UI, GL_DEPTH_COMPONENT16, GL_STENCIL_INDEX8
+        redSize = 8
+        greenSize = 8
+        blueSize = 8
+        alphaSize = 8
         depthSize = 16
         stencilSize = 8
-        pixelFormatFloat = true
+        pixelFormatFloat = false
     }
 
     fun addActive(canvas: GLCanvasComponent) {

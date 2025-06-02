@@ -21,6 +21,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
+    alias(libs.plugins.introspekt)
 }
 
 kotlin {
@@ -39,6 +40,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.composeglCore)
+                implementation(libs.lazyStatic)
             }
         }
         jvmMain {

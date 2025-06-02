@@ -44,10 +44,9 @@ internal class GLCanvasComponent( // @formatter:off
     inner class RenderScope : GLRenderScope, GLES20 by PlatformGLES20 {
         override var width: Int = this@GLCanvasComponent.width
         override var height: Int = this@GLCanvasComponent.height
-        override val refreshRate: Int = data.swapInterval!!
-        override var refreshRateOverride: Int = refreshRate
+        override var refreshRateOverride: Int = data.swapInterval
             set(value) {
-                frameTimer.delay = if (value == GLRenderScope.NO_REFRESH_RATE_OVERRIDE) refreshRate
+                frameTimer.delay = if (value == GLRenderScope.NO_REFRESH_RATE_OVERRIDE) data.swapInterval
                 else value
             }
     }
