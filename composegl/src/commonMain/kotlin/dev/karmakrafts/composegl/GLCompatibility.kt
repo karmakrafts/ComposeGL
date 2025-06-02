@@ -16,15 +16,7 @@
 
 package dev.karmakrafts.composegl
 
-import dev.karmakrafts.composegl.gles.GLES20
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.staticCompositionLocalOf
 
-interface GLRenderScope : GLES20 {
-    companion object {
-        const val NO_REFRESH_RATE_OVERRIDE: Int = -1
-    }
-
-    val width: Int
-    val height: Int
-    val refreshRate: Int
-    var refreshRateOverride: Int
-}
+val OpenGLSupported: ProvidableCompositionLocal<Boolean> = staticCompositionLocalOf { false }

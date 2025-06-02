@@ -17,13 +17,16 @@
 package dev.karmakrafts.composegl
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 
 @Composable
 actual fun GLCanvas(
+    modifier: Modifier,
     onDispose: () -> Unit,
     fallbackContent: @Composable () -> Unit,
     overlayContent: (@Composable () -> Unit)?,
+    refreshRate: Int,
     content: GLRenderScope.() -> Unit
 ) {
-
+    TODO("Not implemented")
 }

@@ -18,16 +18,25 @@ package dev.karmakrafts.composegl
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 
 @Composable
 fun DefaultGLCanvasFallbackContent() {
     Text("OpenGL is not supported")
 }
 
+/**
+ * Uses the refresh rate of the primary display device.
+ * This is effectively equivalent to using vertical sync.
+ */
+const val DEFAULT_REFRESH_RATE: Int = -1
+
 @Composable
 expect fun GLCanvas( // @formatter:off
+    modifier: Modifier = Modifier,
     onDispose: () -> Unit = {},
     fallbackContent: @Composable () -> Unit = { DefaultGLCanvasFallbackContent() },
     overlayContent: (@Composable () -> Unit)? = null,
+    refreshRate: Int = DEFAULT_REFRESH_RATE,
     content: GLRenderScope.() -> Unit
 ) // @formatter:on

@@ -69,19 +69,19 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.ui)
-                implementation(compose.material3)
+                api(compose.runtime)
+                api(compose.foundation)
+                api(compose.ui)
+                api(compose.material3)
                 implementation(libs.skiko)
             }
         }
         jvmMain {
             dependencies {
-                implementation(compose.desktop.currentOs)
-                implementation(libs.lwjgl)
+                api(compose.desktop.currentOs)
+                api(libs.lwjgl)
+                api(libs.lwjgl.opengl)
                 implementation(libs.lwjgl.jawt)
-                implementation(libs.lwjgl.opengl)
                 implementation(libs.lwjglx.awt)
                 for (platform in lwjglPlatforms) {
                     val variant = "natives-$platform"
