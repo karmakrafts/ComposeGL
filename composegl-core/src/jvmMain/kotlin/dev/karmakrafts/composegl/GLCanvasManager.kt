@@ -33,7 +33,7 @@ internal object GLCanvasManager {
         forwardCompatible = true
         majorVersion = 4
         minorVersion = 1
-        doubleBuffer = false
+        doubleBuffer = true
         swapInterval = -1 // We already disable this later on, but it can't hurt to prevent confusion
         // GL_RGBA8UI, GL_DEPTH_COMPONENT16, GL_STENCIL_INDEX8
         redSize = 8
