@@ -58,7 +58,8 @@ sealed interface FrameBufferAttachment {
 }
 
 class FrameBuffer private constructor(
-    private val impl: GLES20, val attachments: List<FrameBufferAttachment>
+    private val impl: GLES20,
+    val attachments: List<FrameBufferAttachment>
 ) : BindableResource {
     companion object {
         @GLRenderScopeDsl

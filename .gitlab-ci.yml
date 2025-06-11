@@ -1,0 +1,105 @@
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+
+stages:
+  - build
+  - security
+  - publish
+
+variables:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false
+
+# ------------------------------ Conditions
+
+.if-merge-request-or-main: &if-merge-request-or-main
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+    when: never
+
+.if-main: &if-main
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+    when: never
+
+.if-release: &if-release
+  - if: '$CI_COMMIT_TAG =~ /^\d+.\d+.\d+.*/'
+  - if: $CI_PIPELINE_SOURCE == "schedule"
+    when: never
+
+# ------------------------------ Security
+
+security:
+  stage: security
+  interruptible: true
+  needs: [ ]
+  variables:
+    TRIVY_CACHE_DIR: ".trivycache/"
+  cache:
+    paths:
+      - .trivycache/
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      allow_failure: true
+    - if: '$CI_COMMIT_TAG =~ /^\d+.\d+.\d+.*/'
+      allow_failure: false
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      allow_failure: false
+  artifacts:
+    when: always
+    reports:
+      dependency_scanning: report.json
+  script:
+    - trivy repo ./ --exit-code 0
+    - trivy repo ./ --exit-code 0 --format template --template "@/contrib/gitlab.tpl" --output report.json
+    - trivy repo ./ --exit-code 1 --severity CRITICAL
+  tags:
+    - linux
+
+# ------------------------------ Build
+
+build:
+  stage: build
+  interruptible: true
+  rules:
+    - *if-merge-request-or-main
+  script:
+    - ./gradlew clean build --stacktrace
+  tags:
+    - macos
+
+# ------------------------------ Publish
+
+publish-gitlab:
+  stage: publish
+  rules:
+    - *if-main
+    - *if-release
+  script:
+    - ./gradlew publishAllPublicationsToGitLabRepository
+  tags:
+    - macos
+
+publish-central:
+  stage: publish
+  rules:
+    - *if-main
+    - *if-release
+  script:
+    - ./gradlew publishToSonatype closeAndReleaseStagingRepositories
+  tags:
+    - macos
+
+publish-documentation:
+  stage: publish
+  rules:
+    - *if-release
+  script:
+    - ./gradlew -DpublishDocs.root=/var/www/docs/composegl publishDocs
+  tags:
+    - linux

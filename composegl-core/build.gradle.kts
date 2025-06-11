@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import dev.karmakrafts.conventions.GitLabCI.karmaKraftsDefaults
-import dev.karmakrafts.conventions.apache2License
 import dev.karmakrafts.conventions.configureJava
-import dev.karmakrafts.conventions.setProjectInfo
-import dev.karmakrafts.conventions.setRepository
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Family
 import java.time.ZonedDateTime
@@ -30,6 +26,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.dokka)
     alias(libs.plugins.introspekt)
+    signing
     `maven-publish`
 }
 
@@ -135,8 +132,7 @@ android {
 }
 
 publishing {
-    setProjectInfo(project.name, "A GLCanvas composable for hardware accelerated rendering in Compose Multiplatform.")
-    karmaKraftsDefaults()
-    apache2License()
-    setRepository("github.com/karmakrafts/composegl")
+    publications.withType<MavenPublication> {
+        artifact(dokkaJar)
+    }
 }
