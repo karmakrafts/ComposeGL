@@ -31,8 +31,7 @@ allows using GLES 3.2 on iOS and Web.
 fun MyApp() {
     GLCanvas(
         onDispose = { /* Callback when canvas is disposed */ },
-        fallbackContent = { Text("ComposeGL is not supported") },
-        overlayContent = { Text("Compose inside the GL viewport") }
+        fallbackContent = { Text("ComposeGL is not supported") }
     ) {
         val shader = memoize { GLShader(...) }
         glClearColor(0F, 0F, 0F, 1F)
