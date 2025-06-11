@@ -100,7 +100,9 @@ internal class PlatformGLES20(context: WebGLRenderingContext) : PlatformGLES11(c
     override val GL_RENDERBUFFER: Int get() = WebGLRenderingContext.RENDERBUFFER
     override val GL_RGBA4: Int get() = WebGLRenderingContext.RGBA4
     override val GL_RGB5_A1: Int get() = WebGLRenderingContext.RGB5_A1
+    override val GL_DEPTH_COMPONENT: Int get() = WebGLRenderingContext.DEPTH_COMPONENT
     override val GL_DEPTH_COMPONENT16: Int get() = WebGLRenderingContext.DEPTH_COMPONENT16
+    override val GL_STENCIL_INDEX: Int get() = WebGLRenderingContext.STENCIL_INDEX
     override val GL_STENCIL_INDEX8: Int get() = WebGLRenderingContext.STENCIL_INDEX8
     override val GL_RENDERBUFFER_WIDTH: Int get() = WebGLRenderingContext.RENDERBUFFER_WIDTH
     override val GL_RENDERBUFFER_HEIGHT: Int get() = WebGLRenderingContext.RENDERBUFFER_HEIGHT
@@ -127,6 +129,7 @@ internal class PlatformGLES20(context: WebGLRenderingContext) : PlatformGLES11(c
     override val GL_RENDERBUFFER_BINDING: Int get() = WebGLRenderingContext.RENDERBUFFER_BINDING
     override val GL_MAX_RENDERBUFFER_SIZE: Int get() = WebGLRenderingContext.MAX_RENDERBUFFER_SIZE
     override val GL_INVALID_FRAMEBUFFER_OPERATION: Int get() = WebGLRenderingContext.INVALID_FRAMEBUFFER_OPERATION
+
     // We assume WebGL 2 at this point in the API, so why does Kotlin not bind against WGL2??
     override val GL_INT: Int get() = WebGLRenderingContext.asDynamic().GL_INT
     override val GL_UNSIGNED_INT: Int get() = WebGLRenderingContext.asDynamic().GL_UNSIGNED_INT
@@ -221,6 +224,10 @@ internal class PlatformGLES20(context: WebGLRenderingContext) : PlatformGLES11(c
         context.framebufferTexture2D(target, attachment, textarget, texture.asDynamic(), level)
     }
 
+    override fun glGetFramebufferAttachmentParameteri(target: Int, attachment: Int, pname: Int): Int {
+        return context.getFramebufferAttachmentParameter(target, attachment, pname) as? Int ?: 0
+    }
+
     override fun glGenerateMipmap(target: Int) {
         context.generateMipmap(target)
     }
@@ -304,6 +311,10 @@ internal class PlatformGLES20(context: WebGLRenderingContext) : PlatformGLES11(c
         target: Int, internalformat: Int, width: Int, height: Int
     ) {
         context.renderbufferStorage(target, internalformat, width, height)
+    }
+
+    override fun glGetRenderbufferParameteri(target: Int, pname: Int): Int {
+        return context.getRenderbufferParameter(target, pname) as? Int ?: 0
     }
 
     override fun glShaderSource(shader: GLESShader, source: String) {

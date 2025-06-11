@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl.util
+package dev.karmakrafts.composegl.pipeline
 
-internal object Log {
-    private val debug: Boolean = true
+interface BindableResource : Resource {
+    fun bind()
+    fun unbind()
+}
 
-    fun debug(message: () -> Any?) {
-        if (!debug) return
-        println(message())
+inline fun <reified R> BindableResource.use(block: () -> R): R {
+    return try {
+        bind()
+        block()
+    }
+    finally {
+        unbind()
     }
 }

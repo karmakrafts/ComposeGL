@@ -497,6 +497,10 @@ internal object PlatformGLES11 : GLES11 {
         GL11.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels)
     }
 
+    override fun glGetTexParameteri(target: Int, pname: Int): Int {
+        return GL11.glGetTexParameteri(target, pname)
+    }
+
     override fun glViewport(x: Int, y: Int, width: Int, height: Int) {
         GL11.glViewport(x, y, width, height)
     }

@@ -31,6 +31,8 @@ import dev.karmakrafts.composegl.pipeline.Shader.Companion.shader
 import dev.karmakrafts.composegl.pipeline.ShaderProgram.Companion.shaderProgram
 import dev.karmakrafts.composegl.pipeline.ShaderStage
 import dev.karmakrafts.composegl.pipeline.Texture.Companion.texture
+import dev.karmakrafts.composegl.pipeline.TextureFilter
+import dev.karmakrafts.composegl.pipeline.TextureFormat
 import dev.karmakrafts.composegl.pipeline.VertexBufferBuilder.Companion.vertexBuffer
 import dev.karmakrafts.composegl.pipeline.VertexFormat
 import dev.karmakrafts.composegl.pipeline.VertexFormatElement
@@ -69,7 +71,7 @@ varying vec2 v_uv;
 varying vec4 v_color;
     
 void main() {
-    gl_FragColor = texture(u_texture, v_uv) * v_color;
+    gl_FragColor = (texture(u_texture, v_uv) * 0.5) + (v_color * 0.5);
 }
 """
 
@@ -85,6 +87,7 @@ fun Sample(videoSource: VideoSource) {
             refreshRate = 30 // Our video plays at 30FPS
         ) { // @formatter:on
             onResize { width, height -> glViewport(0, 0, width, height) }
+            glEnable(GL_TEXTURE_2D)
 
             val pipeline = memoize(onCleanup = Resource::dispose) {
                 val vertexFormat = VertexFormat(
@@ -125,17 +128,12 @@ fun Sample(videoSource: VideoSource) {
                 ) // @formatter:on
             }
 
-            glEnable(GL_TEXTURE_2D)
-
             val texture = memoize(onCleanup = Resource::dispose) {
-                texture().apply {
-                    bind()
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-                    unbind()
-                }
+                texture( // @formatter:off
+                    format = TextureFormat.RGBA_8UI,
+                    minFilter = TextureFilter.LINEAR,
+                    magFilter = TextureFilter.LINEAR
+                ) // @formatter:on
             }
 
             glClearColor(0F, 0F, 0F, 1F)

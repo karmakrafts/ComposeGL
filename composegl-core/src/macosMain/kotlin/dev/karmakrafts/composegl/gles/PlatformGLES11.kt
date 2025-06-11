@@ -25,6 +25,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toCPointer
 import kotlinx.cinterop.value
+import platform.OpenGLCommon.GLintVar
 import platform.OpenGLCommon.GLuintVar
 
 @OptIn(ExperimentalForeignApi::class)
@@ -539,6 +540,12 @@ internal object PlatformGLES11 : GLES11 {
             type.convert(),
             cValuesOf(*pixels)
         )
+    }
+
+    override fun glGetTexParameteri(target: Int, pname: Int): Int = memScoped {
+        val value = alloc<GLintVar>()
+        platform.OpenGL.glGetTexParameteriv(target.convert(), pname.convert(), value.ptr)
+        value.value
     }
 
     override fun glViewport(x: Int, y: Int, width: Int, height: Int) {

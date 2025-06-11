@@ -48,15 +48,13 @@ class ShaderProgram private constructor( // @formatter:off
         private set
 
     init {
+        for (stage in stages) impl.glAttachShader(handle, stage.handle)
         Log.debug { "Created shader program $handle" }
     }
 
     private fun link() = with(impl) {
         isLinked = false
-        for (stage in stages) {
-            stage.compile()
-            glAttachShader(handle, stage.handle)
-        }
+        for (stage in stages) stage.compile()
         glLinkProgram(handle)
         if (glGetProgrami(handle, GL_LINK_STATUS) == GL_FALSE) {
             error("Could not link program $handle: ${glGetProgramInfoLog(handle) ?: "unknown error"}")
@@ -64,6 +62,10 @@ class ShaderProgram private constructor( // @formatter:off
         var index = 0
         for (element in format.elements) {
             impl.glBindAttribLocation(handle, index++, element.name)
+        }
+        glValidateProgram(handle)
+        if (glGetProgrami(handle, GL_VALIDATE_STATUS) == GL_FALSE) {
+            error("Could not validate program $handle: ${glGetProgramInfoLog(handle) ?: "unknown error"}")
         }
         isLinked = true
     }

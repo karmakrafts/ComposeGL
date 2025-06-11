@@ -18,7 +18,6 @@ package dev.karmakrafts.composegl
 
 import dev.karmakrafts.composegl.GLRenderScope.Companion.NO_REFRESH_RATE_OVERRIDE
 import dev.karmakrafts.composegl.gles.GLES20
-import dev.karmakrafts.composegl.pipeline.Resource
 import dev.karmakrafts.introspekt.util.SourceLocation
 
 /**

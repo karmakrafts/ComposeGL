@@ -486,6 +486,12 @@ internal object PlatformGLES11 : GLES11 {
         )
     }
 
+    override fun glGetTexParameteri(target: Int, pname: Int): Int {
+        val value = IntArray(1)
+        AndroidGLES11.glGetTexParameteriv(target, pname, value, 0)
+        return value.first()
+    }
+
     override fun glViewport(x: Int, y: Int, width: Int, height: Int) {
         AndroidGLES11.glViewport(x, y, width, height)
     }

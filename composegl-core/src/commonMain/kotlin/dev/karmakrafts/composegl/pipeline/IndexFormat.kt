@@ -19,9 +19,7 @@ package dev.karmakrafts.composegl.pipeline
 import dev.karmakrafts.composegl.gles.GLES20
 
 enum class IndexFormat(
-    val sizeInBytes: Int,
-    val isUnsigned: Boolean,
-    private val typeGetter: GLES20.() -> Int
+    val sizeInBytes: Int, val isUnsigned: Boolean, private val typeGetter: GLES20.() -> Int
 ) {
     // @formatter:off
     UBYTE   (UByte.SIZE_BYTES,  true,  { GL_UNSIGNED_BYTE }),

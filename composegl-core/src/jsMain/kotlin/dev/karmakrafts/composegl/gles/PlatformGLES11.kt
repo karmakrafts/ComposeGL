@@ -493,6 +493,10 @@ internal open class PlatformGLES11(protected val context: WebGLRenderingContext)
         )
     }
 
+    override fun glGetTexParameteri(target: Int, pname: Int): Int {
+        return context.getTexParameter(target, pname) as? Int ?: 0
+    }
+
     override fun glViewport(x: Int, y: Int, width: Int, height: Int) {
         context.viewport(x, y, width, height)
     }

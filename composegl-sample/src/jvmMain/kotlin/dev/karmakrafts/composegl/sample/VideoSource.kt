@@ -61,14 +61,7 @@ internal object DemoVideoSource : VideoSource {
         val frame = frameGrabber.grabImage()
         val frameImage = frameConverter.convert(frame)
         writeImageToBuffer(frameImage)
-        texture.upload(
-            width = frameImage.width,
-            height = frameImage.height,
-            internalFormat = GL_RGBA,
-            format = GL_RGBA,
-            type = GL_UNSIGNED_BYTE,
-            buffer = buffer
-        )
+        texture.upload(frameImage.width, frameImage.height, buffer)
     }
 
     override fun seek(frameIndex: Long) {

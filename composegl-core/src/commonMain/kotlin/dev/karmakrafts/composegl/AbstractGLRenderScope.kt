@@ -44,7 +44,7 @@ abstract class AbstractGLRenderScope : GLRenderScope {
     }
 
     override fun onResize(callback: (Int, Int) -> Unit) {
-        if(width != lastWidth || height != lastHeight) {
+        if (width != lastWidth || height != lastHeight) {
             callback(width, height)
             lastWidth = width
             lastHeight = height

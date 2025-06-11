@@ -123,7 +123,9 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override val GL_RENDERBUFFER: Int get() = platform.OpenGL.GL_RENDERBUFFER
     override val GL_RGBA4: Int get() = platform.OpenGL.GL_RGBA4
     override val GL_RGB5_A1: Int get() = platform.OpenGL.GL_RGB5_A1
+    override val GL_DEPTH_COMPONENT: Int get() = platform.OpenGL.GL_DEPTH_COMPONENT
     override val GL_DEPTH_COMPONENT16: Int get() = platform.OpenGL.GL_DEPTH_COMPONENT16
+    override val GL_STENCIL_INDEX: Int get() = platform.OpenGL.GL_STENCIL_INDEX
     override val GL_STENCIL_INDEX8: Int get() = platform.OpenGL.GL_STENCIL_INDEX8
     override val GL_RENDERBUFFER_WIDTH: Int get() = platform.OpenGL.GL_RENDERBUFFER_WIDTH
     override val GL_RENDERBUFFER_HEIGHT: Int get() = platform.OpenGL.GL_RENDERBUFFER_HEIGHT
@@ -249,6 +251,17 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         )
     }
 
+    override fun glGetFramebufferAttachmentParameteri(target: Int, attachment: Int, pname: Int): Int = memScoped {
+        val value = alloc<GLintVar>()
+        platform.OpenGL.glGetFramebufferAttachmentParameteriv(
+            target.convert(),
+            attachment.convert(),
+            pname.convert(),
+            value.ptr
+        )
+        value.value
+    }
+
     override fun glGenerateMipmap(target: Int) {
         platform.OpenGL.glGenerateMipmap(target.convert())
     }
@@ -370,6 +383,12 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         target: Int, internalformat: Int, width: Int, height: Int
     ) {
         platform.OpenGL.glRenderbufferStorage(target.convert(), internalformat.convert(), width, height)
+    }
+
+    override fun glGetRenderbufferParameteri(target: Int, pname: Int): Int = memScoped {
+        val value = alloc<GLintVar>()
+        platform.OpenGL.glGetRenderbufferParameteriv(target.convert(), pname.convert(), value.ptr)
+        value.value
     }
 
     override fun glShaderSource(shader: GLESShader, source: String) = memScoped {

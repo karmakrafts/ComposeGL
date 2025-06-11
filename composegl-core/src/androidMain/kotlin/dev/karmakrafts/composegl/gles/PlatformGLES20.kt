@@ -102,7 +102,11 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override val GL_RENDERBUFFER: Int get() = AndroidGLES20.GL_RENDERBUFFER
     override val GL_RGBA4: Int get() = AndroidGLES20.GL_RGBA4
     override val GL_RGB5_A1: Int get() = AndroidGLES20.GL_RGB5_A1
+    override val GL_DEPTH_COMPONENT: Int get() = AndroidGLES20.GL_DEPTH_COMPONENT
     override val GL_DEPTH_COMPONENT16: Int get() = AndroidGLES20.GL_DEPTH_COMPONENT16
+
+    @Suppress("DEPRECATION")
+    override val GL_STENCIL_INDEX: Int get() = AndroidGLES20.GL_STENCIL_INDEX
     override val GL_STENCIL_INDEX8: Int get() = AndroidGLES20.GL_STENCIL_INDEX8
     override val GL_RENDERBUFFER_WIDTH: Int get() = AndroidGLES20.GL_RENDERBUFFER_WIDTH
     override val GL_RENDERBUFFER_HEIGHT: Int get() = AndroidGLES20.GL_RENDERBUFFER_HEIGHT
@@ -222,6 +226,12 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         AndroidGLES20.glFramebufferTexture2D(target, attachment, textarget, texture, level)
     }
 
+    override fun glGetFramebufferAttachmentParameteri(target: Int, attachment: Int, pname: Int): Int {
+        val value = IntArray(1)
+        AndroidGLES20.glGetFramebufferAttachmentParameteriv(target, attachment, pname, value, 0)
+        return value.first()
+    }
+
     override fun glGenerateMipmap(target: Int) {
         AndroidGLES20.glGenerateMipmap(target)
     }
@@ -314,6 +324,12 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         target: Int, internalformat: Int, width: Int, height: Int
     ) {
         AndroidGLES20.glRenderbufferStorage(target, internalformat, width, height)
+    }
+
+    override fun glGetRenderbufferParameteri(target: Int, pname: Int): Int {
+        val value = IntArray(1)
+        AndroidGLES20.glGetRenderbufferParameteriv(target, pname, value, 0)
+        return value.first()
     }
 
     override fun glShaderSource(shader: GLESShader, source: String) {

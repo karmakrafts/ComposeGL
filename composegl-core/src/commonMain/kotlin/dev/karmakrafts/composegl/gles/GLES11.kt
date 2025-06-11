@@ -250,6 +250,7 @@ interface GLES11 {
     fun glTexParameteri(target: Int, pname: Int, param: Int)
     fun glTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, type: Int, pixels: ByteArray)
     fun glTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, type: Int, pixels: IntArray)
+    fun glGetTexParameteri(target: Int, pname: Int): Int
     fun glViewport(x: Int, y: Int, width: Int, height: Int)
     // @formatter:on
 

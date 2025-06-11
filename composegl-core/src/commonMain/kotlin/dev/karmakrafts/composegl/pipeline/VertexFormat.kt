@@ -20,8 +20,7 @@ import dev.karmakrafts.composegl.gles.GLES20
 import kotlin.jvm.JvmInline
 
 enum class VertexFormatPrimitiveType(
-    val sizeInBytes: Int,
-    val typeGetter: GLES20.() -> Int
+    val sizeInBytes: Int, val typeGetter: GLES20.() -> Int
 ) {
     // @formatter:off
     FLOAT(Float.SIZE_BYTES, { GL_FLOAT }),
@@ -51,8 +50,7 @@ enum class VertexFormatElementType( // @formatter:off
 }
 
 data class VertexFormatElement(
-    val type: VertexFormatElementType,
-    val name: String
+    val type: VertexFormatElementType, val name: String
 ) {
     inline val sizeInBytes: Int
         get() = type.sizeInBytes

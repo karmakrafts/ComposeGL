@@ -105,7 +105,9 @@ interface GLES20 : GLES11 {
     val GL_RENDERBUFFER: Int
     val GL_RGBA4: Int
     val GL_RGB5_A1: Int
+    val GL_DEPTH_COMPONENT: Int
     val GL_DEPTH_COMPONENT16: Int
+    val GL_STENCIL_INDEX: Int
     val GL_STENCIL_INDEX8: Int
     val GL_RENDERBUFFER_WIDTH: Int
     val GL_RENDERBUFFER_HEIGHT: Int
@@ -154,6 +156,7 @@ interface GLES20 : GLES11 {
     fun glEnableVertexAttribArray(index: Int)
     fun glFramebufferRenderbuffer(target: Int, attachment: Int, renderbuffertarget: Int, renderbuffer: GLESRenderBuffer)
     fun glFramebufferTexture2D(target: Int, attachment: Int, textarget: Int, texture: GLESTexture, level: Int)
+    fun glGetFramebufferAttachmentParameteri(target: Int, attachment: Int, pname: Int): Int
     fun glGenerateMipmap(target: Int)
     fun glGenFramebuffer(): GLESFrameBuffer
     fun glGenRenderbuffer(): GLESRenderBuffer
@@ -171,6 +174,7 @@ interface GLES20 : GLES11 {
     fun glIsShader(shader: GLESShader): Boolean
     fun glLinkProgram(program: GLESShaderProgram)
     fun glRenderbufferStorage(target: Int, internalformat: Int, width: Int, height: Int)
+    fun glGetRenderbufferParameteri(target: Int, pname: Int): Int
     fun glShaderSource(shader: GLESShader, source: String)
     fun glGetProgrami(program: GLESShaderProgram, pname: Int): Int
     fun glGetShaderi(shader: GLESShader, pname: Int): Int

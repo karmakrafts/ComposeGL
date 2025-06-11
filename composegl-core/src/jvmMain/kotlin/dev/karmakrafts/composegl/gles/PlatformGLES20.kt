@@ -110,7 +110,9 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override val GL_RENDERBUFFER: Int get() = GL30.GL_FRAMEBUFFER
     override val GL_RGBA4: Int get() = GL11.GL_RGBA4
     override val GL_RGB5_A1: Int get() = GL11.GL_RGB5_A1
-    override val GL_DEPTH_COMPONENT16: Int get() = GL15.GL_DEPTH_COMPONENT16
+    override val GL_DEPTH_COMPONENT: Int get() = GL11.GL_DEPTH_COMPONENT
+    override val GL_DEPTH_COMPONENT16: Int get() = GL14.GL_DEPTH_COMPONENT16
+    override val GL_STENCIL_INDEX: Int get() = GL11.GL_STENCIL_INDEX
     override val GL_STENCIL_INDEX8: Int get() = GL30.GL_STENCIL_INDEX8
     override val GL_RENDERBUFFER_WIDTH: Int get() = GL30.GL_RENDERBUFFER_WIDTH
     override val GL_RENDERBUFFER_HEIGHT: Int get() = GL30.GL_RENDERBUFFER_HEIGHT
@@ -230,6 +232,10 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         GL30.glFramebufferTexture2D(target, attachment, textarget, texture, level)
     }
 
+    override fun glGetFramebufferAttachmentParameteri(target: Int, attachment: Int, pname: Int): Int {
+        return GL30.glGetFramebufferAttachmentParameteri(target, attachment, pname)
+    }
+
     override fun glGenerateMipmap(target: Int) {
         GL30.glGenerateMipmap(target)
     }
@@ -330,6 +336,10 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
         target: Int, internalformat: Int, width: Int, height: Int
     ) {
         GL30.glRenderbufferStorage(target, internalformat, width, height)
+    }
+
+    override fun glGetRenderbufferParameteri(target: Int, pname: Int): Int {
+        return GL30.glGetRenderbufferParameteri(target, pname)
     }
 
     override fun glShaderSource(shader: GLESShader, source: String) {
