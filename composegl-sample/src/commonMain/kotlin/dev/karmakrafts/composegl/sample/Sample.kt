@@ -148,7 +148,7 @@ fun Sample(videoSource: VideoSource) {
             if (!videoSource.hasNextFrame()) {
                 videoSource.seek(0L) // Loop to beginning
             }
-            videoSource.nextFrame(this, texture)
+            videoSource.nextFrame(this, texture, 33)
 
             glDisable(GL_TEXTURE_2D)
         }

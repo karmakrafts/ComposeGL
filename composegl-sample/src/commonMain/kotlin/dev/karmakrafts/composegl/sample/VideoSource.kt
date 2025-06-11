@@ -22,7 +22,7 @@ import dev.karmakrafts.composegl.pipeline.Texture
 interface VideoSource : AutoCloseable {
     val frameCount: Long
     val frameIndex: Long
-    fun nextFrame(impl: GLES20, texture: Texture)
+    fun nextFrame(impl: GLES20, texture: Texture, maxFrameTime: Long)
     fun seek(frameIndex: Long)
     fun hasNextFrame(): Boolean = frameIndex < frameCount - 1
 }
