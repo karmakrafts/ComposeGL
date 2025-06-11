@@ -16,6 +16,7 @@
 
 import dev.karmakrafts.conventions.GitLabCI.karmaKraftsDefaults
 import dev.karmakrafts.conventions.apache2License
+import dev.karmakrafts.conventions.configureJava
 import dev.karmakrafts.conventions.setProjectInfo
 import dev.karmakrafts.conventions.setRepository
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -28,8 +29,11 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.introspekt)
     `maven-publish`
 }
+
+configureJava(rootProject.libs.versions.java)
 
 val lwjglPlatforms: Array<String> = arrayOf("linux", "linux-arm64", "macos", "macos-arm64", "windows")
 
@@ -73,7 +77,10 @@ kotlin {
                 api(compose.foundation)
                 api(compose.ui)
                 api(compose.material3)
+                api(libs.introspekt.runtime)
+                api(libs.kotlinx.io)
                 implementation(libs.skiko)
+                implementation(libs.annotations)
             }
         }
         jvmMain {

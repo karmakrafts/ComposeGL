@@ -94,6 +94,8 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override val GL_TEXTURE_CUBE_MAP_POSITIVE_Z: Int get() = platform.OpenGL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z
     override val GL_TEXTURE_CUBE_MAP_NEGATIVE_Z: Int get() = platform.OpenGL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
     override val GL_MAX_CUBE_MAP_TEXTURE_SIZE: Int get() = platform.OpenGL.GL_MAX_CUBE_MAP_TEXTURE_SIZE
+    override val GL_INT: Int get() = platform.OpenGL.GL_INT
+    override val GL_UNSIGNED_INT: Int get() = platform.OpenGL.GL_UNSIGNED_INT
     override val GL_FLOAT_VEC2: Int get() = platform.OpenGL.GL_FLOAT_VEC2
     override val GL_FLOAT_VEC3: Int get() = platform.OpenGL.GL_FLOAT_VEC3
     override val GL_FLOAT_VEC4: Int get() = platform.OpenGL.GL_FLOAT_VEC4
@@ -372,6 +374,18 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
 
     override fun glShaderSource(shader: GLESShader, source: String) = memScoped {
         platform.OpenGL.glShaderSource(shader.convert(), 1, cValuesOf(source.cstr.ptr), cValuesOf(source.length))
+    }
+
+    override fun glGetProgrami(program: GLESShaderProgram, pname: Int): Int = memScoped {
+        val value = alloc<GLintVar>()
+        platform.OpenGL.glGetProgramiv(program.convert(), pname.convert(), value.ptr)
+        value.value
+    }
+
+    override fun glGetShaderi(shader: GLESShader, pname: Int): Int = memScoped {
+        val value = alloc<GLintVar>()
+        platform.OpenGL.glGetShaderiv(shader.convert(), pname.convert(), value.ptr)
+        value.value
     }
 
     override fun glStencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int) {

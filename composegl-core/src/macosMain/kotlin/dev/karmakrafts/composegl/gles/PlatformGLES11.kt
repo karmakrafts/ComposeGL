@@ -240,6 +240,10 @@ internal object PlatformGLES11 : GLES11 {
         platform.OpenGL.glBlendFunc(sfactor.convert(), dfactor.convert())
     }
 
+    override fun glBufferData(target: Int, data: ByteArray, usage: Int) {
+        platform.OpenGL.glBufferData(target.convert(), data.size.convert(), cValuesOf(*data), usage.convert())
+    }
+
     override fun glBufferData(target: Int, data: ShortArray, usage: Int) {
         platform.OpenGL.glBufferData(target.convert(), data.size.convert(), cValuesOf(*data), usage.convert())
     }

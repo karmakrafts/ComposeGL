@@ -22,6 +22,7 @@ import org.lwjgl.opengl.GL13
 import org.lwjgl.opengl.GL14
 import org.lwjgl.opengl.GL15
 import org.lwjgl.system.MemoryStack
+import org.lwjgl.system.MemoryUtil
 
 internal object PlatformGLES11 : GLES11 {
     override val GL_DEPTH_BUFFER_BIT: Int get() = GL11.GL_DEPTH_BUFFER_BIT
@@ -235,6 +236,14 @@ internal object PlatformGLES11 : GLES11 {
         GL11.glBlendFunc(sfactor, dfactor)
     }
 
+    override fun glBufferData(target: Int, data: ByteArray, usage: Int) {
+        val stack = MemoryStack.stackGet()
+        val previousSp = stack.pointer
+        val dataAddress = stack.bytes(*data)
+        GL15.glBufferData(target, dataAddress, usage)
+        stack.pointer = previousSp
+    }
+
     override fun glBufferData(target: Int, data: ShortArray, usage: Int) {
         GL15.glBufferData(target, data, usage)
     }
@@ -431,11 +440,11 @@ internal object PlatformGLES11 : GLES11 {
         type: Int,
         pixels: ByteArray
     ) {
-        val stack = MemoryStack.stackGet()
-        val previousSp = stack.pointer
-        val buffer = stack.bytes(*pixels)
+        val buffer = MemoryUtil.memAlloc(pixels.size)
+        buffer.put(pixels)
+        buffer.flip()
         GL11.glTexImage2D(target, level, internalformat, width, height, border, format, type, buffer)
-        stack.pointer = previousSp
+        MemoryUtil.memFree(buffer)
     }
 
     override fun glTexImage2D(
@@ -467,11 +476,11 @@ internal object PlatformGLES11 : GLES11 {
         type: Int,
         pixels: ByteArray
     ) {
-        val stack = MemoryStack.stackGet()
-        val previousSp = stack.pointer
-        val buffer = stack.bytes(*pixels)
+        val buffer = MemoryUtil.memAlloc(pixels.size)
+        buffer.put(pixels)
+        buffer.flip()
         GL11.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, buffer)
-        stack.pointer = previousSp
+        MemoryUtil.memFree(buffer)
     }
 
     override fun glTexSubImage2D(

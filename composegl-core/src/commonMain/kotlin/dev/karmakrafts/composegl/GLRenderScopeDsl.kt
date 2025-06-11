@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl.gles
+package dev.karmakrafts.composegl
 
-data class GLESShaderPrecisionFormat( // @formatter:off
-    var rangeMin: Int,
-    var rangeMax: Int,
-    var precision: Int
-) // @formatter:on
+@DslMarker
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+annotation class GLRenderScopeDsl

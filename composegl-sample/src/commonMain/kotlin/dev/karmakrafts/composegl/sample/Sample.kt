@@ -17,18 +17,142 @@
 package dev.karmakrafts.composegl.sample
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 import dev.karmakrafts.composegl.GLCanvas
+import dev.karmakrafts.composegl.pipeline.IndexBufferBuilder.Companion.indexBuffer
+import dev.karmakrafts.composegl.pipeline.IndexFormat
+import dev.karmakrafts.composegl.pipeline.Pipeline.Companion.pipeline
+import dev.karmakrafts.composegl.pipeline.Resource
+import dev.karmakrafts.composegl.pipeline.Shader.Companion.shader
+import dev.karmakrafts.composegl.pipeline.ShaderProgram.Companion.shaderProgram
+import dev.karmakrafts.composegl.pipeline.ShaderStage
+import dev.karmakrafts.composegl.pipeline.Texture.Companion.texture
+import dev.karmakrafts.composegl.pipeline.VertexBufferBuilder.Companion.vertexBuffer
+import dev.karmakrafts.composegl.pipeline.VertexFormat
+import dev.karmakrafts.composegl.pipeline.VertexFormatElement
+import dev.karmakrafts.composegl.pipeline.VertexFormatElementType
+import org.intellij.lang.annotations.Language
+
+@Language("glsl")
+private const val vertexShader: String = """
+#if GL_ES
+precision mediump float;
+#endif
+
+attribute vec2 in_position;
+attribute vec2 in_uv;
+attribute vec4 in_color;
+
+varying vec2 v_uv;
+varying vec4 v_color;
+
+void main() {
+    gl_Position = vec4(vec3(in_position, 0.0), 1.0);
+    v_uv = in_uv;
+    v_color = in_color;
+}
+"""
+
+@Language("glsl")
+private const val fragmentShader: String = """
+#if GL_ES
+precision mediump float;
+#endif
+
+uniform sampler2D u_texture;
+
+varying vec2 v_uv;
+varying vec4 v_color;
+    
+void main() {
+    gl_FragColor = texture(u_texture, v_uv) * v_color;
+}
+"""
 
 @Composable
-fun Sample() {
+fun Sample(videoSource: VideoSource) {
     Column {
-        Text("OpenGL in Compose Demo")
-        GLCanvas {
-            // Clear composable to solid green
-            glClearColor(0F, 1F, 0F, 1F)
+        Text( // @formatter:off
+            text = "OpenGL in Compose Demo",
+            fontSize = 20.sp
+        ) // @formatter:on
+        GLCanvas( // @formatter:off
+            modifier = Modifier.fillMaxSize(),
+            refreshRate = 30 // Our video plays at 30FPS
+        ) { // @formatter:on
+            onResize { width, height -> glViewport(0, 0, width, height) }
+
+            val pipeline = memoize(onCleanup = Resource::dispose) {
+                val vertexFormat = VertexFormat(
+                    VertexFormatElement(VertexFormatElementType.FLOAT_2, "in_position"),
+                    VertexFormatElement(VertexFormatElementType.FLOAT_2, "in_uv"),
+                    VertexFormatElement(VertexFormatElementType.FLOAT_4, "in_color")
+                )
+                pipeline( // @formatter:off
+                    vbo = vertexBuffer {
+                        format = vertexFormat
+                        // Top left
+                        write(-1F, 1F)
+                        write(0F, 0F)
+                        write(1F, 0F, 0F, 1F)
+                        // Bottom left
+                        write(-1F, -1F)
+                        write(0F, 1F)
+                        write(0F, 1F, 0F, 1F)
+                        // Bottom right
+                        write(1F, -1F)
+                        write(1F, 1F)
+                        write(0F, 0F, 1F, 1F)
+                        // Top right
+                        write(1F, 1F)
+                        write(1F, 0F)
+                        write(1F, 1F, 1F, 1F)
+                    },
+                    ibo = indexBuffer {
+                        format = IndexFormat.UBYTE
+                        write(0U.toUByte(), 1U.toUByte(), 2U.toUByte())
+                        write(0U.toUByte(), 2U.toUByte(), 3U.toUByte())
+                    },
+                    program = shaderProgram(
+                        vertexFormat,
+                        shader(ShaderStage.VERTEX, vertexShader),
+                        shader(ShaderStage.FRAGMENT, fragmentShader)
+                    )
+                ) // @formatter:on
+            }
+
+            glEnable(GL_TEXTURE_2D)
+
+            val texture = memoize(onCleanup = Resource::dispose) {
+                texture().apply {
+                    bind()
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+                    unbind()
+                }
+            }
+
+            glClearColor(0F, 0F, 0F, 1F)
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
+
+            glActiveTexture(GL_TEXTURE0) // We only use texture unit 0
+            texture.bind()
+            pipeline.program.uniform1i("u_texture", 0) // Sampler uses texture unit 0
+            pipeline.draw(GL_TRIANGLES)
+            texture.unbind()
+
+            if (!videoSource.hasNextFrame()) {
+                videoSource.seek(0L) // Loop to beginning
+            }
+            videoSource.nextFrame(this, texture)
+
+            glDisable(GL_TEXTURE_2D)
         }
     }
 }

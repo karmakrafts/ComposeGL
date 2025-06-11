@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl.gles
+package dev.karmakrafts.composegl.pipeline
 
-data class GLESShaderPrecisionFormat( // @formatter:off
-    var rangeMin: Int,
-    var rangeMax: Int,
-    var precision: Int
-) // @formatter:on
+import dev.karmakrafts.composegl.gles.GLES20
+
+enum class BufferUsage(internal val typeGetter: GLES20.() -> Int) {
+    // @formatter:off
+    STATIC_DRAW ({ GL_STATIC_DRAW }),
+    DYNAMIC_DRAW({ GL_DYNAMIC_DRAW }),
+    STREAM_DRAW ({ GL_STREAM_DRAW });
+    // @formatter:on
+
+    internal operator fun invoke(impl: GLES20): Int = typeGetter(impl)
+}

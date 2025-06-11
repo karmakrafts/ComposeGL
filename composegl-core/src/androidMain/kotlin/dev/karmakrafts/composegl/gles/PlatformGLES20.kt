@@ -73,6 +73,8 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override val GL_TEXTURE_CUBE_MAP_POSITIVE_Z: Int get() = AndroidGLES20.GL_TEXTURE_CUBE_MAP_POSITIVE_Z
     override val GL_TEXTURE_CUBE_MAP_NEGATIVE_Z: Int get() = AndroidGLES20.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
     override val GL_MAX_CUBE_MAP_TEXTURE_SIZE: Int get() = AndroidGLES20.GL_MAX_CUBE_MAP_TEXTURE_SIZE
+    override val GL_INT: Int get() = AndroidGLES20.GL_INT
+    override val GL_UNSIGNED_INT: Int get() = AndroidGLES20.GL_UNSIGNED_INT
     override val GL_FLOAT_VEC2: Int get() = AndroidGLES20.GL_FLOAT_VEC2
     override val GL_FLOAT_VEC3: Int get() = AndroidGLES20.GL_FLOAT_VEC3
     override val GL_FLOAT_VEC4: Int get() = AndroidGLES20.GL_FLOAT_VEC4
@@ -316,6 +318,18 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
 
     override fun glShaderSource(shader: GLESShader, source: String) {
         AndroidGLES20.glShaderSource(shader, source)
+    }
+
+    override fun glGetProgrami(program: GLESShader, pname: Int): Int {
+        val value = IntArray(1)
+        AndroidGLES20.glGetProgramiv(program, pname, value, 0)
+        return value.first()
+    }
+
+    override fun glGetShaderi(shader: GLESShader, pname: Int): Int {
+        val value = IntArray(1)
+        AndroidGLES20.glGetShaderiv(shader, pname, value, 0)
+        return value.first()
     }
 
     override fun glStencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int) {

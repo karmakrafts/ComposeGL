@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl.gles
+package dev.karmakrafts.composegl.util
 
-data class GLESShaderPrecisionFormat( // @formatter:off
-    var rangeMin: Int,
-    var rangeMax: Int,
-    var precision: Int
-) // @formatter:on
+internal object Log {
+    private val debug: Boolean = true
+
+    fun debug(message: () -> Any?) {
+        if(!debug) return
+        println(message())
+    }
+}

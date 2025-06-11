@@ -27,7 +27,6 @@ actual fun GLCanvas(
     modifier: Modifier,
     onDispose: () -> Unit,
     fallbackContent: @Composable () -> Unit,
-    overlayContent: (@Composable () -> Unit)?,
     refreshRate: Int,
     content: GLRenderScope.() -> Unit
 ) {

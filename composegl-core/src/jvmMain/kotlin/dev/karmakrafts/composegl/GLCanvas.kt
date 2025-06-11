@@ -23,12 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.SwingPanel
 import java.awt.DisplayMode
 
+private const val FALLBACK_REFRESH_RATE: Int = 30
+
 @Composable
 actual fun GLCanvas(
     modifier: Modifier,
     onDispose: () -> Unit,
     fallbackContent: @Composable () -> Unit,
-    overlayContent: (@Composable () -> Unit)?,
     refreshRate: Int,
     content: GLRenderScope.() -> Unit
 ) {
@@ -43,12 +44,14 @@ actual fun GLCanvas(
             val displayMode = window.graphicsConfiguration.device.displayMode
             val actualRefreshRate = when (refreshRate) {
                 DEFAULT_REFRESH_RATE -> when (val currentRefreshRate = displayMode.refreshRate) {
-                    DisplayMode.REFRESH_RATE_UNKNOWN -> 30
+                    DisplayMode.REFRESH_RATE_UNKNOWN -> FALLBACK_REFRESH_RATE
                     else -> currentRefreshRate
                 }
                 else -> refreshRate
             }
-            GLCanvasManager.create(actualRefreshRate, content)
+            GLCanvasManager.create(actualRefreshRate) {
+                content()
+            }
         }
     ) // @formatter:on
 }

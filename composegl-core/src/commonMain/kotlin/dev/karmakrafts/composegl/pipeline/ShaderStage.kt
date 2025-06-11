@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl.gles
+package dev.karmakrafts.composegl.pipeline
 
-data class GLESShaderPrecisionFormat( // @formatter:off
-    var rangeMin: Int,
-    var rangeMax: Int,
-    var precision: Int
-) // @formatter:on
+import dev.karmakrafts.composegl.gles.GLES20
+
+enum class ShaderStage(
+    private val typeGetter: GLES20.() -> Int
+) {
+    // @formatter:off
+    VERTEX  ({ GL_VERTEX_SHADER }),
+    FRAGMENT({ GL_FRAGMENT_SHADER });
+    // @formatter:on
+
+    operator fun invoke(impl: GLES20): Int = impl.typeGetter()
+}

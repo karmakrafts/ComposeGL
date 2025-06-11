@@ -15,7 +15,6 @@
  */
 
 import dev.karmakrafts.conventions.GitLabCI
-import dev.karmakrafts.conventions.configureJava
 import dev.karmakrafts.conventions.defaultDependencyLocking
 
 plugins {
@@ -34,6 +33,5 @@ version = GitLabCI.getDefaultVersion(libs.versions.composegl)
 subprojects {
     group = rootProject.group
     version = rootProject.version
-    configureJava(rootProject.libs.versions.java)
     if (GitLabCI.isCI) defaultDependencyLocking()
 }

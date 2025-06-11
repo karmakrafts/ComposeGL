@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl.gles
+package dev.karmakrafts.composegl.util
 
-data class GLESShaderPrecisionFormat( // @formatter:off
-    var rangeMin: Int,
-    var rangeMax: Int,
-    var precision: Int
-) // @formatter:on
+import kotlinx.io.Buffer
+import kotlinx.io.readFloat
+
+internal fun Buffer.readShortArray(size: Int): ShortArray = ShortArray(size) { readShort() }
+
+internal fun Buffer.readIntArray(size: Int): IntArray = IntArray(size) { readInt() }
+
+internal fun Buffer.readFloatArray(size: Int): FloatArray = FloatArray(size) { readFloat() }

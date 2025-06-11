@@ -237,6 +237,10 @@ internal open class PlatformGLES11(protected val context: WebGLRenderingContext)
         context.blendFunc(sfactor, dfactor)
     }
 
+    override fun glBufferData(target: Int, data: ByteArray, usage: Int) {
+        context.bufferData(target, data.toInt8Array(), usage)
+    }
+
     override fun glBufferData(target: Int, data: ShortArray, usage: Int) {
         context.bufferData(target, data.toInt16Array(), usage)
     }

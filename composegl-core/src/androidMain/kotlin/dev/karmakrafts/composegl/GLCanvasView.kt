@@ -18,6 +18,7 @@ package dev.karmakrafts.composegl
 
 import android.content.Context
 import android.opengl.GLSurfaceView
+import android.view.SurfaceHolder
 import dev.karmakrafts.composegl.gles.GLES20
 import dev.karmakrafts.composegl.gles.PlatformGLES20
 import javax.microedition.khronos.egl.EGLConfig
@@ -27,19 +28,26 @@ internal class GLCanvasView( // @formatter:off
     context: Context,
     content: GLRenderScope.() -> Unit
 ) : GLSurfaceView(context) { // @formatter:on
+    private val renderer: GLCanvasRenderer = GLCanvasRenderer(content)
+
     constructor(context: Context) : this(context, {})
 
     init {
         // GL_RGBA8UI, GL_DEPTH_COMPONENT16, GL_STENCIL_INDEX8
         setEGLConfigChooser(8, 8, 8, 8, 16, 8)
-        setRenderer(GLCanvasRenderer(content))
+        setRenderer(renderer)
+    }
+
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
+        renderer.onSurfaceDestroyed()
+        super.surfaceDestroyed(holder)
     }
 }
 
 internal class GLCanvasRenderer(
     private val content: GLRenderScope.() -> Unit
 ) : GLSurfaceView.Renderer {
-    class RenderScope : GLRenderScope, GLES20 by PlatformGLES20 {
+    class RenderScope : AbstractGLRenderScope(), GLES20 by PlatformGLES20 {
         override var width: Int = 0
         override var height: Int = 0
 
@@ -59,5 +67,9 @@ internal class GLCanvasRenderer(
 
     override fun onDrawFrame(gl: GL10) {
         renderScope.content()
+    }
+
+    fun onSurfaceDestroyed() {
+        renderScope.cleanup() // Make sure all memoized values are released immediately
     }
 }

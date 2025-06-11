@@ -204,6 +204,7 @@ interface GLES11 {
     fun glBindBuffer(target: Int, buffer: GLESBuffer)
     fun glBindTexture(target: Int, texture: GLESTexture)
     fun glBlendFunc(sfactor: Int, dfactor: Int)
+    fun glBufferData(target: Int, data: ByteArray, usage: Int)
     fun glBufferData(target: Int, data: ShortArray, usage: Int)
     fun glBufferData(target: Int, data: IntArray, usage: Int)
     fun glBufferData(target: Int, data: FloatArray, usage: Int)

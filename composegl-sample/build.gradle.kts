@@ -1,5 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-
 /*
  * Copyright 2025 Karma Krafts & associates
  *
@@ -16,56 +14,62 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
  * limitations under the License.
  */
 
+import dev.karmakrafts.conventions.configureJava
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.application)
+    //alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
     alias(libs.plugins.introspekt)
 }
 
+configureJava(rootProject.libs.versions.java)
+
 kotlin {
     jvm()
-    androidTarget()
-    macosX64()
-    macosArm64()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
-    js {
-        browser()
-    }
+    //androidTarget()
+    //macosX64()
+    //macosArm64()
+    //iosX64()
+    //iosArm64()
+    //iosSimulatorArm64()
+    //js {
+    //    browser()
+    //}
     applyDefaultHierarchyTemplate()
     sourceSets {
         commonMain {
             dependencies {
                 implementation(projects.composeglCore)
-                implementation(libs.lazyStatic)
             }
         }
         jvmMain {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation(libs.javacv)
+                implementation(libs.javacv.platform)
             }
         }
     }
 }
 
-android {
-    namespace = "$group.${rootProject.name}"
-    compileSdk = libs.versions.androidCompileSDK.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.androidMinimalSDK.get().toInt()
-    }
-}
+//android {
+//    namespace = "$group.${rootProject.name}"
+//    compileSdk = libs.versions.androidCompileSDK.get().toInt()
+//    defaultConfig {
+//        minSdk = libs.versions.androidMinimalSDK.get().toInt()
+//    }
+//}
 
 compose {
     desktop {
         application {
-            mainClass = "$group.${rootProject.name}.sample.MainKt"
+            mainClass = "$group.sample.MainKt"
             nativeDistributions {
                 packageVersion = rootProject.version.toString().substringBeforeLast('.')
-                targetFormats(TargetFormat.Deb, TargetFormat.Rpm, TargetFormat.Exe, TargetFormat.Msi, TargetFormat.Dmg)
+                targetFormats(TargetFormat.Deb)
             }
         }
     }

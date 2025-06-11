@@ -28,7 +28,7 @@ internal object GLCanvasManager {
         private set
 
     private val defaultConfig: GLData = GLData().apply {
-        profile = GLData.Profile.CORE
+        profile = GLData.Profile.COMPATIBILITY
         api = GLData.API.GL
         forwardCompatible = true
         majorVersion = 4

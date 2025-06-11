@@ -19,7 +19,7 @@ package dev.karmakrafts.composegl.gles
 /**
  * GLES 2.0 conformant API minus fixed point/fixed pipeline functions,
  * compatible with the WebGL standard.
- * See https://registry.khronos.org/OpenGL/specs/es/1.1/es_full_spec_1.1.pdf
+ * See https://registry.khronos.org/OpenGL/specs/es/2.0/es_full_spec_2.0.pdf
  */
 interface GLES20 : GLES11 {
     val GL_FUNC_ADD: Int
@@ -76,6 +76,8 @@ interface GLES20 : GLES11 {
     val GL_TEXTURE_CUBE_MAP_POSITIVE_Z: Int
     val GL_TEXTURE_CUBE_MAP_NEGATIVE_Z: Int
     val GL_MAX_CUBE_MAP_TEXTURE_SIZE: Int
+    val GL_INT: Int
+    val GL_UNSIGNED_INT: Int
     val GL_FLOAT_VEC2: Int
     val GL_FLOAT_VEC3: Int
     val GL_FLOAT_VEC4: Int
@@ -170,6 +172,8 @@ interface GLES20 : GLES11 {
     fun glLinkProgram(program: GLESShaderProgram)
     fun glRenderbufferStorage(target: Int, internalformat: Int, width: Int, height: Int)
     fun glShaderSource(shader: GLESShader, source: String)
+    fun glGetProgrami(program: GLESShaderProgram, pname: Int): Int
+    fun glGetShaderi(shader: GLESShader, pname: Int): Int
     fun glStencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int)
     fun glStencilMaskSeparate(face: Int, mask: Int)
     fun glStencilOpSeparate(face: Int, sfail: Int, dpfail: Int, dppass: Int)

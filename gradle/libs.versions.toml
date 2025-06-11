@@ -7,22 +7,31 @@ androidMinimalSDK = "28"
 
 composegl = "1.0.0"
 kotlin = "2.1.21" # https://github.com/JetBrains/kotlin/releases
+kotlinx-io = "0.7.0"
 lwjgl = "3.3.6"
 lwjglx = "0.1.8"
 compose = "1.7.3" # https://github.com/JetBrains/compose-multiplatform/releases
 dokka = "2.0.0" # https://github.com/Kotlin/dokka/releases
 karmaConventions = "1.3.20"
 skiko = "0.9.4.2"
-introspekt = "1.2.1"
-lazyStatic = "1.1.1"
+introspekt = "1.3.0"
+annotations = "26.0.2"
+
+javacv = "1.5.11"
 
 [libraries]
+kotlinx-io = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
+
 skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skiko" }
 lwjgl = { module = "org.lwjgl:lwjgl", version.ref = "lwjgl" }
 lwjgl-jawt = { module = "org.lwjgl:lwjgl-jawt", version.ref = "lwjgl" }
 lwjgl-opengl = { module = "org.lwjgl:lwjgl-opengl", version.ref = "lwjgl" }
 lwjglx-awt = { module = "org.lwjglx:lwjgl3-awt", version.ref = "lwjglx" }
-lazyStatic = { module = "dev.karmakrafts.lazystatic:lazystatic-core", version.ref = "lazyStatic" }
+introspekt-runtime = { module = "dev.karmakrafts.introspekt:introspekt-runtime", version.ref = "introspekt" }
+annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+
+javacv = { module = "org.bytedeco:javacv", version.ref = "javacv" }
+javacv-platform = { module = "org.bytedeco:javacv-platform", version.ref = "javacv" }
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

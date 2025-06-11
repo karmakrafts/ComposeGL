@@ -127,6 +127,9 @@ internal class PlatformGLES20(context: WebGLRenderingContext) : PlatformGLES11(c
     override val GL_RENDERBUFFER_BINDING: Int get() = WebGLRenderingContext.RENDERBUFFER_BINDING
     override val GL_MAX_RENDERBUFFER_SIZE: Int get() = WebGLRenderingContext.MAX_RENDERBUFFER_SIZE
     override val GL_INVALID_FRAMEBUFFER_OPERATION: Int get() = WebGLRenderingContext.INVALID_FRAMEBUFFER_OPERATION
+    // We assume WebGL 2 at this point in the API, so why does Kotlin not bind against WGL2??
+    override val GL_INT: Int get() = WebGLRenderingContext.asDynamic().GL_INT
+    override val GL_UNSIGNED_INT: Int get() = WebGLRenderingContext.asDynamic().GL_UNSIGNED_INT
 
     override fun glAttachShader(program: GLESShaderProgram, shader: GLESShader) {
         context.attachShader(program.asDynamic(), shader.asDynamic())
@@ -305,6 +308,14 @@ internal class PlatformGLES20(context: WebGLRenderingContext) : PlatformGLES11(c
 
     override fun glShaderSource(shader: GLESShader, source: String) {
         context.shaderSource(shader.asDynamic(), source)
+    }
+
+    override fun glGetProgrami(program: GLESShaderProgram, pname: Int): Int {
+        return context.getProgramParameter(program.asDynamic(), pname) as? Int ?: 0
+    }
+
+    override fun glGetShaderi(shader: GLESShader, pname: Int): Int {
+        return context.getShaderParameter(shader.asDynamic(), pname) as? Int ?: 0
     }
 
     override fun glStencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int) {

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl.gles
+package dev.karmakrafts.composegl.pipeline
 
-data class GLESShaderPrecisionFormat( // @formatter:off
-    var rangeMin: Int,
-    var rangeMax: Int,
-    var precision: Int
-) // @formatter:on
+interface Resource {
+    fun dispose()
+
+    fun asCloseable(): AutoCloseable = AutoCloseable(::dispose)
+}

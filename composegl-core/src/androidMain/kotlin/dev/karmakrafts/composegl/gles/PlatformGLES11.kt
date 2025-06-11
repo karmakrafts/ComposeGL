@@ -234,6 +234,10 @@ internal object PlatformGLES11 : GLES11 {
         AndroidGLES11.glBlendFunc(sfactor, dfactor)
     }
 
+    override fun glBufferData(target: Int, data: ByteArray, usage: Int) {
+        AndroidGLES11.glBufferData(target, data.size, ByteBuffer.wrap(data), usage)
+    }
+
     override fun glBufferData(target: Int, data: ShortArray, usage: Int) {
         AndroidGLES11.glBufferData(target, data.size, ShortBuffer.wrap(data), usage)
     }

@@ -21,8 +21,9 @@ import dev.karmakrafts.composegl.GLCompatibleWindow
 
 fun main(args: Array<String>) = application {
     GLCompatibleWindow(
+        title = "ComposeGL Sample",
         onCloseRequest = ::exitApplication
     ) {
-        Sample()
+        Sample(DemoVideoSource)
     }
 }

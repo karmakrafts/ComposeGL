@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-package dev.karmakrafts.composegl.gles
+package dev.karmakrafts.composegl.pipeline
 
-data class GLESShaderPrecisionFormat( // @formatter:off
-    var rangeMin: Int,
-    var rangeMax: Int,
-    var precision: Int
-) // @formatter:on
+import dev.karmakrafts.composegl.gles.GLES20
+
+enum class IndexFormat(
+    val sizeInBytes: Int,
+    val isUnsigned: Boolean,
+    private val typeGetter: GLES20.() -> Int
+) {
+    // @formatter:off
+    UBYTE   (UByte.SIZE_BYTES,  true,  { GL_UNSIGNED_BYTE }),
+    USHORT  (UShort.SIZE_BYTES, true,  { GL_UNSIGNED_SHORT }),
+    UINT    (UInt.SIZE_BYTES,   true,  { GL_UNSIGNED_INT });
+    // @formatter:on
+
+    internal operator fun invoke(impl: GLES20): Int = impl.typeGetter()
+}

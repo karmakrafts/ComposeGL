@@ -18,12 +18,15 @@ package dev.karmakrafts.composegl
 
 import dev.karmakrafts.composegl.GLRenderScope.Companion.NO_REFRESH_RATE_OVERRIDE
 import dev.karmakrafts.composegl.gles.GLES20
+import dev.karmakrafts.composegl.pipeline.Resource
+import dev.karmakrafts.introspekt.util.SourceLocation
 
 /**
  * A render scope which provides access to the underlying [GLES20] implementation
  * and information about the current viewport.
  * It also provides functions to control the rendering dynamically from within the draw callback.
  */
+@GLRenderScopeDsl
 interface GLRenderScope : GLES20 {
     companion object {
         /**
@@ -57,4 +60,21 @@ interface GLRenderScope : GLES20 {
     fun resetRefreshRate() {
         refreshRateOverride = NO_REFRESH_RATE_OVERRIDE
     }
+
+    /**
+     * Memoizes the value created in [factory] between rendered frames.
+     * This is ideal for creating resources such as textures and shaders.
+     *
+     * @param key The source location hash of the value to memoize. Computed at compile time by default.
+     * @param onCleanup A callback which is invoked when the render scope which the value was
+     *  originally created in is disposed.
+     * @param factory A closure to invoke once to create the new value to memoize.
+     */
+    fun <T> memoize( // @formatter:off
+        key: Int = SourceLocation.hereHash(),
+        onCleanup: (T) -> Unit = {},
+        factory: () -> T
+    ): T // @formatter:on
+
+    fun onResize(callback: (width: Int, height: Int) -> Unit)
 }

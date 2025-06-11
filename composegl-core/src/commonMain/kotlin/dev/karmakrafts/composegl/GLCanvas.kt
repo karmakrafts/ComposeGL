@@ -36,7 +36,6 @@ expect fun GLCanvas( // @formatter:off
     modifier: Modifier = Modifier,
     onDispose: () -> Unit = {},
     fallbackContent: @Composable () -> Unit = { DefaultGLCanvasFallbackContent() },
-    overlayContent: (@Composable () -> Unit)? = null,
     refreshRate: Int = DEFAULT_REFRESH_RATE,
     content: GLRenderScope.() -> Unit
 ) // @formatter:on

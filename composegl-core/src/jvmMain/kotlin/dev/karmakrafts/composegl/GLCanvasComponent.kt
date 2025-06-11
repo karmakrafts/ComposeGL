@@ -41,7 +41,7 @@ internal class GLCanvasComponent( // @formatter:off
     private val frameTime: Int = 1000 / data.swapInterval!!
     private val frameTimer: Timer = Timer(frameTime) { render() }
 
-    inner class RenderScope : GLRenderScope, GLES20 by PlatformGLES20 {
+    inner class RenderScope : AbstractGLRenderScope(), GLES20 by PlatformGLES20 {
         override var width: Int = this@GLCanvasComponent.width
         override var height: Int = this@GLCanvasComponent.height
         override var refreshRateOverride: Int = data.swapInterval
@@ -61,6 +61,7 @@ internal class GLCanvasComponent( // @formatter:off
     override fun disposeCanvas() {
         frameTimer.stop()
         GLCanvasManager.removeActive(this)
+        renderScope.cleanup() // Make sure all memoized values are released immediately
         super.disposeCanvas()
     }
 
