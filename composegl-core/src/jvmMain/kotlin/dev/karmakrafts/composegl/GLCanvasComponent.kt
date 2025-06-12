@@ -72,6 +72,7 @@ internal class GLCanvasComponent( // @formatter:off
 
     override fun initGL() {
         GLCanvasManager.initIfNeeded()
+        renderScope.glViewport(0, 0, width, height) // Set initial viewport size
     }
 
     override fun paintGL() {
