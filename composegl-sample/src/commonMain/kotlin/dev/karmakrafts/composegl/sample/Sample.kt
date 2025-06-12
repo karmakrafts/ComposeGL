@@ -41,12 +41,6 @@ import org.intellij.lang.annotations.Language
 
 @Language("glsl")
 private const val vertexShader: String = """
-#version 150
-
-#if GL_ES
-precision mediump float;
-#endif
-
 attribute vec2 in_position;
 attribute vec2 in_uv;
 attribute vec4 in_color;
@@ -63,12 +57,6 @@ void main() {
 
 @Language("glsl")
 private const val fragmentShader: String = """
-#version 150
-
-#if GL_ES
-precision mediump float;
-#endif
-
 uniform sampler2D u_texture;
 
 varying vec2 v_uv;
