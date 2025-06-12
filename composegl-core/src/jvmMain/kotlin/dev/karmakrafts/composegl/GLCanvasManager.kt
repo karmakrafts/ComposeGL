@@ -61,7 +61,7 @@ internal object GLCanvasManager {
 
     fun requestGL() {
         when(Platform.get()) {
-            Platform.LINUX -> System.setProperty("skiko.renderApi", "OPENGL")
+            Platform.LINUX, Platform.WINDOWS -> System.setProperty("skiko.renderApi", "OPENGL")
             else -> {}
         }
     }
