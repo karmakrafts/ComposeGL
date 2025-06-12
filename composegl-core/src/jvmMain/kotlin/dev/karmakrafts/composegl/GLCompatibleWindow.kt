@@ -65,7 +65,7 @@ fun GLCompatibleWindow(
         onKeyEvent = onKeyEvent
     ) {
         CompositionLocalProvider( // @formatter:off
-            OpenGLSupported provides (window.renderApi == GraphicsApi.OPENGL),
+            OpenGLSupported provides true,
             WindowInstance provides window
         ) { // @formatter:on
             content()
