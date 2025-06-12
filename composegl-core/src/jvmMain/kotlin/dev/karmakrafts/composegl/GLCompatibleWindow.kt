@@ -27,7 +27,6 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberWindowState
-import org.jetbrains.skiko.GraphicsApi
 
 internal val WindowInstance: ProvidableCompositionLocal<ComposeWindow?> = staticCompositionLocalOf { null }
 

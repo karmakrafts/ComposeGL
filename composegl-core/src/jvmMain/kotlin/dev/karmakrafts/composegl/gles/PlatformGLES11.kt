@@ -372,6 +372,14 @@ internal object PlatformGLES11 : GLES11 {
         return GL11.glGetError()
     }
 
+    override fun glGetInteger(pname: Int): Int {
+        return GL11.glGetInteger(pname)
+    }
+
+    override fun glGetString(pname: Int): String? {
+        return GL11.glGetString(pname)
+    }
+
     override fun glHint(target: Int, mode: Int) {
         GL11.glHint(target, mode)
     }
@@ -503,5 +511,22 @@ internal object PlatformGLES11 : GLES11 {
 
     override fun glViewport(x: Int, y: Int, width: Int, height: Int) {
         GL11.glViewport(x, y, width, height)
+    }
+
+    override fun getExtensions(): List<String> {
+        return GL11.glGetString(GL11.GL_EXTENSIONS)?.split(' ') ?: emptyList()
+    }
+
+    override fun hasExtension(name: String): Boolean {
+        return name in getExtensions()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E : GLESExtension> findExtension(name: String): E? {
+        return if (name !in this) null
+        else when (name) {
+            GLESExtVertexArrayObject.NAME -> PlatformExtVertexArrayObject
+            else -> null
+        } as? E
     }
 }

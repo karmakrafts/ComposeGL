@@ -29,7 +29,7 @@ internal object GLCanvasManager {
         private set
 
     private val defaultConfig: GLData = GLData().apply {
-        profile = when(Platform.get()) {
+        profile = when (Platform.get()) {
             Platform.LINUX -> GLData.Profile.COMPATIBILITY
             else -> GLData.Profile.CORE
         }

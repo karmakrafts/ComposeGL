@@ -233,6 +233,8 @@ interface GLES11 {
     fun glGenBuffer(): GLESBuffer
     fun glGenTexture(): GLESTexture
     fun glGetError(): Int
+    fun glGetInteger(pname: Int): Int
+    fun glGetString(pname: Int): String?
     fun glHint(target: Int, mode: Int)
     fun glIsBuffer(buffer: GLESBuffer): Boolean
     fun glIsEnabled(cap: Int): Boolean
@@ -256,4 +258,15 @@ interface GLES11 {
 
     fun Boolean.toGLBool(): Int = if (this) GL_TRUE else GL_FALSE
     fun Int.fromGLBool(): Boolean = this == GL_TRUE
+
+    // Extensions API
+
+    fun getExtensions(): List<String>
+    fun hasExtension(name: String): Boolean
+    fun <E : GLESExtension> findExtension(name: String): E?
+    operator fun contains(name: String): Boolean = hasExtension(name)
+
+    fun <E : GLESExtension> getExtension(name: String): E = requireNotNull(findExtension(name)) {
+        "Extension '$name' is not present"
+    }
 }

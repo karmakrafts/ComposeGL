@@ -16,6 +16,7 @@
 
 package dev.karmakrafts.composegl.gles
 
+import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.COpaque
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
@@ -23,7 +24,9 @@ import kotlinx.cinterop.cValuesOf
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
+import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.toCPointer
+import kotlinx.cinterop.toKStringFromUtf8
 import kotlinx.cinterop.value
 import platform.OpenGLCommon.GLintVar
 import platform.OpenGLCommon.GLuintVar
@@ -390,6 +393,14 @@ internal object PlatformGLES11 : GLES11 {
         return platform.OpenGL.glGetError().convert()
     }
 
+    override fun glGetInteger(pname: Int): Int {
+        TODO("Not yet implemented")
+    }
+
+    override fun glGetString(pname: Int): String? {
+        TODO("Not yet implemented")
+    }
+
     override fun glHint(target: Int, mode: Int) {
         platform.OpenGL.glHint(target.convert(), mode.convert())
     }
@@ -550,5 +561,25 @@ internal object PlatformGLES11 : GLES11 {
 
     override fun glViewport(x: Int, y: Int, width: Int, height: Int) {
         platform.OpenGL.glViewport(x, y, width, height)
+    }
+
+    override fun getExtensions(): List<String> {
+        return platform.OpenGL.glGetString(platform.OpenGL.GL_EXTENSIONS.convert())
+            ?.reinterpret<ByteVar>()
+            ?.toKStringFromUtf8()
+            ?.split(' ') ?: emptyList()
+    }
+
+    override fun hasExtension(name: String): Boolean {
+        return name in getExtensions()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E : GLESExtension> findExtension(name: String): E? {
+        return if (name !in this) null
+        else when (name) {
+            GLESExtVertexArrayObject.NAME -> PlatformExtVertexArrayObject
+            else -> null
+        } as? E
     }
 }

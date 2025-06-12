@@ -254,10 +254,7 @@ internal object PlatformGLES20 : GLES20, GLES11 by PlatformGLES11 {
     override fun glGetFramebufferAttachmentParameteri(target: Int, attachment: Int, pname: Int): Int = memScoped {
         val value = alloc<GLintVar>()
         platform.OpenGL.glGetFramebufferAttachmentParameteriv(
-            target.convert(),
-            attachment.convert(),
-            pname.convert(),
-            value.ptr
+            target.convert(), attachment.convert(), pname.convert(), value.ptr
         )
         value.value
     }

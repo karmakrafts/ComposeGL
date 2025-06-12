@@ -366,6 +366,16 @@ internal object PlatformGLES11 : GLES11 {
         return AndroidGLES11.glGetError()
     }
 
+    override fun glGetInteger(pname: Int): Int {
+        val value = IntArray(1)
+        AndroidGLES11.glGetIntegerv(pname, value, 0)
+        return value.first()
+    }
+
+    override fun glGetString(pname: Int): String? {
+        return AndroidGLES11.glGetString(pname)
+    }
+
     override fun glHint(target: Int, mode: Int) {
         AndroidGLES11.glHint(target, mode)
     }
@@ -494,5 +504,22 @@ internal object PlatformGLES11 : GLES11 {
 
     override fun glViewport(x: Int, y: Int, width: Int, height: Int) {
         AndroidGLES11.glViewport(x, y, width, height)
+    }
+
+    override fun getExtensions(): List<String> {
+        return AndroidGLES11.glGetString(AndroidGLES11.GL_EXTENSIONS).split(' ')
+    }
+
+    override fun hasExtension(name: String): Boolean {
+        return name in getExtensions()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E : GLESExtension> findExtension(name: String): E? {
+        return if (name !in this) null
+        else when (name) {
+            GLESExtVertexArrayObject.NAME -> PlatformExtVertexArrayObject
+            else -> null
+        } as? E
     }
 }

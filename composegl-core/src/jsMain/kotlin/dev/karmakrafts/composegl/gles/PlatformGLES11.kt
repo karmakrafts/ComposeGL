@@ -25,7 +25,7 @@ import org.khronos.webgl.Int32Array
 import org.khronos.webgl.Int8Array
 import org.khronos.webgl.WebGLRenderingContext
 
-internal open class PlatformGLES11(protected val context: WebGLRenderingContext) : GLES11 {
+internal open class PlatformGLES11(internal val context: WebGLRenderingContext) : GLES11 {
     override val GL_DEPTH_BUFFER_BIT: Int get() = WebGLRenderingContext.DEPTH_BUFFER_BIT
     override val GL_STENCIL_BUFFER_BIT: Int get() = WebGLRenderingContext.STENCIL_BUFFER_BIT
     override val GL_COLOR_BUFFER_BIT: Int get() = WebGLRenderingContext.COLOR_BUFFER_BIT
@@ -196,6 +196,10 @@ internal open class PlatformGLES11(protected val context: WebGLRenderingContext)
     override val GL_DYNAMIC_DRAW: Int get() = WebGLRenderingContext.DYNAMIC_DRAW
     override val GL_BUFFER_SIZE: Int get() = WebGLRenderingContext.BUFFER_SIZE
     override val GL_BUFFER_USAGE: Int get() = WebGLRenderingContext.BUFFER_USAGE
+
+    private val extensions: Map<String, GLESExtension> = mapOf(
+        GLESExtVertexArrayObject.NAME to PlatformExtVertexArrayObject(this@PlatformGLES11)
+    )
 
     override fun glClearColor(red: Float, green: Float, blue: Float, alpha: Float) {
         context.clearColor(red, green, blue, alpha)
@@ -369,6 +373,14 @@ internal open class PlatformGLES11(protected val context: WebGLRenderingContext)
         return context.getError()
     }
 
+    override fun glGetInteger(pname: Int): Int {
+        return context.getParameter(pname) as? Int ?: 0
+    }
+
+    override fun glGetString(pname: Int): String? {
+        return context.getParameter(pname) as? String
+    }
+
     override fun glHint(target: Int, mode: Int) {
         context.hint(target, mode)
     }
@@ -499,5 +511,19 @@ internal open class PlatformGLES11(protected val context: WebGLRenderingContext)
 
     override fun glViewport(x: Int, y: Int, width: Int, height: Int) {
         context.viewport(x, y, width, height)
+    }
+
+    override fun getExtensions(): List<String> {
+        return context.getSupportedExtensions()?.toList() ?: emptyList()
+    }
+
+    override fun hasExtension(name: String): Boolean {
+        return context.getExtension(name) as? Boolean ?: false
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <E : GLESExtension> findExtension(name: String): E? {
+        return if (name !in this) null
+        else extensions[name] as? E
     }
 }
