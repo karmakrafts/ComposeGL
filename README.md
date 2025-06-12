@@ -1,5 +1,11 @@
 # <img src="docs/composegl.svg" width=48> ComposeGL
 
+[![](https://git.karmakrafts.dev/kk/composegl/badges/master/pipeline.svg)](https://git.karmakrafts.dev/kk/composegl/-/pipelines)
+[![](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Frepo.maven.apache.org%2Fmaven2%2Fdev%2Fkarmakrafts%2Fcomposegl%2Fcomposegl-core%2Fmaven-metadata.xml
+)](https://git.karmakrafts.dev/kk/composegl/-/packages)
+[![](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fcentral.sonatype.com%2Frepository%2Fmaven-snapshots%2Fdev%2Fkarmakrafts%2Fcomposegl%2Fcomposegl-core%2Fmaven-metadata.xml
+)](https://git.karmakrafts.dev/kk/composegl/-/packages)
+
 This library adds a `GLCanvas` composable which allows high-performance 2D and 3D rendering within any  
 Compose Multiplatform application.  
 It also provides a lightweight abstraction to access GLES and Desktop GL using a common API up to GLES 3.0.
