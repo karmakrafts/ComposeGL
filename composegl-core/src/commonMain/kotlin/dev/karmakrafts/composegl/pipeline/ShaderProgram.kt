@@ -28,7 +28,7 @@ class ShaderProgram private constructor( // @formatter:off
     private val impl: GLES20,
     private val stages: List<Shader>,
     val format: VertexFormat
-) : Resource { // @formatter:on
+) : BindableResource { // @formatter:on
     companion object {
         @GLRenderScopeDsl
         fun GLRenderScope.shaderProgram(format: VertexFormat, vararg stages: Shader): ShaderProgram =
@@ -63,11 +63,16 @@ class ShaderProgram private constructor( // @formatter:off
         for (element in format.elements) {
             impl.glBindAttribLocation(handle, index++, element.name)
         }
-        glValidateProgram(handle)
-        if (glGetProgrami(handle, GL_VALIDATE_STATUS) == GL_FALSE) {
-            error("Could not validate program $handle: ${glGetProgramInfoLog(handle) ?: "unknown error"}")
-        }
         isLinked = true
+    }
+
+    internal fun validate() = with(impl) {
+        use<Unit> {
+            glValidateProgram(handle)
+            if (glGetProgrami(handle, GL_VALIDATE_STATUS) == GL_FALSE) {
+                error("Could not validate program $handle: ${glGetProgramInfoLog(handle) ?: "unknown error"}")
+            }
+        }
     }
 
     fun getUniformLocation(name: String): GLESUniformLocation = with(impl) {
@@ -112,7 +117,7 @@ class ShaderProgram private constructor( // @formatter:off
         glUniform4f(getUniformLocation(name), x, y, z, w)
     }
 
-    fun bind() {
+    override fun bind() {
         if (needsRelink || !isLinked) {
             link()
             needsRelink = false
@@ -121,7 +126,7 @@ class ShaderProgram private constructor( // @formatter:off
         impl.glUseProgram(handle)
     }
 
-    fun unbind() = impl.glUseProgram(glesNoShaderProgram)
+    override fun unbind() = impl.glUseProgram(glesNoShaderProgram)
 
     override fun dispose() {
         if (isDisposed) return

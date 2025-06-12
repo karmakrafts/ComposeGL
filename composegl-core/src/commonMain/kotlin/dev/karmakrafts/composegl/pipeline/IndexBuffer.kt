@@ -34,7 +34,7 @@ class IndexBuffer internal constructor( // @formatter:off
     private val impl: GLES20,
     val format: IndexFormat,
     val usage: BufferUsage
-) : Resource { // @formatter:on
+) : BindableResource { // @formatter:on
     val handle: GLESBuffer = impl.glGenBuffer()
     private var isDisposed: Boolean = false
 
@@ -52,8 +52,8 @@ class IndexBuffer internal constructor( // @formatter:off
         isDisposed = true
     }
 
-    fun bind() = impl.glBindBuffer(impl.GL_ELEMENT_ARRAY_BUFFER, handle)
-    fun unbind() = impl.glBindBuffer(impl.GL_ELEMENT_ARRAY_BUFFER, glesNoBuffer)
+    override fun bind() = impl.glBindBuffer(impl.GL_ELEMENT_ARRAY_BUFFER, handle)
+    override fun unbind() = impl.glBindBuffer(impl.GL_ELEMENT_ARRAY_BUFFER, glesNoBuffer)
 
     fun upload(buffer: Buffer) {
         val bufferSize = buffer.size.toInt()

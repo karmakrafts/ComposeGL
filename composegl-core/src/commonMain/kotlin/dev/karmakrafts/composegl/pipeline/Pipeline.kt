@@ -37,6 +37,9 @@ class Pipeline private constructor( // @formatter:off
     }
 
     init {
+        vbo.use {
+            ibo.use { program.validate() }
+        }
         Log.debug { "Created pipeline [VBO:${vbo.handle}/IBO:${ibo.handle}/PRG:${program.handle}]" }
     }
 

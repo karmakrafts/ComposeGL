@@ -30,7 +30,7 @@ class VertexBuffer internal constructor( // @formatter:off
     private val impl: GLES20,
     val usage: BufferUsage,
     val format: VertexFormat
-) : Resource { // @formatter:on
+) : BindableResource { // @formatter:on
     val handle: GLESBuffer = impl.glGenBuffer()
     private var isDisposed: Boolean = false
 
@@ -48,8 +48,8 @@ class VertexBuffer internal constructor( // @formatter:off
         isDisposed = true
     }
 
-    fun bind() = impl.glBindBuffer(impl.GL_ARRAY_BUFFER, handle)
-    fun unbind() = impl.glBindBuffer(impl.GL_ARRAY_BUFFER, glesNoBuffer)
+    override fun bind() = impl.glBindBuffer(impl.GL_ARRAY_BUFFER, handle)
+    override fun unbind() = impl.glBindBuffer(impl.GL_ARRAY_BUFFER, glesNoBuffer)
 
     fun upload(buffer: Buffer) {
         val bufferSize = buffer.size.toInt()
