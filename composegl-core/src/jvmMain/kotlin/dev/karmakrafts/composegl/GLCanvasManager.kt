@@ -60,7 +60,10 @@ internal object GLCanvasManager {
     }
 
     fun requestGL() {
-        //System.setProperty("skiko.renderApi", "OPENGL")
+        when(Platform.get()) {
+            Platform.LINUX -> System.setProperty("skiko.renderApi", "OPENGL")
+            else -> {}
+        }
     }
 
     fun initIfNeeded() {

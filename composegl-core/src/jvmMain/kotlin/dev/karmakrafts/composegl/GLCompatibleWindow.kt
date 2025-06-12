@@ -27,6 +27,7 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberWindowState
+import dev.karmakrafts.composegl.util.isSoftware
 
 internal val WindowInstance: ProvidableCompositionLocal<ComposeWindow?> = staticCompositionLocalOf { null }
 
@@ -64,7 +65,7 @@ fun GLCompatibleWindow(
         onKeyEvent = onKeyEvent
     ) {
         CompositionLocalProvider( // @formatter:off
-            OpenGLSupported provides true,
+            OpenGLSupported provides !window.renderApi.isSoftware,
             WindowInstance provides window
         ) { // @formatter:on
             content()
