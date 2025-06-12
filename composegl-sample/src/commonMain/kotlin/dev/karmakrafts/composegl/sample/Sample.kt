@@ -94,7 +94,7 @@ fun Sample(videoSource: VideoSource) {
                     VertexFormatElement(VertexFormatElementType.FLOAT_4, "in_color")
                 )
                 pipeline( // @formatter:off
-                    vbo = vertexBuffer {
+                    vertexBuffer = vertexBuffer {
                         format = vertexFormat
                         // Top left
                         write(-1F, 1F)
@@ -113,7 +113,7 @@ fun Sample(videoSource: VideoSource) {
                         write(1F, 0F)
                         write(1F, 1F, 1F, 1F)
                     },
-                    ibo = indexBuffer {
+                    indexBuffer = indexBuffer {
                         format = IndexFormat.UBYTE
                         write(0U.toUByte(), 1U.toUByte(), 2U.toUByte())
                         write(0U.toUByte(), 2U.toUByte(), 3U.toUByte())

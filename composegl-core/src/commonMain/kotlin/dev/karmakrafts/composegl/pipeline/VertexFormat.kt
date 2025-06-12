@@ -66,4 +66,30 @@ value class VertexFormat(val elements: List<VertexFormatElement>) {
 
     inline val sizeInBytes: Int
         get() = elements.sumOf { it.sizeInBytes }
+
+    fun enableVAAs(impl: GLES20) = with(impl) {
+        var index = 0
+        val formatSize = sizeInBytes
+        var offset = 0L
+        for (element in elements) {
+            val elementType = element.type
+            glEnableVertexAttribArray(index)
+            glVertexAttribPointer(
+                index = index,
+                size = elementType.componentCount,
+                type = elementType.primitiveType(impl),
+                normalized = false,
+                stride = formatSize,
+                offset = offset
+            )
+            offset += element.sizeInBytes
+            ++index
+        }
+    }
+
+    fun disableVAAs(impl: GLES20) = with(impl) {
+        for (index in elements.indices) {
+            glDisableVertexAttribArray(index)
+        }
+    }
 }
