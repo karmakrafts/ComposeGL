@@ -41,7 +41,7 @@ import org.intellij.lang.annotations.Language
 
 @Language("glsl")
 private const val vertexShader: String = """
-#version 410 core
+#version 410
     
 in vec2 in_position;
 in vec2 in_uv;
@@ -59,7 +59,7 @@ void main(void) {
 
 @Language("glsl")
 private const val fragmentShader: String = """
-#version 410 core
+#version 410
     
 uniform sampler2D u_texture;
 
