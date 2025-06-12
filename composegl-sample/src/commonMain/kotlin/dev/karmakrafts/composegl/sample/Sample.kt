@@ -134,7 +134,7 @@ fun Sample(videoSource: VideoSource) {
                 ) // @formatter:on
             }
 
-            glClearColor(0F, 0F, 0F, 1F)
+            glClearColor(1F, 0F, 1F, 1F)
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
 
             glActiveTexture(GL_TEXTURE0) // We only use texture unit 0
