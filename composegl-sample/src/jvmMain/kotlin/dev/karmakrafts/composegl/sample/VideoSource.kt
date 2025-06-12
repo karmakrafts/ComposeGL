@@ -56,7 +56,7 @@ private data class FrameData(
 
 @OptIn(ExperimentalAtomicApi::class)
 internal object DemoVideoSource : VideoSource {
-    private val frameGrabber: FFmpegFrameGrabber = FFmpegFrameGrabber(File("demo_720.mov"))
+    private val frameGrabber: FFmpegFrameGrabber = FFmpegFrameGrabber(File("demo.mp4"))
     private val frameGrabberMutex: Any = Any()
 
     private val buffer: Buffer = Buffer()
