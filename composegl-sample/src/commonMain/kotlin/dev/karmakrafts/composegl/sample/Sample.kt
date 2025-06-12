@@ -41,7 +41,7 @@ import org.intellij.lang.annotations.Language
 
 @Language("glsl")
 private const val vertexShader: String = """
-#version 130
+#version 150
 
 #if GL_ES
 precision mediump float;
@@ -63,7 +63,7 @@ void main() {
 
 @Language("glsl")
 private const val fragmentShader: String = """
-#version 130
+#version 150
 
 #if GL_ES
 precision mediump float;
