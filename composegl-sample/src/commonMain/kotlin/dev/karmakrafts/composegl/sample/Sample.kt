@@ -41,17 +41,16 @@ import org.intellij.lang.annotations.Language
 
 @Language("glsl")
 private const val vertexShader: String = """
-#version 300 es
-precision mediump float;
+#version 410 core
     
-attribute vec2 in_position;
-attribute vec2 in_uv;
-attribute vec4 in_color;
+in vec2 in_position;
+in vec2 in_uv;
+in vec4 in_color;
 
 out vec2 v_uv;
 out vec4 v_color;
 
-void main() {
+void main(void) {
     gl_Position = vec4(vec3(in_position, 0.0), 1.0);
     v_uv = in_uv;
     v_color = in_color;
@@ -60,17 +59,16 @@ void main() {
 
 @Language("glsl")
 private const val fragmentShader: String = """
-#version 300 es
-precision mediump float;
-
+#version 410 core
+    
 uniform sampler2D u_texture;
 
 in vec2 v_uv;
 in vec4 v_color;
 
-layout(location = 0) out vec4 out_color;
+out vec4 out_color;
     
-void main() {
+void main(void) {
     out_color = (texture(u_texture, v_uv) * 0.5) + (v_color * 0.5);
 }
 """
