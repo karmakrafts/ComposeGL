@@ -20,6 +20,7 @@ import dev.karmakrafts.composegl.util.copyFrom
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GLCapabilities
 import org.lwjgl.opengl.awt.GLData
+import org.lwjgl.system.Platform
 
 internal object GLCanvasManager {
     private var isInitialized: Boolean = false
@@ -28,7 +29,10 @@ internal object GLCanvasManager {
         private set
 
     private val defaultConfig: GLData = GLData().apply {
-        profile = GLData.Profile.COMPATIBILITY
+        profile = when(Platform.get()) {
+            Platform.LINUX -> GLData.Profile.COMPATIBILITY
+            else -> GLData.Profile.CORE
+        }
         api = GLData.API.GL
         forwardCompatible = true
         majorVersion = 4
