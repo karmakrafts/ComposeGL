@@ -91,7 +91,8 @@ kotlin {
                 api(libs.lwjgl)
                 api(libs.lwjgl.opengl)
                 implementation(libs.lwjgl.jawt)
-                implementation(libs.lwjglx.awt)
+                val lwjglxModule = libs.lwjglx.awt.get()
+                implementation("${lwjglxModule.module}:${lwjglxModule.version}") { isTransitive = false }
                 for (platform in lwjglPlatforms) {
                     val variant = "natives-$platform"
                     implementation(libs.lwjgl.asProvider().withVariant(variant))
