@@ -63,10 +63,10 @@ class ShaderProgram private constructor( // @formatter:off
         for (element in format.elements) {
             impl.glBindAttribLocation(handle, index++, element.name)
         }
-        glValidateProgram(handle)
-        if (glGetProgrami(handle, GL_VALIDATE_STATUS) == GL_FALSE) {
-            error("Could not validate program $handle: ${glGetProgramInfoLog(handle) ?: "unknown error"}")
-        }
+        //glValidateProgram(handle)
+        //if (glGetProgrami(handle, GL_VALIDATE_STATUS) == GL_FALSE) {
+        //    error("Could not validate program $handle: ${glGetProgramInfoLog(handle) ?: "unknown error"}")
+        //}
         isLinked = true
     }
 
