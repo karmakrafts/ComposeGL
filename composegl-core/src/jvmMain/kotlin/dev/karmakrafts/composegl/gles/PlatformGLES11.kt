@@ -196,6 +196,10 @@ internal object PlatformGLES11 : GLES11 {
     override val GL_BUFFER_SIZE: Int get() = GL15.GL_BUFFER_SIZE
     override val GL_BUFFER_USAGE: Int get() = GL15.GL_BUFFER_USAGE
 
+    private val emulatedExtensions: Array<String> = arrayOf(
+        GLESExtVertexArrayObject.NAME
+    )
+
     override fun glClearColor(red: Float, green: Float, blue: Float, alpha: Float) {
         GL11.glClearColor(red, green, blue, alpha)
     }
@@ -514,7 +518,7 @@ internal object PlatformGLES11 : GLES11 {
     }
 
     override fun getExtensions(): List<String> {
-        return GL11.glGetString(GL11.GL_EXTENSIONS)?.split(' ') ?: emptyList()
+        return (GL11.glGetString(GL11.GL_EXTENSIONS)?.split(' ') ?: emptyList()) + emulatedExtensions
     }
 
     override fun hasExtension(name: String): Boolean {

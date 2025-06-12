@@ -36,18 +36,25 @@ class Pipeline private constructor( // @formatter:off
         ): Pipeline = Pipeline(this, vbo, ibo, program) // @formatter:on
     }
 
+    val vao: VertexArrayObject = VertexArrayObject(impl)
+
     init {
-        vbo.use {
-            ibo.use { program.validate() }
+        // Attach VBO, IBO and attrib pointers to our VAO and validate program
+        vao.use {
+            vbo.bind()
+            ibo.bind()
+            enableVAAs()
+            program.validate()
         }
         Log.debug { "Created pipeline [VBO:${vbo.handle}/IBO:${ibo.handle}/PRG:${program.handle}]" }
     }
 
     override fun dispose() {
         Log.debug { "Disposing pipeline [VBO:${vbo.handle}/IBO:${ibo.handle}/PRG:${program.handle}]" }
-        program.dispose()
+        vao.dispose()
         ibo.dispose()
         vbo.dispose()
+        program.dispose()
     }
 
     fun enableVAAs() = with(impl) {
@@ -78,13 +85,9 @@ class Pipeline private constructor( // @formatter:off
 
     fun draw(mode: Int, offset: Long = 0L) = with(impl) {
         program.bind()
-        vbo.bind()
-        ibo.bind()
-        enableVAAs()
+        vao.bind()
         glDrawElements(mode, ibo.indexCount, ibo.format(impl), offset)
-        disableVAAs()
-        ibo.unbind()
-        vbo.unbind()
+        vao.unbind()
         program.unbind()
     }
 }
